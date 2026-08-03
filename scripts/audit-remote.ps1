@@ -9,18 +9,20 @@
 
     Uses the SSH host alias configured in ~/.ssh/config. Defaults to 'commerce-host'
     because that is the alias actually present on this machine — 'lyli-prod' does not
-    exist in ~/.ssh/config as of this audit (see docs/HOSTING-AUDIT.md section 0).
-.PARAMETER SshAlias
-    SSH config Host alias to connect through. Default: commerce-host.
+    exist in ~/.ssh/config as of this audit (see docs/HOSTING-AUDIT.md section 0). Do
+    not hard-code host/IP/port/username/private-key path anywhere — only the alias.
+.PARAMETER SSH_HOST_ALIAS
+    SSH config Host alias to connect through. Falls back to $env:SSH_HOST_ALIAS, then
+    defaults to commerce-host.
 #>
 
 param(
-    [string]$SshAlias = 'commerce-host'
+    [string]$SSH_HOST_ALIAS = $(if ($env:SSH_HOST_ALIAS) { $env:SSH_HOST_ALIAS } else { 'commerce-host' })
 )
 
 $ErrorActionPreference = 'Stop'
 
-Write-Host "Auditing $SshAlias (read-only) ..." -ForegroundColor Cyan
+Write-Host "Auditing $SSH_HOST_ALIAS (read-only) ..." -ForegroundColor Cyan
 
 $remoteScript = @'
 set -u
@@ -64,4 +66,4 @@ crontab -l 2>&1
 echo "default cron PHP:"; php -v 2>&1 | head -1
 '@
 
-ssh $SshAlias $remoteScript
+ssh $SSH_HOST_ALIAS $remoteScript

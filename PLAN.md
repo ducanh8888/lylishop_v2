@@ -10,6 +10,8 @@
 **Người triển khai:** Developer
 **Đối thủ tham chiếu:** WordPress + WooCommerce được cài thủ công và vận hành thiếu kiểm soát
 
+> **Amendment 2026-08-03 — hạ tầng production-only:** Dự án dùng đúng một domain (lylishop.online), một môi trường production, một database production, một kho uploads production. Không có staging domain/database/deploy/promotion workflow. Local development và automated checks là cổng kiểm tra duy nhất trước production; mọi deploy production vẫn phải qua quy trình release-based có backup trước khi deploy và rollback (xem `docs/DEPLOYMENT.md`). Các mục nhắc tới "staging" bên dưới đã được cập nhật theo quyết định này; nội dung gốc không bị xóa khỏi lịch sử Git.
+
 ---
 
 # 1. Định nghĩa lại sản phẩm
@@ -159,7 +161,7 @@ Dùng để:
 * Thiết lập role.
 * Ẩn menu không cần thiết.
 * Đặt cấu hình mặc định.
-* Thiết lập môi trường development, staging và production.
+* Thiết lập môi trường development và production (không có staging — xem Amendment 2026-08-03).
 
 ## 4.3. Deployment scripts
 
@@ -813,7 +815,7 @@ Mỗi website có một manifest ghi rõ:
 * Backup production.
 * Customer data.
 
-WordPress hỗ trợ phân biệt môi trường local, development, staging và production qua cấu hình môi trường.
+WordPress hỗ trợ phân biệt môi trường qua cấu hình môi trường; dự án này chỉ dùng hai môi trường thật — local development và production — theo Amendment 2026-08-03, không có staging riêng.
 
 ## 10.3. Setup script
 
@@ -929,7 +931,7 @@ Cần hỗ trợ:
 * Backup trước update.
 * Backup off-site.
 * Tải backup thủ công.
-* Restore staging.
+* Restore lên môi trường kiểm thử cục bộ (không có staging riêng — xem Amendment 2026-08-03).
 * Restore production.
 * Kiểm thử restore định kỳ.
 
@@ -987,7 +989,7 @@ Không cho production tự cập nhật:
 
 1. Renovate, Dependabot hoặc kiểm tra thủ công phát hiện phiên bản mới.
 2. Cập nhật lockfile.
-3. Deploy lên local hoặc staging.
+3. Deploy lên local (môi trường phát triển) và chạy automated checks — không có staging riêng.
 4. Chạy smoke test.
 5. Test sản phẩm.
 6. Test giỏ hàng.
@@ -1081,7 +1083,7 @@ Chủ shop không nhìn thấy control plane kỹ thuật.
 * Security baseline.
 * Admin menu rút gọn.
 * Cài đặt bằng code.
-* Staging.
+* Local development và automated checks trước production (không có staging riêng).
 * Quy trình update.
 * Tài liệu bàn giao.
 
@@ -1208,7 +1210,7 @@ Chủ shop không nhìn thấy control plane kỹ thuật.
 * Security.
 * Cache.
 * Monitoring.
-* Staging.
+* Local/CI validation trước production (không có staging riêng).
 * Update workflow.
 * Rollback workflow.
 
@@ -1253,7 +1255,7 @@ Website được coi là đạt khi:
 10. Tồn kho được cập nhật đúng.
 11. Email đơn hàng được gửi đúng.
 12. Backup có thể restore.
-13. Update có staging và rollback.
+13. Update có kiểm tra local/CI và rollback (không có staging riêng).
 14. Không sửa WordPress core.
 15. Không sửa WooCommerce core.
 16. Không sửa trực tiếp plugin bên thứ ba.

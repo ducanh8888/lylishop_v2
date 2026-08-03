@@ -2,6 +2,8 @@
 
 Nguồn: PLAN.md mục 12, TECH_STACK.md mục 8.4. Chi tiết khả năng thực tế của host: `docs/HOSTING-AUDIT.md` mục 9.
 
+**Amendment 2026-08-03:** Không có staging database/domain. Restore-test dùng một database/thư mục kiểm thử cục bộ (DDEV) hoặc một schema riêng trên cùng host, tách biệt khỏi database production đang phục vụ site thật — không bao giờ restore-test bằng cách ghi đè trực tiếp lên database production đang chạy.
+
 ## Nguyên tắc
 
 Repository (Git) **không** thay thế database backup, và database backup **không** thay thế repository. Một bên chứa code, bên kia chứa dữ liệu khách hàng thật.
@@ -24,16 +26,16 @@ Repository (Git) **không** thay thế database backup, và database backup **kh
 | Backup trước mỗi deploy | Mỗi lần, bắt buộc |
 | Off-site copy | Giữ ít nhất một bản, không chỉ backup của hosting |
 
-UpdraftPlus (`docs/PLUGIN-MANIFEST.md`) đảm nhiệm backup theo lịch sau khi WordPress được cài. Trước khi WordPress tồn tại, `scripts/backup.sh` dùng `mysqldump` + `rsync`/`tar` trực tiếp qua SSH.
+UpdraftPlus (`docs/PLUGIN-MANIFEST.md`) đảm nhiệm backup theo lịch sau khi WordPress được cài. Trước khi WordPress tồn tại, `scripts/production-backup.sh` dùng `mysqldump` + `rsync`/`tar` trực tiếp qua SSH (biến `SSH_HOST_ALIAS`, mặc định `commerce-host`).
 
 ## Quy trình restore
 
 1. Xác định bản backup cần khôi phục (theo timestamp trong `shared/backups/`).
-2. Restore trước tiên trên **staging** hoặc một database/thư mục riêng trên cùng host (chưa có staging domain riêng — xem `docs/HOSTING-AUDIT.md` mục 13) — không restore thẳng lên production.
+2. Restore trước tiên trên **local (DDEV)** hoặc một database/thư mục kiểm thử riêng trên cùng host — không có staging domain (`docs/HOSTING-AUDIT.md` mục 13) — không bao giờ restore thẳng đè lên database production đang phục vụ site thật để "thử".
 3. `wp db import` hoặc nạp trực tiếp qua `mysql` client.
 4. Giải nén `uploads` vào đúng `shared/uploads/`.
-5. Chạy `scripts/health-check.sh` để xác nhận site hoạt động trên bản restore.
-6. Chỉ sau khi xác nhận, mới restore lên production thật (nếu đây là restore khắc phục sự cố, không phải kiểm thử định kỳ).
+5. Chạy `scripts/production-health-check.sh` để xác nhận site hoạt động trên bản restore.
+6. Chỉ sau khi xác nhận, mới restore lên production thật qua `scripts/production-rollback.sh` hoặc quy trình restore tương ứng (nếu đây là restore khắc phục sự cố, không phải kiểm thử định kỳ) — luôn kèm backup của trạng thái production hiện tại trước khi ghi đè.
 
 ## Kiểm thử restore định kỳ
 

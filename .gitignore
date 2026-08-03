@@ -5,6 +5,17 @@
 auth.json
 *.pem
 *.key
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+*.ppk
+
+# Internal planning workbook — non-sensitive extracts live in docs/PRODUCT-BRIEF.md,
+# docs/WEBSITE-REQUIREMENTS.md and docs/THEME-DECISION-BRIEF.md instead.
+Lyli-Shop-90-Day-Project-Management-Workbook.xlsx
+*.xlsx
+*.xls
 
 # Composer-managed WordPress core, plugins, themes (declared in composer.json)
 /web/wp/

@@ -2,6 +2,8 @@
 
 Nguồn: PLAN.md mục 14, TECH_STACK.md mục 13.
 
+**Amendment 2026-08-03:** Không có staging. Local development (DDEV) và automated checks là bước kiểm tra duy nhất trước production; quy trình dưới đây đã cập nhật lại bước 3.
+
 ## Không auto-update vô điều kiện trên production
 
 Không cho production tự cập nhật: WordPress major version, WooCommerce major version, theme, plugin ảnh hưởng checkout/payment/order/affiliate (PLAN.md mục 14.1). `AUTOMATIC_UPDATER_DISABLED` và `WP_AUTO_UPDATE_CORE=false` đã đặt ở `config/environments/production.php`.
@@ -10,15 +12,15 @@ Không cho production tự cập nhật: WordPress major version, WooCommerce ma
 
 1. Renovate/Dependabot hoặc kiểm tra thủ công phát hiện phiên bản mới.
 2. Cập nhật `composer.lock` (không sửa version trực tiếp trong `wp-admin`).
-3. Deploy lên local (DDEV) hoặc staging.
+3. Deploy lên local (DDEV) và chạy `scripts/production-preflight.sh` (dry-run) trên máy dev/CI — không có staging riêng.
 4. Chạy smoke test (`tests/smoke/`).
 5. Test sản phẩm, giỏ hàng, voucher, checkout, COD, chuyển khoản QR (SePay), email, admin (`tests/checkout/`, `tests/payment/`).
 6. Developer review changelog của package vừa update.
-7. Backup production (`scripts/backup.sh`) — bắt buộc trước khi deploy.
-8. Deploy production (manual approval).
+7. Backup production (`scripts/production-backup.sh`) — bắt buộc trước khi deploy.
+8. Deploy production theo quy trình 10 bước ở `docs/DEPLOYMENT.md` (manual approval, maintenance mode, release bất biến, rollback sẵn sàng).
 9. Chạy migration (`wp core update-db` qua PHP 8.3).
-10. Kiểm tra health (`scripts/health-check.sh`).
-11. Có phương án rollback sẵn sàng (symlink `current` về release trước — xem `docs/DEPLOYMENT.md`).
+10. Kiểm tra health (`scripts/production-health-check.sh`).
+11. Có phương án rollback sẵn sàng (`scripts/production-rollback.sh` — symlink `current` về release trước, xem `docs/DEPLOYMENT.md`).
 
 ## Ưu tiên bảo mật
 

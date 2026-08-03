@@ -2,12 +2,16 @@
 
 Chi tiết audit hạ tầng: `docs/HOSTING-AUDIT.md`. Tài liệu này mô tả quy trình, không lặp lại số liệu audit.
 
+**Amendment 2026-08-03 — production-only:** Dự án có đúng một domain (lylishop.online), một môi trường production, một database production, một kho uploads production. Không có staging domain, staging database, staging deployment hay staging promotion workflow. Local development và automated checks (CI) là cổng kiểm tra duy nhất trước production. Không có staging **không** có nghĩa là được sửa production trực tiếp, thủ công — mọi thay đổi vẫn đi qua quy trình release-based bên dưới.
+
 ## Nguyên tắc
 
 * Composer chạy ở **máy dev hoặc CI**, không chạy build nặng lặp lại trên shared host (`docs/HOSTING-AUDIT.md` mục 12).
 * Host chỉ nhận **release artifact đã build sẵn** (có `vendor/`, `web/wp/`, asset đã compile) rồi chạy WP-CLI để migrate/config.
 * Production đặt `DISALLOW_FILE_MODS=true` — không cài/update plugin qua `wp-admin` (TECH_STACK.md mục 13.1).
-* Alias SSH thật trên máy dev hiện tại là `commerce-host` (không phải `lyli-prod` — xem `docs/HOSTING-AUDIT.md` mục 0).
+* SSH dùng biến `SSH_HOST_ALIAS`, mặc định `commerce-host` — không hard-code host/IP/port/username/private-key path trong bất kỳ script nào (xem `docs/HOSTING-AUDIT.md` mục 0 về vì sao `commerce-host` chứ không phải `lyli-prod`).
+* Production **không** clone/pull từ GitHub trừ khi có quyết định riêng cho phép sau này — release đến production qua artifact upload (rsync/scp), không qua `git pull` trên host.
+* Mọi script production (`scripts/production-*.sh`) mặc định **dry-run**; chỉ thực thi thật khi truyền cờ xác nhận rõ ràng (`--apply`, và với thao tác nguy hiểm hơn còn yêu cầu gõ xác nhận bằng tay).
 
 ## Cấu trúc release trên host
 
@@ -20,29 +24,44 @@ Chi tiết audit hạ tầng: `docs/HOSTING-AUDIT.md`. Tài liệu này mô tả
     └── current -> releases/<timestamp>
 ```
 
-Lý do chọn mô hình này: `docs/HOSTING-AUDIT.md` mục 8 (chưa xác nhận panel cho đổi document root tùy ý, nhưng symlink đã xác nhận hoạt động).
+Symlink switching được ưu tiên vì đã xác nhận hoạt động trên host này (`docs/HOSTING-AUDIT.md` mục 8) và cho phép chuyển release/rollback gần như tức thời mà không cần panel hỗ trợ đổi document root. Nếu một hosting khác trong tương lai không cho phép symlink an toàn, dùng fallback rsync có kiểm soát ở mục "Fallback không dùng symlink" bên dưới.
 
-## Quy trình deploy (staging hoặc production)
+## Quy trình deploy production (10 bước bắt buộc)
 
-1. **Build** (máy dev hoặc CI): `composer validate`, `composer install --no-dev --optimize-autoloader`, build asset theme nếu có, PHP syntax check (`scripts/validate-local.ps1` / `.sh`).
-2. **Đóng gói artifact**: `scripts/build-artifact.sh` — tar toàn bộ trừ `.env`, `uploads/`, `.git/`.
-3. **Backup trước deploy**: `scripts/backup.sh` chạy trên host — dump DB + tar `shared/uploads` vào `shared/backups/pre-deploy/<timestamp>/`.
-4. **Upload**: rsync/scp artifact lên `releases/<timestamp>/` (script `scripts/staging-deploy.sh`, thủ công/manual approval cho production theo TECH_STACK.md mục 14 Deploy).
-5. **Liên kết shared state**: symlink `shared/.env` → `releases/<timestamp>/.env`, symlink `shared/uploads` → `releases/<timestamp>/web/app/uploads`.
-6. **Migrate**: `wp core update-db`, `wp option ...`, flush rewrite, clear cache — tất cả qua `/opt/alt/php83/usr/bin/php /usr/bin/wp` (không dùng `php` mặc định 8.1).
-7. **Switch**: đổi symlink `current` sang release mới.
-8. **Health check**: `scripts/health-check.sh` — kiểm tra HTTP 200 trang chủ, `wp core is-installed`, `wp plugin list --status=active`, cart/checkout không bị cache.
-9. **Rollback nếu lỗi**: trỏ lại `current` về release trước, không cần đụng `public_html`.
+1. **Pre-deploy validation** (máy dev/CI) — `scripts/validate-local.ps1` + `scripts/production-preflight.sh` (dry-run mặc định): `composer validate`, `composer install --no-dev --optimize-autoloader`, build asset theme nếu có, PHP syntax check, kiểm tra secret không bị commit.
+2. **Backup database production** — `scripts/production-backup.sh` (chạy trên host qua `SSH_HOST_ALIAS`): `mysqldump` vào `shared/backups/pre-deploy/<timestamp>/database.sql.gz`.
+3. **Backup uploads/config production nếu áp dụng** — cùng script: tar `shared/uploads/` và `shared/.env` (chỉ để khôi phục, không đưa vào release artifact hay Git).
+4. **Bật maintenance mode** — `wp maintenance-mode activate` qua PHP 8.3 trên release đang chạy (`current`), trước khi đụng tới file.
+5. **Upload release bất biến (immutable)** — đóng gói bằng `scripts/build-artifact.sh`, rsync/scp lên `releases/<timestamp>/` — không sửa trực tiếp một release đã tồn tại.
+6. **Giữ nguyên dữ liệu chia sẻ (shared persistent data)** — symlink `shared/.env` → `releases/<timestamp>/.env`, symlink `shared/uploads` → `releases/<timestamp>/web/app/uploads`; database không bị ghi đè bởi việc deploy code.
+7. **Migration qua WP-CLI** — `wp core update-db`, cấu hình cần thiết, flush rewrite, clear cache — luôn qua `/opt/alt/php83/usr/bin/php /usr/bin/wp` (không dùng `php` mặc định 8.1).
+8. **Health check** — `scripts/production-health-check.sh`: HTTP 200 trang chủ, `wp core is-installed`, `wp plugin list --status=active`, xác nhận cart/checkout/my-account không bị page-cache.
+9. **Tắt maintenance mode** — chỉ sau khi health check qua; đổi symlink `current` sang release mới ngay trước hoặc cùng lúc tắt maintenance mode để giảm downtime.
+10. **Rollback sẵn sàng** — `scripts/production-rollback.sh`: trỏ lại `current` về release trước; nếu migration đã chạy và không tương thích ngược, khôi phục database từ backup bước 2 trước khi trỏ lại release cũ.
 
-## Trước khi staging deploy đầu tiên (chưa làm ở phase này)
+Mọi script ở trên mặc định dry-run và yêu cầu `--apply` (hoặc xác nhận gõ tay với thao tác ghi đè database) — không script nào tự chạy thật trong quá trình chuẩn bị này.
+
+## Fallback không dùng symlink (nếu một hosting khác không cho phép)
+
+Nếu môi trường hosting không hỗ trợ symlink an toàn cho document root:
+
+1. Giữ nguyên bước backup (2–3) và maintenance mode (4) như trên.
+2. Thay bước 5–6 bằng rsync có loại trừ: `rsync -a --delete --exclude=.env --exclude=uploads/ --exclude=.git/ release/ current-path/`, với `uploads/` và `.env` được rsync riêng theo hướng một chiều từ `shared/` vào, không bị `--delete` xóa mất.
+3. Trước khi rsync, tạo bản nén rollback của thư mục hiện tại (`tar` toàn bộ document root hiện có) vào `shared/backups/pre-deploy/<timestamp>/current-snapshot.tar.gz`.
+4. Rollback = giải nén lại `current-snapshot.tar.gz` đè lên document root.
+
+Host hiện tại (`docs/HOSTING-AUDIT.md`) đã xác nhận symlink hoạt động, nên fallback này chỉ là phương án dự phòng, không phải quy trình chính.
+
+## Trước khi deploy production lần đầu (chưa làm ở phase này)
 
 Theo `docs/HOSTING-AUDIT.md` mục 15 (Stop Conditions), xác nhận qua OnePanel trước:
 
 1. PHP Selector cho domain đã chọn PHP 8.3.
 2. Database + user MySQL đã tạo (charset `utf8mb4`, collation `utf8mb4_unicode_ci`).
 3. Xác nhận web server thật (Apache+mod_lsapi hay LiteSpeed) để chọn đúng cache plugin.
-4. Ba mâu thuẫn PLAN.md/TECH_STACK.md ở `docs/HOSTING-AUDIT.md` mục 14 đã được người chốt PLAN xác nhận (không chặn scaffold, nhưng chặn cấu hình Cart/Checkout và Bundle/Coupon thật).
+4. Mâu thuẫn PLAN.md/TECH_STACK.md ở `docs/HOSTING-AUDIT.md` mục 14 đã được người chốt PLAN xác nhận.
+5. Theme đã được founder xác nhận (xem `docs/THEME-DECISION-BRIEF.md` — hiện đang ở trạng thái THEME DECISION REQUIRED).
 
 ## CI/CD (khi thiết lập)
 
-Theo TECH_STACK.md mục 14 — GitHub Actions: `composer validate` → `composer install --no-dev` → PHP syntax check → PHPCS → kiểm tra secret → kiểm tra plugin manifest → build artifact → deploy staging tự động → production cần manual approval.
+Theo TECH_STACK.md mục 14 — GitHub Actions: `composer validate` → `composer install --no-dev` → PHP syntax check → PHPCS → kiểm tra secret → kiểm tra plugin manifest → build artifact → production-preflight tự động trên mọi commit vào `main` → production luôn cần manual approval trước khi deploy thật. Production không tự động pull từ GitHub; pipeline CI đẩy artifact lên host qua SSH, host không kéo code về.

@@ -40,4 +40,4 @@ Xem danh sách đầy đủ ở TECH_STACK.md mục 16 — Elementor/Divi/Bricks
 
 * Mọi plugin mới — kể cả free trên WordPress.org — phải có một dòng ở đây trước khi vào `composer.json`.
 * Không có hai plugin cùng giải quyết một chức năng (PLAN.md mục 9.2).
-* Version bump đi qua staging + regression test trước khi cập nhật baseline ở đây (xem `docs/UPDATE-POLICY.md`).
+* Version bump đi qua production-preflight (validation cục bộ/CI) + regression test trước khi cập nhật baseline ở đây (xem `docs/UPDATE-POLICY.md`).

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Read-only post-deploy verification. Safe to run any time.
+# Step 8 of docs/DEPLOYMENT.md. Read-only post-deploy verification. Safe to run any time.
 set -euo pipefail
 
-SSH_ALIAS="${SSH_ALIAS:-commerce-host}"
+SSH_HOST_ALIAS="${SSH_HOST_ALIAS:-commerce-host}"
 REMOTE_APP_DIR="${REMOTE_APP_DIR:-apps/lylishop}"
 DOMAIN="${DOMAIN:-https://lylishop.online}"
 
@@ -14,14 +14,16 @@ if [ "$http_code" != "200" ]; then
 fi
 
 echo "== WP-CLI checks (via SSH, PHP 8.3) =="
-ssh "$SSH_ALIAS" "
+ssh "$SSH_HOST_ALIAS" "
   cd ~/${REMOTE_APP_DIR}/current/web 2>/dev/null || { echo 'current release not found'; exit 1; }
   WP='/opt/alt/php83/usr/bin/php ~/${REMOTE_APP_DIR}/shared/wp-cli.phar --path=.'
   echo '--- core is-installed ---'
   \$WP core is-installed && echo OK || echo FAIL
   echo '--- active plugins ---'
   \$WP plugin list --status=active --field=name
-  echo '--- site health (WP-CLI has no direct site-health command; check option table instead) ---'
+  echo '--- maintenance mode ---'
+  \$WP maintenance-mode status
+  echo '--- site URLs ---'
   \$WP option get siteurl
   \$WP option get home
 "

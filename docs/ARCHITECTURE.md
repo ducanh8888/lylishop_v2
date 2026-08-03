@@ -2,10 +2,14 @@
 
 Nguồn quyết định: `PLAN.md` (sản phẩm) và `TECH_STACK.md` (stack đã chốt). Tài liệu này chỉ tóm tắt và trỏ về, không thay thế hai file gốc. Mâu thuẫn chưa giải quyết giữa hai file gốc được liệt kê ở `docs/HOSTING-AUDIT.md` mục 14 — chưa được tự ý xử lý ở đây.
 
+**Amendment 2026-08-03 — production-only:** một domain, một môi trường production, một database, một kho uploads; không có staging (xem `docs/DEPLOYMENT.md`).
+
+**Theme gate:** dòng "Storefront 4.6.2 + shop-child" trong sơ đồ dưới đây phản ánh lựa chọn tạm ghi trong TECH_STACK.md mục 3.1, nhưng **chưa được founder xác nhận là quyết định cuối cùng**. Không cài đặt, kích hoạt hay phát triển theme cho tới khi `docs/THEME-DECISION-BRIEF.md` được founder chốt — xem tài liệu đó để biết các điểm còn mở (màu sắc, cấu trúc danh mục, classic/block theme).
+
 ## Lớp kiến trúc
 
 ```text
-Storefront 4.6.2 + shop-child (child theme)
+Storefront 4.6.2 + shop-child (child theme)  ← CHƯA CHỐT, xem Theme gate ở trên
         │
 WordPress 7.0.2 + WooCommerce 10.9.4
         │
@@ -29,7 +33,7 @@ Shared hosting (OnePanel/CloudLinux, xem docs/HOSTING-AUDIT.md)
 ## Quyết định V1 đã chốt (TECH_STACK.md mục 4)
 
 * **Cart/Checkout:** Classic (shortcode/template), chưa dùng Cart/Checkout Blocks — xem mâu thuẫn #2 ở `docs/HOSTING-AUDIT.md` mục 14 trước khi thay đổi.
-* **HPOS:** tắt khi go-live, chỉ bật sau khi toàn bộ plugin commerce xác nhận tương thích + test đầy đủ trên staging.
+* **HPOS:** tắt khi go-live, chỉ bật sau khi toàn bộ plugin commerce xác nhận tương thích + test đầy đủ trên bản sao dữ liệu kiểm thử cục bộ (không có staging riêng).
 * **Editor:** Gutenberg core + WooCommerce blocks đã kiểm thử cho nội dung (không phải Cart/Checkout), không dùng page builder bên thứ ba.
 
 ## Vai trò và quyền
@@ -38,7 +42,7 @@ Xem `web/app/mu-plugins/site-policy/` — đăng ký role, capability, ẩn menu
 
 ## Môi trường
 
-`WP_ENV` chọn giữa `development` (DDEV local), `staging`, `production` — override tương ứng nằm trong `config/environments/`. Biến môi trường thật nằm trong `.env` (không commit); mẫu ở `.env.example`.
+`WP_ENV` chọn giữa `development` (DDEV local) và `production` — không có `staging` (Amendment 2026-08-03). Override tương ứng nằm trong `config/environments/`. Biến môi trường thật nằm trong `.env` (không commit); mẫu ở `.env.example`.
 
 ## Hạ tầng thực tế (đã audit)
 

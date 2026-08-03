@@ -172,7 +172,7 @@ Hoạt động bình thường qua PHP 8.3.
 6. **Account quota thực tế** — `quota -s` không khả dụng qua CLI; cần xem trong OnePanel (mục "Disk Usage" hoặc tương đương).
 7. **Cron minimum interval** và **liệu OnePanel scheduler chạy đúng theo giờ hệ thống VN hay UTC** — cần xem trong giao diện Cron Jobs của panel.
 8. **Domain document root re-pointing** — `opcli domains` chỉ đọc, không có subcommand set/update. Chưa xác nhận panel UI có cho đổi document root sang đường dẫn tuỳ ý (ví dụ `~/apps/lylishop/current/web`) hay không. Xem mục 8 (Recommended deployment layout) cho phương án không phụ thuộc vào việc này.
-9. **Staging subdomain** — panel hỗ trợ `accelerate_wp` và multi-feature nhưng chưa xác nhận có addon-domain/subdomain miễn phí đi kèm gói hiện tại. Cần kiểm tra OnePanel → Domains.
+9. ~~Staging subdomain~~ — **không còn áp dụng.** Amendment 2026-08-03: dự án chốt production-only, không có staging domain. Mục này được giữ lại để ghi nhận rằng panel có `accelerate_wp`/multi-feature (chưa xác nhận addon-domain miễn phí), phòng trường hợp quyết định này được xem xét lại trong tương lai — không phải một hạng mục cần kiểm tra tiếp.
 10. **Composer self-update quyền ghi** — `/usr/local/bin/composer` nằm ngoài `$HOME`, nhiều khả năng không ghi được bởi user thường (không kiểm tra trực tiếp để tránh side-effect). Nếu cần Composer mới hơn, cân nhắc tải Composer riêng vào `~/bin/composer.phar`.
 
 ---
@@ -278,7 +278,7 @@ Vì chưa xác nhận được panel có cho đổi document root tuỳ ý hay k
 
 * Mỗi lần deploy: upload release mới vào `releases/<timestamp>/`, symlink `shared/uploads`, `shared/.env` vào đúng vị trí Bedrock cần bên trong release đó, sau đó đổi `current` sang release mới, và **chỉ đổi `public_html` một lần duy nhất** lúc go-live đầu tiên (từ thư mục thật hiện tại sang symlink trỏ `current/web`).
 * Rollback = trỏ lại `current` về release cũ, không cần đụng tới `public_html`.
-* Vì đây là bước ghi đè `public_html` hiện tại (đang chỉ chứa `index.htm` mặc định) — **phải backup nó trước** (dù chỉ là file mặc định của hosting) và thực hiện ở Phase 6 (staging deploy), không phải bây giờ.
+* Vì đây là bước ghi đè `public_html` hiện tại (đang chỉ chứa `index.htm` mặc định) — **phải backup nó trước** (dù chỉ là file mặc định của hosting) và thực hiện ở Phase 6 (deploy production đầu tiên — không có staging, xem `docs/DEPLOYMENT.md`), không phải bây giờ.
 
 Không cần panel hỗ trợ set document root tuỳ ý — cách này hoạt động trên bất kỳ shared hosting nào cho phép symlink, đã xác nhận đúng ở tài khoản này.
 
@@ -289,7 +289,7 @@ Không cần panel hỗ trợ set document root tuỳ ý — cách này hoạt �
 * **Database:** `mysqldump` hằng ngày (đã xác nhận có binary) → nén → lưu vào `shared/backups/db/` → đồng bộ off-site (rsync xuống máy dev, hoặc gắn vào UpdraftPlus theo TECH_STACK.md §8.4 khi WordPress đã cài).
 * **Uploads:** `rsync -a shared/uploads/` hằng ngày/hằng tuần xuống nơi lưu off-site, tách biệt với backup code.
 * **Trước mỗi deploy:** bắt buộc dump DB + tar uploads trước khi chạy migration, lưu trong `shared/backups/pre-deploy/<timestamp>/`.
-* **Restore test định kỳ:** phục hồi bản mới nhất lên một database/thư mục riêng trên chính hosting này (không có staging domain riêng cho tới khi mục 3.9 được xác nhận) để kiểm chứng backup dùng được.
+* **Restore test định kỳ:** phục hồi bản mới nhất lên một database/thư mục kiểm thử riêng trên chính hosting này, hoặc lên local DDEV (dự án production-only, không có staging domain — Amendment 2026-08-03) để kiểm chứng backup dùng được.
 * Repository (Git) **không** thay thế database backup — đúng nguyên tắc PLAN.md §12.
 
 ---
@@ -320,15 +320,17 @@ Lý do:
 
 ---
 
-## 13. Staging
+## 13. Staging — SUPERSEDED (Amendment 2026-08-03)
 
-**Chưa xác nhận được subdomain miễn phí đi kèm gói hosting** (mục 3.9). Ba lựa chọn theo mức độ sẵn sàng:
+Nội dung gốc của mục này (giữ bên dưới cho lịch sử) khảo sát ba lựa chọn staging vì tại thời điểm audit, quyết định hạ tầng chưa được chốt. Founder sau đó đã quyết định: **production-only, không có staging domain/database/deploy/promotion workflow.** Local development (DDEV) và automated checks (CI) là cổng kiểm tra duy nhất trước production — xem `docs/DEPLOYMENT.md`. Mục 3 item 9 ở trên (staging subdomain) không còn là hạng mục cần xác nhận qua panel.
 
-1. **Tốt nhất nếu panel cho phép:** subdomain thật, ví dụ `staging.lylishop.online`, database + `.env` riêng, cùng tài khoản hosting này — cần kiểm tra OnePanel → Domains để xác nhận có thể tạo addon/subdomain hay không.
-2. **Nếu không có subdomain:** thư mục riêng dưới `apps/lylishop-staging/` với DB riêng, truy cập qua path hoặc qua port khác — phức tạp hơn để test HTTPS/checkout thật.
-3. **Trong lúc chưa xác nhận cả hai trên:** staging chạy **local trên DDEV** (máy dev, khi đã cài DDEV) trước khi đẩy lên production — an toàn nhất, không phụ thuộc panel, nhưng không test được đúng 100% môi trường CloudLinux/PHP Selector thật.
+Nội dung khảo sát gốc (lịch sử, không còn là hướng đi hiện hành):
 
-Khuyến nghị hiện tại: bắt đầu với lựa chọn 3 (DDEV local) ngay khi Phase 5 xong, song song xác nhận lựa chọn 1 qua panel trước khi go-live.
+1. ~~Tốt nhất nếu panel cho phép: subdomain thật, ví dụ `staging.lylishop.online`, database + `.env` riêng.~~
+2. ~~Nếu không có subdomain: thư mục riêng dưới `apps/lylishop-staging/` với DB riêng.~~
+3. ~~Staging chạy local trên DDEV trước khi đẩy lên production.~~
+
+Lựa chọn 3 ở trên vẫn có giá trị nhưng nay được mô tả lại đúng bản chất: đó là **local development**, không phải "staging" — không có domain/database staging tương ứng trên hosting.
 
 ---
 
@@ -367,4 +369,4 @@ Các điểm **không** phải mâu thuẫn (TECH_STACK chỉ đang giải quy�
 
 **Kết luận:** Không có Stop Condition nào bị vi phạm để chặn hoàn toàn Phase 5 (scaffold repository). Ba mâu thuẫn ở mục 14 nên được xác nhận **trước khi cấu hình plugin Bundle/Coupon và trước khi build trang Cart/Checkout thật**, nhưng không chặn việc tạo cấu trúc repository, composer.json, mu-plugin skeleton, hay viết script.
 
-Staging deployment (Phase 6 thật, lên host) **chưa nên bắt đầu** cho tới khi mục 3.1, 3.4, 3.5 (PHP Selector, DB tạo qua panel, xác nhận web server) được xác nhận qua OnePanel.
+Deploy production thật (Phase 6, lên host — không có staging, xem Amendment mục 13) **chưa nên bắt đầu** cho tới khi mục 3.1, 3.4, 3.5 (PHP Selector, DB tạo qua panel, xác nhận web server) được xác nhận qua OnePanel, và theme đã được founder chốt (`docs/THEME-DECISION-BRIEF.md`).

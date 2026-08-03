@@ -8,6 +8,8 @@
 **Thị trường:** Việt Nam
 **Nguyên tắc:** Reuse-first, code-managed, minimal-custom
 
+> **Amendment 2026-08-03 — hạ tầng production-only:** Đúng một domain (lylishop.online), một môi trường production, một database production, một kho uploads production. Không có staging domain/database/deploy/promotion workflow. Local development và automated checks (CI) là cổng kiểm tra trước production; mọi deploy production đi qua release-based workflow: pre-deploy validation → backup → maintenance mode → upload immutable release → giữ nguyên dữ liệu chia sẻ (DB/uploads) → WP-CLI migration → health check → tắt maintenance mode → rollback sẵn sàng nếu cần (xem `docs/DEPLOYMENT.md`). Các mục nhắc "staging" bên dưới đã được cập nhật theo quyết định này.
+
 ---
 
 # 1. Kết luận kiến trúc
@@ -55,7 +57,7 @@ Không có:
 
 # 2. Stack phiên bản được chốt
 
-Các phiên bản dưới đây là **baseline tại ngày 03/08/2026**, không phải đóng băng vĩnh viễn. Phiên bản mới chỉ được cập nhật qua pull request, staging và regression test.
+Các phiên bản dưới đây là **baseline tại ngày 03/08/2026**, không phải đóng băng vĩnh viễn. Phiên bản mới chỉ được cập nhật qua pull request, validation cục bộ/CI và regression test (không có staging riêng — xem Amendment 2026-08-03).
 
 ## 2.1. Core và runtime
 
@@ -206,7 +208,7 @@ WooCommerce vẫn hỗ trợ chuyển về hệ lưu order truyền thống khi 
 HPOS chỉ được bật khi:
 
 1. Toàn bộ plugin commerce khai báo hoặc chứng minh tương thích.
-2. Chạy migration trên staging.
+2. Chạy migration trên bản sao dữ liệu kiểm thử cục bộ trước, sau đó lặp lại trên production với backup đầy đủ và rollback sẵn sàng (không có staging riêng).
 3. Test đầy đủ checkout, refund, coupon, affiliate và SePay.
 4. Chạy song song dữ liệu trong giai đoạn kiểm thử.
 5. Có backup và rollback.
@@ -465,7 +467,7 @@ Chính sách:
 * Full backup hằng tuần.
 * Backup trước mỗi deploy.
 * Giữ ít nhất một bản off-site.
-* Kiểm thử restore trên staging định kỳ.
+* Kiểm thử restore định kỳ trên môi trường cục bộ (không có staging riêng).
 * Không coi backup của hosting là bản duy nhất.
 
 ---
@@ -675,7 +677,6 @@ commerce-site/
 │   ├── application.php
 │   └── environments/
 │       ├── development.php
-│       ├── staging.php
 │       └── production.php
 ├── web/
 │   ├── app/
@@ -735,7 +736,7 @@ commerce-site/
 1. Renovate hoặc Dependabot tạo pull request.
 2. Composer resolve dependency.
 3. CI build website mới.
-4. Deploy staging.
+4. Production-preflight: validation cục bộ/CI, dry-run của script deploy (không có staging riêng).
 5. Chạy regression tests.
 6. Developer review changelog.
 7. Backup production.
@@ -785,7 +786,7 @@ WP-CLI hỗ trợ cài core, plugin, theme, user, role, option, database, cron v
 
 ### Deploy
 
-* Tự động deploy staging.
+* Tự động chạy production-preflight (build + validate + dry-run) trên CI cho mọi commit vào `main` (không có staging riêng).
 * Production cần manual approval.
 * Database không bị ghi đè khi deploy code.
 * Upload không được đóng gói vào release.
@@ -812,7 +813,7 @@ WP-CLI hỗ trợ cài core, plugin, theme, user, role, option, database, cron v
 | Refund   | Full, partial, manual payment                      |
 | Email    | Customer, owner, SMTP failure                      |
 | Role     | Owner, staff, developer admin                      |
-| Backup   | Database, uploads, restore staging                 |
+| Backup   | Database, uploads, restore kiểm thử cục bộ         |
 | Cache    | Cart, checkout, account không bị cache             |
 | Update   | Core, WooCommerce, payment, theme                  |
 | Mobile   | Product, cart, checkout, account                   |
@@ -851,7 +852,7 @@ Không dùng trong baseline:
 * Sửa WordPress core.
 * Sửa WooCommerce core.
 * Sửa plugin bên thứ ba.
-* Auto-update production không qua staging.
+* Auto-update production không qua production-preflight và backup trước đó.
 
 ---
 
@@ -924,7 +925,7 @@ Không dùng trong baseline:
 6. Log.
 7. Monitoring.
 8. CI/CD.
-9. Staging.
+9. Production-preflight (validation cục bộ/CI trước deploy — không có staging riêng).
 10. Rollback.
 
 ## Phase 7: QA và go-live
@@ -1008,5 +1009,5 @@ ARCHITECTURE DECISIONS
 ├── No RMA plugin in V1
 ├── No wp-admin updates
 ├── Composer-locked dependencies
-└── Staging-gated production releases
+└── Backup-gated, release-based production deploys (không có staging)
 ```
