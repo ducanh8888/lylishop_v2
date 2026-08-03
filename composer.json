@@ -1,0 +1,78 @@
+{
+    "name": "lylishop/commerce-site",
+    "type": "project",
+    "license": "proprietary",
+    "description": "lylishop.online — WordPress/WooCommerce commerce distribution (Bedrock-managed, single shop, single repo). See docs/PLUGIN-MANIFEST.md for plugins not yet resolvable here.",
+    "homepage": "https://lylishop.online",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://wpackagist.org",
+            "only": [
+                "wpackagist-plugin/*",
+                "wpackagist-theme/*"
+            ]
+        }
+    ],
+    "require": {
+        "php": ">=8.3",
+        "composer/installers": "^2.3",
+        "vlucas/phpdotenv": "^5.6",
+        "oscarotero/env": "^2.1",
+        "roots/bedrock-autoloader": "^1.0",
+        "roots/wordpress": "7.0.2",
+        "roots/wp-config": "^1.0",
+
+        "wpackagist-plugin/woocommerce": "10.9.4",
+        "wpackagist-theme/storefront": "4.6.2",
+
+        "wpackagist-plugin/wp-seopress": "10.1",
+        "wpackagist-plugin/fluent-smtp": "2.2.95",
+        "wpackagist-plugin/wp-super-cache": "3.1.1",
+        "wpackagist-plugin/updraftplus": "1.26.6",
+        "wpackagist-plugin/wp-2fa": "4.1.0",
+        "wpackagist-plugin/simple-history": "5.29.0"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    },
+    "extra": {
+        "installer-paths": {
+            "web/app/mu-plugins/{$name}/": [
+                "type:wordpress-muplugin"
+            ],
+            "web/app/plugins/{$name}/": [
+                "type:wordpress-plugin"
+            ],
+            "web/app/themes/{$name}/": [
+                "type:wordpress-theme"
+            ]
+        },
+        "wordpress-install-dir": "web/wp",
+        "pending-commercial-plugins": {
+            "note": "Not resolvable via public Packagist/wpackagist. See docs/PLUGIN-MANIFEST.md before adding — each needs a private repository entry or manual artifact under web/app/plugins/, plus the Phase-2 plugin audit in TECH_STACK.md section 6.2 before production use.",
+            "plugins": [
+                "Vietnam Store Toolkit for WooCommerce 1.1.2 (audit required)",
+                "SePay Gateway 1.1.23",
+                "WooCommerce Product Bundles 8.5.10 (WooCommerce.com Marketplace)",
+                "WooCommerce Smart Coupons 9.80.0 (WooCommerce.com Marketplace)",
+                "Affiliate for WooCommerce 9.10.0 (feature-flagged, not installed by default)"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "roots/wordpress-core-installer": true
+        },
+        "platform": {
+            "php": "8.3"
+        }
+    },
+    "scripts": {
+        "validate": [
+            "composer validate --strict",
+            "@php -l web/app/mu-plugins/site-policy/site-policy.php"
+        ]
+    }
+}

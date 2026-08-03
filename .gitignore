@@ -1,0 +1,43 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+auth.json
+*.pem
+*.key
+
+# Composer-managed WordPress core, plugins, themes (declared in composer.json)
+/web/wp/
+/web/app/plugins/*
+!/web/app/plugins/.gitkeep
+/web/app/themes/storefront/
+/vendor/
+composer.phar
+
+# Uploads — belong to shared/uploads on the host, not the release artifact
+/web/app/uploads/
+
+# Backups and dumps — never committed (PLAN.md section 10.2)
+*.sql
+*.sql.gz
+/backups/
+/scratch/
+
+# Build artifacts
+/artifacts/
+/dist/
+*.zip
+*.tar.gz
+
+# Editor/OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# DDEV local state
+.ddev/.*
+!.ddev/config.yaml
+
+# Node (theme asset build, if any)
+node_modules/

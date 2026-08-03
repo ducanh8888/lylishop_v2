@@ -1,0 +1,9 @@
+{
+    "http-basic": {
+        "wpackagist.org": {
+            "username": "not-required-for-wpackagist",
+            "password": "remove-this-block-unless-needed"
+        }
+    },
+    "_comment": "If commercial extensions (WooCommerce.com Marketplace, SePay) gain private Composer repositories, add their http-basic or bearer credentials here as auth.json (gitignored), never in composer.json."
+}
