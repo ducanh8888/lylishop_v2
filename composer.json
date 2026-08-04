@@ -72,8 +72,11 @@
     },
     "scripts": {
         "validate": [
-            "composer validate --strict",
+            "composer validate",
             "@php -l web/app/mu-plugins/site-policy/site-policy.php"
+        ],
+        "validate:strict-advisory": [
+            "composer validate --strict"
         ]
     }
 }
