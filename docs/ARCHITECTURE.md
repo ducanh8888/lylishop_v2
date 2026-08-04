@@ -4,12 +4,12 @@ Nguồn quyết định: `PLAN.md` (sản phẩm) và `TECH_STACK.md` (stack đ�
 
 **Amendment 2026-08-03 — production-only:** một domain, một môi trường production, một database, một kho uploads; không có staging (xem `docs/DEPLOYMENT.md`).
 
-**Theme gate:** dòng "Storefront 4.6.2 + shop-child" trong sơ đồ dưới đây phản ánh lựa chọn tạm ghi trong TECH_STACK.md mục 3.1, nhưng **chưa được founder xác nhận là quyết định cuối cùng**. Không cài đặt, kích hoạt hay phát triển theme cho tới khi `docs/THEME-DECISION-BRIEF.md` được founder chốt — xem tài liệu đó để biết các điểm còn mở (màu sắc, cấu trúc danh mục, classic/block theme).
+**Theme decision (2026-08-04 — ACCEPTED):** theme cha V1 là **Botiga Free**, kiến trúc classic/hybrid, child theme `shop-child`. Quyết định đầy đủ, lý do, phương án bị loại và điều kiện mở lại: `docs/THEME-DECISION.md`. Trình tự triển khai: `docs/THEME-IMPLEMENTATION-PLAN.md`. Tiêu chí tương thích trước khi coi là "xong": `docs/THEME-COMPATIBILITY-GATE.md`. **Vẫn chưa chốt:** màu chính (`docs/THEME-DECISION-BRIEF.md` mâu thuẫn #1) và cấu trúc navigation cuối cùng (mâu thuẫn #2) — không tự chọn hộ. Chưa cài đặt, kích hoạt hay style hóa theme — chỉ mới sửa metadata skeleton của `shop-child`.
 
 ## Lớp kiến trúc
 
 ```text
-Storefront 4.6.2 + shop-child (child theme)  ← CHƯA CHỐT, xem Theme gate ở trên
+Botiga Free + shop-child (child theme)  ← ACCEPTED 2026-08-04, xem docs/THEME-DECISION.md
         │
 WordPress 7.0.2 + WooCommerce 10.9.4
         │
@@ -32,9 +32,10 @@ Shared hosting (OnePanel/CloudLinux, xem docs/HOSTING-AUDIT.md)
 
 ## Quyết định V1 đã chốt (TECH_STACK.md mục 4)
 
+* **Theme:** Botiga Free + `shop-child`, classic/hybrid, không FSE làm kiến trúc chính (`docs/THEME-DECISION.md`).
 * **Cart/Checkout:** Classic (shortcode/template), chưa dùng Cart/Checkout Blocks — xem mâu thuẫn #2 ở `docs/HOSTING-AUDIT.md` mục 14 trước khi thay đổi.
 * **HPOS:** tắt khi go-live, chỉ bật sau khi toàn bộ plugin commerce xác nhận tương thích + test đầy đủ trên bản sao dữ liệu kiểm thử cục bộ (không có staging riêng).
-* **Editor:** Gutenberg core + WooCommerce blocks đã kiểm thử cho nội dung (không phải Cart/Checkout), không dùng page builder bên thứ ba.
+* **Editor:** Gutenberg core + block pattern được kiểm soát cho nội dung (không phải Cart/Checkout), không dùng page builder bên thứ ba.
 
 ## Vai trò và quyền
 

@@ -310,6 +310,8 @@ Hai hướng theme có thể đánh giá:
 
 Storefront vẫn được WooCommerce mô tả là flagship classic theme; trong khi block theme cho phép chỉnh header, footer, sản phẩm, danh mục, Cart và Checkout thông qua Site Editor.
 
+> **Amendment 2026-08-04 — quyết định V1:** Founder đã chốt Hướng B (classic/hybrid theme) với theme nền **Botiga Free**, không phải Storefront. Lý do, phương án bị loại và điều kiện mở lại quyết định: xem `docs/THEME-DECISION.md`. Mục 6.2 này giữ nguyên làm khung quy trình đánh giá đã dùng, không sửa lại nội dung gốc.
+
 ## 6.3. Bộ giao diện bàn giao
 
 Không cung cấp page builder tự do.
@@ -1170,7 +1172,7 @@ Chủ shop không nhìn thấy control plane kỹ thuật.
 * Thiết lập Cart và Checkout.
 * Thiết lập mobile layout.
 
-**Đầu ra:** Storefront hoàn chỉnh bằng thành phần có sẵn.
+**Đầu ra:** Storefront giao diện hoàn chỉnh bằng thành phần có sẵn (theme nền thực tế là Botiga Free theo quyết định 2026-08-04, xem `docs/THEME-DECISION.md` — "Storefront" ở đây mang nghĩa chung "mặt tiền cửa hàng", không phải tên theme).
 
 ## Giai đoạn 4: Cấu hình commerce
 

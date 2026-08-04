@@ -369,4 +369,4 @@ Các điểm **không** phải mâu thuẫn (TECH_STACK chỉ đang giải quy�
 
 **Kết luận:** Không có Stop Condition nào bị vi phạm để chặn hoàn toàn Phase 5 (scaffold repository). Ba mâu thuẫn ở mục 14 nên được xác nhận **trước khi cấu hình plugin Bundle/Coupon và trước khi build trang Cart/Checkout thật**, nhưng không chặn việc tạo cấu trúc repository, composer.json, mu-plugin skeleton, hay viết script.
 
-Deploy production thật (Phase 6, lên host — không có staging, xem Amendment mục 13) **chưa nên bắt đầu** cho tới khi mục 3.1, 3.4, 3.5 (PHP Selector, DB tạo qua panel, xác nhận web server) được xác nhận qua OnePanel, và theme đã được founder chốt (`docs/THEME-DECISION-BRIEF.md`).
+Deploy production thật (Phase 6, lên host — không có staging, xem Amendment mục 13) **chưa nên bắt đầu** cho tới khi mục 3.1, 3.4, 3.5 (PHP Selector, DB tạo qua panel, xác nhận web server) được xác nhận qua OnePanel, và theme đã vượt qua `docs/THEME-COMPATIBILITY-GATE.md` (lựa chọn theme — Botiga Free — đã chốt 2026-08-04 ở `docs/THEME-DECISION.md`, nhưng gate tương thích chưa chạy).

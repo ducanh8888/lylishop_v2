@@ -4,6 +4,14 @@ Nguồn: TECH_STACK.md mục 5. Mỗi plugin phải có entry ở đây trước
 
 Trạng thái tại thời điểm audit (2026-08-03): **chưa có plugin nào được cài đặt thật** — tài khoản hosting hoàn toàn mới (`docs/HOSTING-AUDIT.md` mục 2.1). Bảng dưới đây là manifest dự kiến cho Phase 2 (Plugin audit) và Phase 3 (Commerce configuration).
 
+## Theme (theo cùng kỷ luật manifest như plugin)
+
+| Theme | Version baseline | Nguồn | License | Trạng thái | Ghi chú |
+|---|---|---|---|---|---|
+| Botiga Free | Bản stable hiện hành (WordPress.org xác nhận 2.4.7, 22/07/2026) | wpackagist (dự kiến `wpackagist-theme/botiga` — **chưa xác nhận trực tiếp qua wpackagist**, xem `docs/THEME-IMPLEMENTATION-PLAN.md` bước 1) | GPL | Đã chốt theme cha V1 (`docs/THEME-DECISION.md`) — chưa vào `composer.json` | Bản Pro không được phép mua/dùng (`docs/THEME-DECISION.md`) |
+| `shop-child` | 0.1.0 (skeleton) | `web/app/themes/shop-child/` trong repo này | Nội bộ | Đã chốt là child theme, chưa style hóa | `Template: botiga` đã cập nhật trong metadata skeleton |
+| Storefront | 4.6.2 | wpackagist (`wpackagist-theme/storefront`, đã có trong `composer.json`) | GPL | Fallback cấp 2, không phải lựa chọn chính | Giữ trong `composer.json` làm baseline tương thích khẩn cấp — xem `docs/THEME-DECISION.md` điều kiện kích hoạt |
+
 ## Plugin bắt buộc (Tier A)
 
 | Plugin | Version baseline | Nguồn | License | Bắt buộc/Tùy chọn | Owner bảo trì | Dữ liệu tạo ra | Backup | Gỡ bỏ | Rủi ro tương thích |

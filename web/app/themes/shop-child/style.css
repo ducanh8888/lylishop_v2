@@ -1,7 +1,11 @@
 /*
 Theme Name: Shop Child
-Template: storefront
-Description: Child theme for lylishop.online — brand identity, typography, color, spacing and Cart/Checkout styling only. No order, payment, voucher or business logic per PLAN.md section 6.1 and TECH_STACK.md section 3.1.
+Template: botiga
+Description: Child theme for lylishop.online — brand identity, typography, color, spacing and Cart/Checkout styling only. No order, payment, voucher or business logic per PLAN.md section 6.1 and TECH_STACK.md section 3.1. Parent theme decision: docs/THEME-DECISION.md (Botiga Free, accepted 2026-08-04).
 Version: 0.1.0
 Text Domain: shop-child
+
+No visual styling, final colors, production assets, or copied demo content
+have been added yet — this file is metadata only pending the color and
+navigation decisions tracked in docs/THEME-DECISION-BRIEF.md.
 */

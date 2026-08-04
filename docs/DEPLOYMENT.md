@@ -60,7 +60,7 @@ Theo `docs/HOSTING-AUDIT.md` mục 15 (Stop Conditions), xác nhận qua OnePane
 2. Database + user MySQL đã tạo (charset `utf8mb4`, collation `utf8mb4_unicode_ci`).
 3. Xác nhận web server thật (Apache+mod_lsapi hay LiteSpeed) để chọn đúng cache plugin.
 4. Mâu thuẫn PLAN.md/TECH_STACK.md ở `docs/HOSTING-AUDIT.md` mục 14 đã được người chốt PLAN xác nhận.
-5. Theme đã được founder xác nhận (xem `docs/THEME-DECISION-BRIEF.md` — hiện đang ở trạng thái THEME DECISION REQUIRED).
+5. Theme nền đã chốt (Botiga Free, `docs/THEME-DECISION.md`, ACCEPTED 2026-08-04) **và** đã vượt qua toàn bộ `docs/THEME-COMPATIBILITY-GATE.md` — chưa chạy gate này ở phase hiện tại, chỉ mới chốt lựa chọn theme.
 
 ## CI/CD (khi thiết lập)
 

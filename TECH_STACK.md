@@ -10,6 +10,8 @@
 
 > **Amendment 2026-08-03 — hạ tầng production-only:** Đúng một domain (lylishop.online), một môi trường production, một database production, một kho uploads production. Không có staging domain/database/deploy/promotion workflow. Local development và automated checks (CI) là cổng kiểm tra trước production; mọi deploy production đi qua release-based workflow: pre-deploy validation → backup → maintenance mode → upload immutable release → giữ nguyên dữ liệu chia sẻ (DB/uploads) → WP-CLI migration → health check → tắt maintenance mode → rollback sẵn sàng nếu cần (xem `docs/DEPLOYMENT.md`). Các mục nhắc "staging" bên dưới đã được cập nhật theo quyết định này.
 
+> **Amendment 2026-08-04 — quyết định theme V1:** Theme cha chốt là **Botiga Free** (không phải Storefront). Kiến trúc classic/hybrid, `shop-child` làm child theme, Classic Cart/Checkout giữ nguyên, không dùng Full Site Editing làm kiến trúc chính cho V1. Botiga Pro **không được phép mua/dùng**. Fallback: Blocksy Free rồi tới Storefront, chỉ khi có FAIL không thể khắc phục bằng cấu hình/hook nhỏ/CSS/patch tương thích — xem `docs/THEME-DECISION.md`, `docs/THEME-IMPLEMENTATION-PLAN.md`, `docs/THEME-COMPATIBILITY-GATE.md`. §3.1 bên dưới đã cập nhật theo quyết định này; nội dung Storefront cũ được giữ lại có đánh dấu để biết lý do thay đổi.
+
 ---
 
 # 1. Kết luận kiến trúc
@@ -17,7 +19,7 @@
 Stack được chốt theo kiến trúc:
 
 ```text
-Storefront + Child Theme
+Botiga Free + Child Theme (shop-child)   ← quyết định 2026-08-04, xem docs/THEME-DECISION.md
         │
 WordPress + WooCommerce
         │
@@ -34,7 +36,7 @@ Hosting/VPS thông thường
 
 * **WordPress:** CMS, nội dung, media, user, admin.
 * **WooCommerce:** sản phẩm, kho, giỏ hàng, checkout, đơn hàng, khách hàng, hoàn tiền.
-* **Storefront:** theme nền tương thích chính thức với WooCommerce.
+* **Botiga Free:** theme nền classic/hybrid, tương thích WooCommerce (Storefront giữ vai trò fallback cấp 2 — xem `docs/THEME-DECISION.md`).
 * **Child theme:** nhận diện thương hiệu và điều chỉnh giao diện.
 * **Plugin được kiểm duyệt:** thanh toán, địa chỉ Việt Nam, coupon, bundle, SEO, backup.
 * **Bedrock:** quản lý WordPress và plugin bằng Composer.
@@ -69,7 +71,7 @@ Các phiên bản dưới đây là **baseline tại ngày 03/08/2026**, không 
 | MySQL          |          8.0 trở lên | Thay thế MariaDB    |
 | WordPress      |                7.0.2 | Bắt buộc            |
 | WooCommerce    |               10.9.4 | Bắt buộc            |
-| Storefront     |                4.6.2 | Theme cha           |
+| Botiga Free    |     bản stable hiện hành (WordPress.org xác nhận 2.4.7 ngày 22/07/2026; chưa xác nhận trực tiếp qua wpackagist — xem `docs/THEME-IMPLEMENTATION-PLAN.md` bước 1) | Theme cha |
 | Composer       |                  2.x | Build dependency    |
 | WP-CLI         | Bản stable hiện hành | Cài đặt và vận hành |
 | DDEV           | Bản stable hiện hành | Môi trường local    |
@@ -87,9 +89,22 @@ Bedrock quản lý WordPress, plugin và theme bằng Composer, tách secret qua
 
 ## 3.1. Theme được chọn
 
-### Theme cha: Storefront 4.6.2
+**Quyết định V1 (2026-08-04): Botiga Free.** Xem lý do đầy đủ, phương án bị loại và điều kiện mở lại quyết định ở `docs/THEME-DECISION.md`. Tóm tắt:
 
-Lý do chọn:
+### Theme cha: Botiga Free
+
+Lý do chọn (chi tiết ở `docs/THEME-DECISION.md`):
+
+* Theme WooCommerce miễn phí, cập nhật thường xuyên trên WordPress.org (do aThemes phát triển).
+* Kiến trúc classic/hybrid — tương thích Classic Cart/Checkout, không ép Full Site Editing.
+* Không phụ thuộc page builder bên thứ ba.
+* Hỗ trợ child theme chuẩn (`Template: botiga`).
+* Bản Pro **không được phép mua hoặc dùng** cho V1 (xem chính sách nâng cấp trả phí ở `docs/THEME-DECISION.md`).
+
+**Fallback nếu Botiga có vấn đề tương thích thật sự** (không phải do sở thích thị giác): Blocksy Free → Storefront (điều kiện kích hoạt cụ thể ở `docs/THEME-COMPATIBILITY-GATE.md`).
+
+<details>
+<summary>Lý do chọn Storefront (bản ghi cũ, đã thay thế 2026-08-04 — giữ lại để biết lịch sử quyết định)</summary>
 
 * Do đội ngũ WooCommerce phát triển.
 * Tương thích sâu với WooCommerce.
@@ -99,51 +114,62 @@ Lý do chọn:
 * Giảm rủi ro checkout hoặc plugin commerce bị theme can thiệp.
 * Có thể thay đổi giao diện đáng kể bằng child theme và CSS.
 
-Storefront 4.6.2 là theme chính thức, được WooCommerce mô tả là theme tích hợp sâu và có nền mã gọn, dễ mở rộng.
+Storefront 4.6.2 là theme chính thức, được WooCommerce mô tả là theme tích hợp sâu và có nền mã gọn, dễ mở rộng. Storefront vẫn là fallback cấp 2 (baseline tương thích khẩn cấp), không bị loại khỏi dự án — chỉ không còn là lựa chọn chính.
+</details>
 
 ### Theme con: `shop-child`
 
-Theme con chỉ chứa:
+Theme con chỉ chứa (cập nhật theo `docs/THEME-DECISION.md`):
 
+* Brand design token (màu, chưa chốt — xem mâu thuẫn #1 ở `docs/THEME-DECISION-BRIEF.md`).
 * Typography.
-* Color palette.
 * Spacing.
+* Style header và footer.
+* Trình bày trang chủ (homepage presentation).
 * Product card.
-* Header.
-* Footer.
-* Banner.
-* Style cho giỏ hàng và checkout.
-* Responsive.
-* Một số template override thật sự cần thiết.
-* Block patterns và nội dung mẫu.
+* Style trang archive sản phẩm.
+* Style trang chi tiết sản phẩm.
+* Style Classic Cart.
+* Style Classic Checkout.
+* Responsive behavior.
+* Block pattern Gutenberg được kiểm soát.
+* Template override WooCommerce có lý do hẹp, được ghi lại rõ ràng (narrowly justified).
 
 Không chứa:
 
-* Logic đơn hàng.
 * Logic thanh toán.
-* Logic voucher.
+* Order workflow.
+* Logic coupon.
+* Logic bundle.
 * Query trực tiếp vào bảng WooCommerce.
-* Đăng ký custom order model.
-* Business workflow.
+* Custom commerce model.
+* Logic thay thế plugin.
+* Deployment credentials.
+* Production content.
 
 ## 3.2. Editor
+
+Kiến trúc V1: classic/hybrid theme (Botiga Free) — **không dùng Full Site Editing làm kiến trúc chính cho V1** (`docs/THEME-DECISION.md`).
 
 Sử dụng:
 
 * Gutenberg core cho page và post.
 * Core blocks.
-* WooCommerce product blocks ở những vị trí đã kiểm thử.
-* Block patterns được đóng gói sẵn.
+* Block patterns được kiểm soát, đóng gói sẵn trong `shop-child`.
 * Reusable blocks hoặc synced patterns cho nội dung dùng lại.
+* Classic Cart, Classic Checkout (không dùng WooCommerce Cart/Checkout Blocks trong V1 — nhất quán với mục 4.1).
 
 Không sử dụng:
 
 * Elementor.
+* Brizy.
 * WPBakery.
 * Divi Builder.
-* Bricks.
 * Oxygen.
+* Bricks.
 * UX Builder.
+* Bất kỳ page builder bên thứ ba nào khác.
+* WooCommerce Cart hoặc Checkout Blocks trong V1.
 * Một bộ block companion khổng lồ chỉ để tạo banner và ba cột sản phẩm.
 
 ## 3.3. Cách chủ shop chỉnh giao diện
@@ -865,7 +891,7 @@ Không dùng trong baseline:
 3. Cấu hình DDEV.
 4. Cài WordPress 7.0.2.
 5. Cài WooCommerce 10.9.4.
-6. Cài Storefront.
+6. Cài Botiga Free (xem `docs/THEME-IMPLEMENTATION-PLAN.md` cho trình tự chi tiết).
 7. Tạo `shop-child`.
 8. Tạo `site-policy`.
 
@@ -979,7 +1005,7 @@ CORE
 ├── WooCommerce 10.9.4
 ├── PHP 8.3
 ├── MariaDB 10.11+ / MySQL 8.0+
-└── Storefront 4.6.2 + shop-child
+└── Botiga Free + shop-child (Storefront = fallback cấp 2, xem docs/THEME-DECISION.md)
 
 VIETNAM COMMERCE
 ├── Vietnam Store Toolkit 1.1.2 [AUDIT REQUIRED]

@@ -1,6 +1,6 @@
 # THEME DECISION BRIEF — Lyli Shop
 
-**Trạng thái: THEME DECISION REQUIRED.** Tài liệu này chỉ tổng hợp bằng chứng đã có trong workbook và tài liệu dự án. Không có quyết định theme, màu sắc cuối cùng, hay cấu trúc navigation nào được đưa ra ở đây. Founder xem xét và chốt trước khi bất kỳ công việc theme nào tiếp tục (xem "Theme gate" trong yêu cầu triển khai).
+**Trạng thái: THEME nền + kiến trúc ĐÃ CHỐT (2026-08-04) — xem `docs/THEME-DECISION.md`.** Founder đã chọn Botiga Free + `shop-child`, kiến trúc classic/hybrid. Tài liệu này **vẫn còn giá trị** cho các điểm chưa chốt: màu chính, cấu trúc navigation, chính sách ảnh sản phẩm thiếu (mục 15 bên dưới đã cập nhật trạng thái từng điểm). Đây vẫn là tài liệu tổng hợp bằng chứng từ workbook, không phải nơi tự ý quyết định thay founder.
 
 Nguồn: `00_AI_Project_Context`, `06_Website`, `09_Product`, `11_Brand_Guideline`, `16_Brand_System_Detail`, `18_NHẬT KÝ QUYẾT ĐỊNH TOÀN DỰ ÁN` (đọc 2026-08-03). Không có link Google Drive hay dữ liệu khách hàng nào được sao chép vào đây.
 
@@ -105,20 +105,20 @@ Không tìm thấy yêu cầu content-editing riêng cho website trong 6 sheet �
 
 ## 14. Yêu cầu tương thích theme
 
-Suy ra từ Design System (`16_Brand_System_Detail`) — không phải quyết định, chỉ là điều kiện cần nếu một theme được chọn:
+Suy ra từ Design System (`16_Brand_System_Detail`) — áp dụng cho Botiga Free + `shop-child` (đã chốt, `docs/THEME-DECISION.md`), kiểm chứng thực tế nằm ở `docs/THEME-COMPATIBILITY-GATE.md`:
 * Bo góc mềm cho card/button; shadow nhẹ; card nền trắng; khoảng cách thoáng; icon rounded outline; hover nhẹ.
 * Cần hỗ trợ palette tùy biến (dù chọn bảng màu nào ở mục 5) và tối đa 3 font tùy biến (Fraunces, Be Vietnam Pro, Aristotelica Pro chỉ cho logo).
 * Cần tương thích WooCommerce (đã là ràng buộc bắt buộc toàn dự án, không riêng theme).
 * Cần hỗ trợ tỷ lệ ảnh 4:5 làm mặc định cho gallery sản phẩm.
 * Không được là page builder bên thứ ba (đã cấm ở TECH_STACK.md).
 
-## 15. Quyết định thiết kế chưa được giải quyết (không tự chốt hộ)
+## 15. Quyết định thiết kế — trạng thái cập nhật 2026-08-04
 
-1. **Màu nâu chính:** `#7A3B17` (`11_Brand_Guideline`) so với `#8A4A23` (`16_Brand_System_Detail`) — xem chi tiết ngay dưới.
-2. **Cấu trúc danh mục điều hướng:** theo size (Size S/M/L, xuất hiện trong tracker `06_Website`) so với theo loại/dòng sản phẩm (5 danh mục Móc khóa len/Gấu bông len/Hoa len/Hộp quà/Đặt mẫu theo yêu cầu, đã chốt trong `09_Product` DEC-024/025).
-3. **Theme nền:** Storefront child theme (đã ghi tạm trong TECH_STACK.md mục 3.1, nhưng theo yêu cầu hiện tại của founder, quyết định này **chưa được xem là chốt cuối cùng** cho đến khi founder xác nhận) so với một theme WooCommerce khác.
-4. **Kiến trúc theme:** classic theme so với block theme (`theme.json`/Site Editor) — PLAN.md mục 6.2 để ngỏ cả hai hướng; TECH_STACK.md mục 3.1 tạm chọn hướng classic (Storefront) nhưng chưa được founder xác nhận lại trong bối cảnh yêu cầu hiện tại.
-5. **Hiển thị sản phẩm thiếu ảnh đầy đủ:** nhiều sản phẩm hiện ở các trạng thái ảnh trung gian (ảnh nhóm tạm thời, cần chụp lại, chưa có ảnh) — chưa có quyết định về cách hiển thị các sản phẩm này trên site (ẩn khỏi shop, hiển thị với nhãn "sắp có ảnh", dùng ảnh nhóm tạm thời, v.v.).
+1. **Màu nâu chính — CÒN MỞ:** `#7A3B17` (`11_Brand_Guideline`) so với `#8A4A23` (`16_Brand_System_Detail`) — xem chi tiết ngay dưới. Chưa chốt trong lần cập nhật theme này (founder chủ động giữ mở, xem `docs/THEME-DECISION.md`).
+2. **Cấu trúc danh mục điều hướng — CÓ HƯỚNG ĐI NHƯNG CHƯA PHẢI QUYẾT ĐỊNH CUỐI:** founder đã ghi nhận hướng dẫn đầu V1 là 5 danh mục theo loại sản phẩm (Móc khóa len, Gấu bông len, Hoa len, Hộp quà, Đặt mẫu theo yêu cầu), **không** dùng Size S/M/L làm điều hướng cấp cao — xem `docs/WEBSITE-REQUIREMENTS.md`. Đây là "hướng đi dự kiến trừ khi việc rà soát dữ liệu sản phẩm cho thấy bất nhất đáng kể", chưa phải chốt tuyệt đối 100%.
+3. **Theme nền — ĐÃ CHỐT (ACCEPTED 2026-08-04):** Botiga Free, xem `docs/THEME-DECISION.md`. Storefront không còn là lựa chọn chính, chỉ còn là fallback cấp 2.
+4. **Kiến trúc theme — ĐÃ CHỐT (ACCEPTED 2026-08-04):** classic/hybrid (không phải block theme/FSE làm kiến trúc chính V1) — xem `docs/THEME-DECISION.md`.
+5. **Hiển thị sản phẩm thiếu ảnh đầy đủ — CÓ QUY TẮC TẠM THỜI, THIẾT KẾ PLACEHOLDER CUỐI CÙNG CÒN MỞ:** sản phẩm chưa có ảnh thật đạt yêu cầu giữ trạng thái draft, không publish mặc định; không dùng ảnh nhóm khi có thể gây hiểu nhầm về một sản phẩm cụ thể; placeholder thương hiệu chỉ dùng cho ngoại lệ được duyệt rõ ràng; layout theme phải ổn định khi sản phẩm chỉ có 1 ảnh. Thiết kế placeholder cụ thể (màu, hình minh họa) chưa chốt — xem `docs/WEBSITE-REQUIREMENTS.md`.
 
 ### Chi tiết mâu thuẫn #1 — màu nâu chính
 
@@ -128,4 +128,6 @@ Suy ra từ Design System (`16_Brand_System_Detail`) — không phải quyết �
 
 ### Chi tiết mâu thuẫn #2 — cấu trúc danh mục điều hướng
 
-`06_Website` (tracker trang) liệt kê các trang: "Danh mục Size S" (gấu, mèo, vịt, hổ…), "Danh mục Size M" (thỏ, gấu Teddy, cây thông…), "Danh mục Size L" (mẫu nhiều chi tiết) như các trang category riêng biệt theo size. Trong khi đó, `09_Product` xác nhận cấu trúc danh mục chính thức hiện hành (DEC-024/025) là 5 danh mục theo loại sản phẩm, hoàn toàn không dùng khái niệm size cho điều hướng, và một quyết định cũ hơn (`DEC-007`, đã bị thay thế) từng dùng cách chia khác nữa (7 nhóm). Tên trang trong `06_Website` chưa được cập nhật lại theo cấu trúc 5 danh mục — đây là khoảng trống đồng bộ giữa tracker và Product Database, không phải một quyết định mới. Founder cần xác nhận: điều hướng site theo 5 danh mục (khớp Product Database) hay vẫn giữ nhóm theo size cho một số mục đích trình bày (ví dụ: bộ lọc trong danh mục Móc khóa len có thể vẫn hiển thị theo kích thước thực tế mà không cần là danh mục cấp cao).
+`06_Website` (tracker trang) liệt kê các trang: "Danh mục Size S" (gấu, mèo, vịt, hổ…), "Danh mục Size M" (thỏ, gấu Teddy, cây thông…), "Danh mục Size L" (mẫu nhiều chi tiết) như các trang category riêng biệt theo size. Trong khi đó, `09_Product` xác nhận cấu trúc danh mục chính thức hiện hành (DEC-024/025) là 5 danh mục theo loại sản phẩm, hoàn toàn không dùng khái niệm size cho điều hướng, và một quyết định cũ hơn (`DEC-007`, đã bị thay thế) từng dùng cách chia khác nữa (7 nhóm). Tên trang trong `06_Website` chưa được cập nhật lại theo cấu trúc 5 danh mục — đây là khoảng trống đồng bộ giữa tracker và Product Database, không phải một quyết định mới.
+
+**Cập nhật 2026-08-04:** Founder đã ghi nhận hướng đi dẫn đầu cho V1 là 5 danh mục theo loại sản phẩm (khớp Product Database), **không** dùng Size S/M/L làm điều hướng cấp cao — size có thể triển khai sau như product attribute/filter/variation/collection subdivision bên trong từng danh mục. Đây là "hướng đi dự kiến trừ khi rà soát dữ liệu sản phẩm cho thấy bất nhất đáng kể" — chưa phải phê duyệt tuyệt đối 100%, nhưng đủ để bắt đầu implementation plan theo hướng này.

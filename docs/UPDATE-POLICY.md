@@ -22,6 +22,12 @@ Không cho production tự cập nhật: WordPress major version, WooCommerce ma
 10. Kiểm tra health (`scripts/production-health-check.sh`).
 11. Có phương án rollback sẵn sàng (`scripts/production-rollback.sh` — symlink `current` về release trước, xem `docs/DEPLOYMENT.md`).
 
+## Chính sách nâng cấp theme (2026-08-04)
+
+Theme V1 là Botiga Free (`docs/THEME-DECISION.md`). **Botiga Pro không được phép mua, tải hay thiết kế theo hướng cần nó.** Chỉ cân nhắc nâng cấp trả phí sau này nếu có tài liệu ghi rõ một khoảng trống tính năng cụ thể, và bản trả phí đó rẻ hơn/an toàn hơn rõ rệt so với việc tự viết/duy trì code tương đương — quyết định này vẫn cần founder phê duyệt, không tự động.
+
+Đổi theme nền (kể cả sang Blocksy Free hoặc Storefront ở `docs/THEME-DECISION.md`) chỉ diễn ra khi có FAIL đã ghi lại trong `docs/THEME-COMPATIBILITY-GATE.md` mà không thể khắc phục bằng cấu hình, hook nhỏ trong `shop-child`, CSS phạm vi hẹp, hoặc patch tương thích an toàn cho plugin — không đổi theme chỉ vì theme khác có nhiều tùy chọn hơn hoặc demo đẹp hơn.
+
 ## Ưu tiên bảo mật
 
 Security release nghiêm trọng (WordPress/WooCommerce/plugin) được ưu tiên triển khai trong vòng 24 giờ sau khi vượt qua smoke test (TECH_STACK.md mục 13.2). Không "pin phiên bản" vô thời hạn khi có security release.
