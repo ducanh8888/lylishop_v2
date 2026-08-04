@@ -63,12 +63,18 @@ Nhắc lại — không đổi bởi quyết định theme này:
 * Không sửa WordPress core, WooCommerce core, hay source code Botiga/Blocksy/Storefront.
 * Không cài đặt WordPress, không tạo database, không deploy production, không sửa `public_html` trong phạm vi quyết định này.
 
-## 9. Quyết định thị giác chưa giải quyết (không tự chốt hộ)
+## 9. Quyết định thị giác — trạng thái cập nhật 2026-08-04 (vòng 2)
 
-* **Màu nâu chính:** `#7A3B17` so với `#8A4A23` — vẫn mở, xem `docs/THEME-DECISION-BRIEF.md` mục 15.1.
-* **Chốt tuyệt đối cấu trúc navigation:** hướng đi dẫn đầu là 5 danh mục sản phẩm (không phải Size S/M/L) đã ghi nhận, nhưng chưa phải phê duyệt 100% — xem `docs/THEME-DECISION-BRIEF.md` mục 15.2 và `docs/WEBSITE-REQUIREMENTS.md`.
-* **Thiết kế placeholder ảnh cuối cùng** cho sản phẩm thiếu ảnh — quy tắc vận hành đã có (`docs/WEBSITE-REQUIREMENTS.md`), nhưng hình ảnh/màu placeholder cụ thể chưa chốt.
-* Việc build thiết kế thị giác cuối cùng (màu, trang chủ, template trang) **chưa được thực hiện trong tác vụ này** — chỉ chuẩn bị metadata skeleton của `shop-child`.
+**Đã chốt (không tự ý mở lại):**
+
+* **Màu nâu chính:** `#7A3B17` là token chính chính thức (primary) — heading, CTA chính, brand accent quan trọng, trạng thái navigation được chọn. `#8A4A23` là token phụ (secondary/soft) — hover state, accent phụ, xử lý trang trí mềm hơn. Hai màu **không còn là hai token chính cạnh tranh nhau** — xem mục 11 (Design tokens) bên dưới và `docs/THEME-DECISION-BRIEF.md` mục 15.1.
+* **Cấu trúc navigation chính:** 5 danh mục sản phẩm — Móc khóa len, Gấu bông len, Hoa len, Hộp quà, Đặt mẫu theo yêu cầu — **đã chốt** làm navigation cấp cao duy nhất cho V1. Size S/M/L **không** được dùng làm danh mục cấp cao; chỉ dùng làm attribute/variation/filter/subdivision bên trong danh mục — xem `docs/WEBSITE-REQUIREMENTS.md`.
+* **Chính sách publish sản phẩm thiếu ảnh:** đã chốt làm quy tắc vận hành chính thức (không còn "provisional") — xem `docs/WEBSITE-REQUIREMENTS.md`.
+
+**Vẫn còn mở (chi tiết thị giác duy nhất còn lại liên quan ảnh):**
+
+* **Thiết kế placeholder ảnh cụ thể** (hình minh họa, bố cục, có dùng màu token ở trên hay không) cho sản phẩm chưa có ảnh thật — đây là chi tiết thiết kế thị giác **duy nhất** còn treo trong nhóm quyết định ảnh sản phẩm.
+* Việc build thiết kế thị giác đầy đủ (trang chủ, template trang, component thật) **chưa được thực hiện trong tác vụ này** — chỉ mới có token nền tảng (mục 11) và metadata skeleton của `shop-child`.
 
 ## 10. Điều kiện mở lại quyết định này
 
@@ -80,3 +86,35 @@ Quyết định Botiga Free chỉ nên được xem xét lại (không phải "c
 4. Founder chủ động quyết định lại, không phụ thuộc điều kiện kỹ thuật.
 
 Không mở lại quyết định chỉ vì sở thích thị giác hoặc vì một theme khác có demo hấp dẫn hơn.
+
+## 11. Design tokens (nền tảng, chưa implement CSS đầy đủ)
+
+Ghi lại token đã được founder chốt (2026-08-04, vòng 2) làm nền tảng cho bước "5. Đưa design token vào" của `docs/THEME-IMPLEMENTATION-PLAN.md`. Đây là **token foundation**, không phải CSS hoàn chỉnh — chưa style hóa component nào. File tương ứng trong code: `web/app/themes/shop-child/inc/design-tokens.php` (chưa được `require` từ `functions.php`, chỉ là nguồn tham chiếu cho bước implement sau).
+
+### Màu — đã chốt
+
+| Token | Hex | Vai trò |
+|---|---|---|
+| `color-brand-primary` | `#7A3B17` | Heading, CTA chính, brand accent quan trọng, trạng thái navigation được chọn |
+| `color-brand-secondary` | `#8A4A23` | Hover state, accent phụ, xử lý trang trí mềm hơn |
+
+### Màu nền/kem — vẫn là candidate, chưa chốt
+
+Hai bộ nền/kem/accent phụ trong workbook (`docs/THEME-DECISION-BRIEF.md` mục 5) **chưa được founder chọn một bộ duy nhất** trong quyết định lần này — chỉ có cặp nâu chính/phụ ở trên được chốt. Ghi lại cả hai làm candidate, không dùng candidate nào làm mặc định khi implement:
+
+* Candidate A (`11_Brand_Guideline`): kem nền chính `#FFFCF7`, kem đào nhạt `#FBEFE5`, hồng phấn `#F6E4E3`, xanh lá nhạt `#E9F1EA`, xanh lam pha xám `#C2C3D2`.
+* Candidate B (`16_Brand_System_Detail`): warm beige `#F4ECE5`, blush pink `#E8CFCF`, cream `#FFFDF9`, light gray `#F6F5F3`, text `#3D312B`, border `#DDD7D0`.
+
+### Typography — đã chốt tên font, chưa có file font
+
+* Heading: **Fraunces**.
+* Body & CTA: **Be Vietnam Pro**.
+* Aristotelica Pro: chỉ nơi asset logo chính thức yêu cầu — **không commit file font Aristotelica Pro vào repository** (bản quyền, chỉ dùng trong asset logo đã có sẵn ngoài repo).
+* Fraunces/Be Vietnam Pro cũng **chưa commit file font nào** vào repository ở bước này — chỉ ghi tên family; phương án tải (self-host hay Google Fonts) là quyết định implementation sau, chưa chốt.
+
+### Không thuộc phạm vi bước này
+
+* Không có CSS component nào được viết (button, card, header thật).
+* Không có file font nhị phân nào được thêm vào repository.
+* Không có màu nền/kem cuối cùng nào được chọn.
+* Không có thiết kế placeholder ảnh nào được tạo.

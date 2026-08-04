@@ -4,7 +4,7 @@ Nguồn quyết định: `PLAN.md` (sản phẩm) và `TECH_STACK.md` (stack đ�
 
 **Amendment 2026-08-03 — production-only:** một domain, một môi trường production, một database, một kho uploads; không có staging (xem `docs/DEPLOYMENT.md`).
 
-**Theme decision (2026-08-04 — ACCEPTED):** theme cha V1 là **Botiga Free**, kiến trúc classic/hybrid, child theme `shop-child`. Quyết định đầy đủ, lý do, phương án bị loại và điều kiện mở lại: `docs/THEME-DECISION.md`. Trình tự triển khai: `docs/THEME-IMPLEMENTATION-PLAN.md`. Tiêu chí tương thích trước khi coi là "xong": `docs/THEME-COMPATIBILITY-GATE.md`. **Vẫn chưa chốt:** màu chính (`docs/THEME-DECISION-BRIEF.md` mâu thuẫn #1) và cấu trúc navigation cuối cùng (mâu thuẫn #2) — không tự chọn hộ. Chưa cài đặt, kích hoạt hay style hóa theme — chỉ mới sửa metadata skeleton của `shop-child`.
+**Theme decision (2026-08-04 — ACCEPTED, cập nhật vòng 2 cùng ngày):** theme cha V1 là **Botiga Free** (đã xác minh qua wpackagist, `composer.json` đã pin `2.4.7`), kiến trúc classic/hybrid, child theme `shop-child`. Màu nâu chính `#7A3B17` / phụ `#8A4A23`, navigation 5-danh-mục, và chính sách publish sản phẩm thiếu ảnh **đã chốt**. Quyết định đầy đủ: `docs/THEME-DECISION.md`. Trình tự triển khai: `docs/THEME-IMPLEMENTATION-PLAN.md`. Tiêu chí tương thích trước khi coi là "xong": `docs/THEME-COMPATIBILITY-GATE.md`. **Vẫn chưa chốt:** màu nền/kem cụ thể và thiết kế placeholder ảnh — xem `docs/THEME-DECISION-BRIEF.md`. Chưa cài đặt, kích hoạt hay style hóa theme thật — chỉ mới có metadata skeleton + design-token foundation của `shop-child`.
 
 ## Lớp kiến trúc
 

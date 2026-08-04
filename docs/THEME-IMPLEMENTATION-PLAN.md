@@ -6,16 +6,16 @@ Mô tả trình tự triển khai **trong tương lai**. Không có bước nào
 
 ### Required V1
 
-1. **Xác minh nguồn gói Botiga và bản phát hành tương thích hiện hành.**
-   Đã xác minh một phần trong quyết định này: WordPress.org Themes API xác nhận theme tồn tại (slug `botiga`, bản 2.4.7, cập nhật 22/07/2026). **Chưa xác minh trực tiếp qua wpackagist** — endpoint `wpackagist.org/packages/wpackagist-theme/botiga.json` và `wpackagist.org/p2/wpackagist-theme/botiga.json` trả về `403 Forbidden` (Cloudflare bot protection) khi truy vấn qua `curl`/WebFetch trong tác vụ này; endpoint gốc `wpackagist.org/packages.json` phản hồi bình thường (200 OK), xác nhận đây là repository Composer hợp lệ đang hoạt động. Bước này cần lặp lại bằng cách chạy `composer show wpackagist-theme/botiga --all` thật (Composer tự thương lượng với Cloudflare khác cách `curl` thông thường) trên máy có Composer, hoặc trong CI, trước khi sang bước 2.
-2. **Cập nhật Composer manifest.**
-   Thêm `"wpackagist-theme/botiga": "<version xác nhận ở bước 1>"` vào `composer.json`; xoá hoặc giữ lại `wpackagist-theme/storefront` tuỳ quyết định — khuyến nghị **giữ lại** vì Storefront là fallback cấp 2 chính thức (`docs/THEME-DECISION.md` mục 6), không phải rác cần dọn. Không pin version chưa xác minh (xem bước 1).
+1. **Xác minh nguồn gói Botiga và bản phát hành tương thích hiện hành — HOÀN TẤT 2026-08-04.**
+   Xác minh trực tiếp qua wpackagist bằng `/opt/alt/php83/usr/bin/php /usr/local/bin/composer show wpackagist-theme/botiga --all` chạy trong thư mục tạm trên `commerce-host` (đã xoá sau khi xong): package resolve thành công, danh sách đầy đủ 1.0.0 → 2.4.7, dist là `https://downloads.wordpress.org/theme/botiga.2.4.7.zip`, source SVN chính thức, không cần credentials. Bản `2.4.7` có sẵn và là bản mới nhất.
+2. **Cập nhật Composer manifest — HOÀN TẤT 2026-08-04.**
+   `"wpackagist-theme/botiga": "2.4.7"` đã thêm vào `composer.json`, pin phiên bản chính xác (nhất quán với cách pin các package khác trong file). Giữ lại `wpackagist-theme/storefront` vì là fallback cấp 2 chính thức (`docs/THEME-DECISION.md` mục 6), không phải rác cần dọn. `composer.json` đã validate bằng Composer thật trên `commerce-host` (PHP 8.3) — xem báo cáo validation.
 3. **Chuẩn hoá metadata `shop-child`.**
-   `Theme Name`, `Template: botiga`, text domain, version placeholder, mô tả — đã thực hiện một phần trong tác vụ này (xem phần "Child-theme preparation" của báo cáo cuối). Hoàn thiện: `Requires at least`, `Requires PHP`, `Tags` nếu cần.
+   `Theme Name`, `Template: botiga`, text domain, version placeholder, mô tả — đã thực hiện một phần trong tác vụ trước (xem `docs/THEME-DECISION.md`). Còn thiếu: `Requires at least`, `Requires PHP`, `Tags` nếu cần — chưa làm, không bắt buộc để tiếp tục các bước sau.
 4. **Enqueue asset cha/con đúng cách.**
-   `wp_enqueue_style` cho style cha (Botiga) làm dependency của style con, tôn trọng cấu trúc asset thật của Botiga (không giả định tên file `style.css` là toàn bộ CSS cha — cần kiểm tra Botiga có tách CSS theo module hay không).
-5. **Đưa design token vào.**
-   Biến CSS custom properties hoặc cấu hình tương đương cho màu, khoảng cách — **chỉ sau khi** màu chính (`#7A3B17` vs `#8A4A23`) được founder chốt (`docs/THEME-DECISION-BRIEF.md` mục 15.1).
+   `wp_enqueue_style` cho style cha (Botiga) làm dependency của style con — đã có khung enqueue tối thiểu trong `functions.php` (handle `botiga-parent`); tôn trọng cấu trúc asset thật của Botiga (không giả định tên file `style.css` là toàn bộ CSS cha — cần kiểm tra Botiga có tách CSS theo module hay không, chỉ xác nhận được sau khi cài đặt thật, chưa làm ở bước này).
+5. **Đưa design token vào — NỀN TẢNG ĐÃ GHI, CHƯA WIRE VÀO OUTPUT.**
+   Màu nâu chính/phụ đã chốt 2026-08-04 (vòng 2): `#7A3B17` primary, `#8A4A23` secondary/soft. Token đã ghi lại tại `web/app/themes/shop-child/inc/design-tokens.php` và `docs/THEME-DECISION.md` mục 11 — **file này chưa được `require` từ `functions.php` và chưa xuất ra CSS nào**, chỉ là nguồn tham chiếu. Bước này (wire token thành CSS custom properties thật, dùng trong component) vẫn là việc **chưa làm**, cần thực hiện khi bắt đầu style hóa thật. Màu nền/kem vẫn là candidate — xem `docs/THEME-DECISION.md` mục 11.
 6. **Đăng ký typography.**
    Fraunces (heading), Be Vietnam Pro (body/CTA), Aristotelica Pro (chỉ nơi logo yêu cầu) — self-hosted hoặc qua phương án đã duyệt, không phụ thuộc Google Fonts runtime nếu chính sách privacy/hiệu năng yêu cầu khác (cần xác nhận riêng, chưa có quyết định).
 7. **Header và mobile navigation.**

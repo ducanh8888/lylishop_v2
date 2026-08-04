@@ -1,6 +1,6 @@
 # THEME DECISION BRIEF — Lyli Shop
 
-**Trạng thái: THEME nền + kiến trúc ĐÃ CHỐT (2026-08-04) — xem `docs/THEME-DECISION.md`.** Founder đã chọn Botiga Free + `shop-child`, kiến trúc classic/hybrid. Tài liệu này **vẫn còn giá trị** cho các điểm chưa chốt: màu chính, cấu trúc navigation, chính sách ảnh sản phẩm thiếu (mục 15 bên dưới đã cập nhật trạng thái từng điểm). Đây vẫn là tài liệu tổng hợp bằng chứng từ workbook, không phải nơi tự ý quyết định thay founder.
+**Trạng thái (2026-08-04, vòng 2): Theme nền, kiến trúc, màu nâu chính/phụ, navigation chính, và chính sách publish ảnh thiếu — TẤT CẢ ĐÃ CHỐT.** Xem `docs/THEME-DECISION.md` mục 9 và 11. Chỉ còn **một** chi tiết thị giác mở: thiết kế placeholder ảnh cụ thể. Tài liệu này vẫn là bằng chứng gốc từ workbook + lịch sử mâu thuẫn (mục 15 đã cập nhật trạng thái "ĐÃ CHỐT" cho từng điểm) — giữ nguyên để biết vì sao quyết định được đưa ra.
 
 Nguồn: `00_AI_Project_Context`, `06_Website`, `09_Product`, `11_Brand_Guideline`, `16_Brand_System_Detail`, `18_NHẬT KÝ QUYẾT ĐỊNH TOÀN DỰ ÁN` (đọc 2026-08-03). Không có link Google Drive hay dữ liệu khách hàng nào được sao chép vào đây.
 
@@ -32,7 +32,9 @@ Thống nhất giữa hai nguồn:
 
 ## 5. Toàn bộ color token hiện có trong workbook
 
-**⚠️ Xem mục "Mâu thuẫn cần founder quyết định — #1" ngay bên dưới trước khi dùng bảng này.**
+**✅ Màu nâu chính đã chốt 2026-08-04:** `#7A3B17` = primary (heading, CTA chính, brand accent quan trọng, trạng thái navigation được chọn); `#8A4A23` = secondary/soft (hover, accent phụ, trang trí mềm). Hai giá trị **không còn cạnh tranh** — chi tiết ở "Chi tiết mâu thuẫn #1" bên dưới (nay đã đóng) và `docs/THEME-DECISION.md` mục 11.
+
+**⚠️ Vẫn còn mở:** các màu nền/kem/accent phụ khác trong hai bảng bên dưới — founder mới chốt cặp nâu chính/phụ, chưa chọn một bộ nền/kem duy nhất giữa Nguồn A và Nguồn B.
 
 Nguồn A — `11_Brand_Guideline` (không có cột trạng thái "Đã chốt" riêng, nhưng được `DEC-006` trong `18_NHẬT KÝ QUYẾT ĐỊNH TOÀN DỰ ÁN` gọi là "chuẩn hiện hành"):
 
@@ -112,22 +114,23 @@ Suy ra từ Design System (`16_Brand_System_Detail`) — áp dụng cho Botiga F
 * Cần hỗ trợ tỷ lệ ảnh 4:5 làm mặc định cho gallery sản phẩm.
 * Không được là page builder bên thứ ba (đã cấm ở TECH_STACK.md).
 
-## 15. Quyết định thiết kế — trạng thái cập nhật 2026-08-04
+## 15. Quyết định thiết kế — trạng thái cập nhật 2026-08-04 (vòng 2)
 
-1. **Màu nâu chính — CÒN MỞ:** `#7A3B17` (`11_Brand_Guideline`) so với `#8A4A23` (`16_Brand_System_Detail`) — xem chi tiết ngay dưới. Chưa chốt trong lần cập nhật theme này (founder chủ động giữ mở, xem `docs/THEME-DECISION.md`).
-2. **Cấu trúc danh mục điều hướng — CÓ HƯỚNG ĐI NHƯNG CHƯA PHẢI QUYẾT ĐỊNH CUỐI:** founder đã ghi nhận hướng dẫn đầu V1 là 5 danh mục theo loại sản phẩm (Móc khóa len, Gấu bông len, Hoa len, Hộp quà, Đặt mẫu theo yêu cầu), **không** dùng Size S/M/L làm điều hướng cấp cao — xem `docs/WEBSITE-REQUIREMENTS.md`. Đây là "hướng đi dự kiến trừ khi việc rà soát dữ liệu sản phẩm cho thấy bất nhất đáng kể", chưa phải chốt tuyệt đối 100%.
+1. **Màu nâu chính — ĐÃ CHỐT (2026-08-04, vòng 2):** `#7A3B17` = primary (heading, CTA chính, brand accent quan trọng, trạng thái navigation được chọn); `#8A4A23` = secondary/soft (hover, accent phụ, trang trí mềm). Không còn là hai token cạnh tranh — xem lịch sử ở "Chi tiết mâu thuẫn #1 (đã đóng)" và `docs/THEME-DECISION.md` mục 11.
+2. **Cấu trúc danh mục điều hướng — ĐÃ CHỐT (2026-08-04, vòng 2):** 5 danh mục theo loại sản phẩm (Móc khóa len, Gấu bông len, Hoa len, Hộp quà, Đặt mẫu theo yêu cầu) là navigation cấp cao chính thức cho V1. Size S/M/L **không** phải danh mục cấp cao — chỉ dùng làm attribute/variation/filter/subdivision bên trong danh mục — xem `docs/WEBSITE-REQUIREMENTS.md`.
 3. **Theme nền — ĐÃ CHỐT (ACCEPTED 2026-08-04):** Botiga Free, xem `docs/THEME-DECISION.md`. Storefront không còn là lựa chọn chính, chỉ còn là fallback cấp 2.
 4. **Kiến trúc theme — ĐÃ CHỐT (ACCEPTED 2026-08-04):** classic/hybrid (không phải block theme/FSE làm kiến trúc chính V1) — xem `docs/THEME-DECISION.md`.
-5. **Hiển thị sản phẩm thiếu ảnh đầy đủ — CÓ QUY TẮC TẠM THỜI, THIẾT KẾ PLACEHOLDER CUỐI CÙNG CÒN MỞ:** sản phẩm chưa có ảnh thật đạt yêu cầu giữ trạng thái draft, không publish mặc định; không dùng ảnh nhóm khi có thể gây hiểu nhầm về một sản phẩm cụ thể; placeholder thương hiệu chỉ dùng cho ngoại lệ được duyệt rõ ràng; layout theme phải ổn định khi sản phẩm chỉ có 1 ảnh. Thiết kế placeholder cụ thể (màu, hình minh họa) chưa chốt — xem `docs/WEBSITE-REQUIREMENTS.md`.
+5. **Chính sách publish sản phẩm thiếu ảnh — ĐÃ CHỐT (2026-08-04, vòng 2), chỉ còn thiết kế placeholder cụ thể là mở:** sản phẩm chưa có ảnh thật đạt yêu cầu giữ trạng thái draft, không publish mặc định; không dùng ảnh nhóm khi có thể gây hiểu nhầm về một sản phẩm cụ thể; placeholder thương hiệu chỉ dùng cho ngoại lệ được duyệt rõ ràng; layout theme phải hoạt động đúng khi sản phẩm chỉ có 1 ảnh. **Duy nhất còn mở:** thiết kế placeholder cụ thể (hình minh họa, bố cục) — xem `docs/WEBSITE-REQUIREMENTS.md`.
 
-### Chi tiết mâu thuẫn #1 — màu nâu chính
+### Chi tiết mâu thuẫn #1 — màu nâu chính (ĐÃ ĐÓNG 2026-08-04)
 
 * `11_Brand_Guideline` ghi `#7A3B17` là "Nâu thương hiệu", dùng cho logo/tiêu đề/CTA.
 * `16_Brand_System_Detail` ghi `#8A4A23` là "Màu chính (Lyli Brown)", đánh dấu trạng thái riêng "Đã chốt".
-* `18_NHẬT KÝ QUYẾT ĐỊNH TOÀN DỰ ÁN`, mục `DEC-006`, ghi: "11_Brand_Guideline là chuẩn hiện hành... Nếu tài liệu chi tiết cũ khác màu hoặc quy tắc, ưu tiên 11_Brand_Guideline" — điều này ngụ ý ưu tiên `#7A3B17`. Tuy nhiên `16_Brand_System_Detail` vẫn đang hiển thị `#8A4A23` với nhãn "Đã chốt" riêng, chưa được sửa lại để khớp `DEC-006`, và sheet `18_` này bản thân có dấu hiệu là nhật ký cũ hơn (không nằm trong danh sách sheet bắt buộc đọc của `00_AI_Project_Context`; sheet đó chỉ định `01_Dashboard` mới là nhật ký quyết định hiện hành). **Chưa đọc `01_Dashboard` trong nhiệm vụ này** — nếu có quyết định mới hơn ở đó, nó sẽ vượt qua mọi thứ ghi ở đây. Kết luận: có bằng chứng nghiêng về `#7A3B17`, nhưng không đủ để tự động chốt — cần founder xác nhận trực tiếp, hoặc yêu cầu đọc thêm `01_Dashboard` trước khi quyết định.
+* `18_NHẬT KÝ QUYẾT ĐỊNH TOÀN DỰ ÁN`, mục `DEC-006`, ghi: "11_Brand_Guideline là chuẩn hiện hành... Nếu tài liệu chi tiết cũ khác màu hoặc quy tắc, ưu tiên 11_Brand_Guideline" — bằng chứng này nghiêng về `#7A3B17` làm chính, đúng như founder sau đó xác nhận.
+* **Cách founder giải quyết:** không chọn một trong hai, loại bỏ cái còn lại — cả hai giá trị được giữ lại với vai trò khác nhau. `#7A3B17` = primary, `#8A4A23` = secondary/soft. Điều này khớp tự nhiên với bằng chứng gốc: `11_Brand_Guideline` (ưu tiên cao hơn theo `DEC-006`) mô tả `#7A3B17` cho vai trò chính (logo/tiêu đề/CTA), còn `#8A4A23` từ `16_Brand_System_Detail` phù hợp làm biến thể phụ/mềm hơn của cùng tông nâu thương hiệu.
 
-### Chi tiết mâu thuẫn #2 — cấu trúc danh mục điều hướng
+### Chi tiết mâu thuẫn #2 — cấu trúc danh mục điều hướng (ĐÃ ĐÓNG 2026-08-04)
 
-`06_Website` (tracker trang) liệt kê các trang: "Danh mục Size S" (gấu, mèo, vịt, hổ…), "Danh mục Size M" (thỏ, gấu Teddy, cây thông…), "Danh mục Size L" (mẫu nhiều chi tiết) như các trang category riêng biệt theo size. Trong khi đó, `09_Product` xác nhận cấu trúc danh mục chính thức hiện hành (DEC-024/025) là 5 danh mục theo loại sản phẩm, hoàn toàn không dùng khái niệm size cho điều hướng, và một quyết định cũ hơn (`DEC-007`, đã bị thay thế) từng dùng cách chia khác nữa (7 nhóm). Tên trang trong `06_Website` chưa được cập nhật lại theo cấu trúc 5 danh mục — đây là khoảng trống đồng bộ giữa tracker và Product Database, không phải một quyết định mới.
+`06_Website` (tracker trang) liệt kê các trang: "Danh mục Size S" (gấu, mèo, vịt, hổ…), "Danh mục Size M" (thỏ, gấu Teddy, cây thông…), "Danh mục Size L" (mẫu nhiều chi tiết) như các trang category riêng biệt theo size. Trong khi đó, `09_Product` xác nhận cấu trúc danh mục chính thức hiện hành (DEC-024/025) là 5 danh mục theo loại sản phẩm, hoàn toàn không dùng khái niệm size cho điều hướng, và một quyết định cũ hơn (`DEC-007`, đã bị thay thế) từng dùng cách chia khác nữa (7 nhóm). Tên trang trong `06_Website` chưa được cập nhật lại theo cấu trúc 5 danh mục — đây là khoảng trống đồng bộ giữa tracker và Product Database, không phải một quyết định mới. **Founder đã chốt:** navigation chính theo 5 danh mục, khớp Product Database; size chuyển xuống làm attribute/filter/variation/subdivision bên trong danh mục.
 
 **Cập nhật 2026-08-04:** Founder đã ghi nhận hướng đi dẫn đầu cho V1 là 5 danh mục theo loại sản phẩm (khớp Product Database), **không** dùng Size S/M/L làm điều hướng cấp cao — size có thể triển khai sau như product attribute/filter/variation/collection subdivision bên trong từng danh mục. Đây là "hướng đi dự kiến trừ khi rà soát dữ liệu sản phẩm cho thấy bất nhất đáng kể" — chưa phải phê duyệt tuyệt đối 100%, nhưng đủ để bắt đầu implementation plan theo hướng này.

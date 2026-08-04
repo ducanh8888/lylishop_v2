@@ -71,7 +71,7 @@ Các phiên bản dưới đây là **baseline tại ngày 03/08/2026**, không 
 | MySQL          |          8.0 trở lên | Thay thế MariaDB    |
 | WordPress      |                7.0.2 | Bắt buộc            |
 | WooCommerce    |               10.9.4 | Bắt buộc            |
-| Botiga Free    |     bản stable hiện hành (WordPress.org xác nhận 2.4.7 ngày 22/07/2026; chưa xác nhận trực tiếp qua wpackagist — xem `docs/THEME-IMPLEMENTATION-PLAN.md` bước 1) | Theme cha |
+| Botiga Free    |                 2.4.7 | Theme cha — xác nhận qua `wpackagist-theme/botiga` (2026-08-04), đã pin trong `composer.json` |
 | Composer       |                  2.x | Build dependency    |
 | WP-CLI         | Bản stable hiện hành | Cài đặt và vận hành |
 | DDEV           | Bản stable hiện hành | Môi trường local    |
