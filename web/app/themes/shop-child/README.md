@@ -6,6 +6,10 @@ Child theme of **Botiga Free** (parent theme decision: `docs/THEME-DECISION.md`,
 
 Metadata skeleton + design-token foundation only (`style.css`, `functions.php`, `inc/design-tokens.php`). **No visual styling, component CSS, or template overrides have been implemented yet.** The color and navigation decisions that used to block this work are now closed (`docs/THEME-DECISION.md` section 9) — what remains open is only the background/cream palette and the final placeholder-image design (`docs/THEME-DECISION-BRIEF.md` section 5).
 
+## Enqueue behavior (verified against real Botiga 2.4.7, 2026-08-04)
+
+`functions.php` intentionally does **not** manually enqueue `style.css`. Botiga's own `botiga_style_css()` (`wp_enqueue_scripts`, priority 12) already enqueues `get_stylesheet_uri()` under the handle `botiga-style`, which WordPress resolves to *this* theme's `style.css` automatically once shop-child is active — that's the standard parent/child mechanism. An earlier version of this file duplicated that enqueue under a second handle (`shop-child`), loading the same file twice, and separately enqueued Botiga's root `style.css` as a fake dependency even though that file is only a 23-line header block with no CSS rules. Botiga's real parent stylesheet is `assets/css/styles.min.css`, enqueued by Botiga itself under the handle `botiga-style-min`. See `docs/INSTALLATION-PREPARATION.md` Phase 3 for the full evidence. Botiga ships no `woocommerce/` template-override directory — it integrates purely through action/filter hooks around WooCommerce's own default templates.
+
 ## Design tokens (accepted, not yet wired into CSS)
 
 Source of truth: `docs/THEME-DECISION.md` section 11. Machine-readable copy: `inc/design-tokens.php` (not required from `functions.php` yet — it produces no output today).
@@ -24,7 +28,7 @@ Aristotelica Pro is logo-asset use only and its font files must never be committ
 ```text
 shop-child/
 ├── style.css                  # theme header (Template: botiga) — no component CSS yet
-├── functions.php              # parent/child enqueue bootstrap (present)
+├── functions.php              # bootstrap only — no manual style enqueue (Botiga does it)
 ├── README.md                  # this file
 ├── inc/
 │   ├── design-tokens.php      # color/typography token constants (present, inert)

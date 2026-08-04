@@ -1,0 +1,63 @@
+name: validate
+
+# Credential-free static validation only. No deployment, no SSH, no production
+# credentials, no paid plugin artifacts, no access to the private workbook
+# (it is gitignored and never present in the checkout). See
+# docs/INSTALLATION-PREPARATION.md and docs/DEPLOYMENT.md for why deployment
+# is intentionally not part of this workflow.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up PHP 8.3 + Composer
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: "8.3"
+          tools: composer:v2
+          coverage: none
+
+      - name: Cache Composer downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-
+
+      - name: composer validate
+        run: composer validate --no-interaction
+
+      - name: composer install (from committed composer.lock)
+        run: composer install --no-interaction --prefer-dist --no-progress --no-scripts
+
+      - name: PHP lint (php -l on every tracked .php file)
+        run: |
+          status=0
+          while IFS= read -r -d '' f; do
+            php -l "$f" || status=1
+          done < <(git ls-files -z '*.php')
+          exit $status
+
+      - name: Shell syntax check (bash -n on every tracked .sh file)
+        run: |
+          status=0
+          while IFS= read -r -d '' f; do
+            bash -n "$f" || status=1
+          done < <(git ls-files -z '*.sh')
+          exit $status
+
+      - name: composer audit
+        run: composer audit --locked
