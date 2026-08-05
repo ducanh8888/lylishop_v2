@@ -1,16 +1,16 @@
 # PRODUCTION INSTALL RUNBOOK — Lyli Shop
 
-Trình tự **tương lai**, chưa thực thi bước nào. Mỗi bước ghi rõ có cần **xác nhận rõ ràng (explicit authorization)** trước khi chạy hay không. Đây là kế hoạch, không phải log thực thi. Điều kiện tiên quyết trước khi bắt đầu bước 1: `docs/INSTALLATION-PREPARATION.md` ở trạng thái READY FOR CREDENTIAL HANDOFF, và **DNS `lylishop.online` đã được founder xác nhận/xử lý** (hiện đang trỏ Vercel — xem `docs/INSTALLATION-PREPARATION.md`).
+Trình tự **tương lai**. Mỗi bước ghi rõ có cần **xác nhận rõ ràng (explicit authorization)** trước khi chạy hay không, và trạng thái thực tế tính đến 2026-08-05. Đây vẫn là kế hoạch cho các bước chưa làm, không phải cho phép tự động tiếp tục. Điều kiện tiên quyết trước khi bắt đầu bước 8: DNS đã đúng (✅ xác nhận 2026-08-05) và web PHP là 8.3.x (✅ xác nhận 2026-08-05) — cả hai xem `docs/INSTALLATION-PREPARATION.md`.
 
-| # | Bước | Cần xác nhận rõ ràng? |
-|---|---|---|
-| 1 | Founder tạo database trong OnePanel (tên DB, user, password, charset `utf8mb4`) | Không áp dụng — founder tự thực hiện, ngoài phạm vi agent |
-| 2 | Credential được lưu ngoài repository (trực tiếp trên `commerce-host`, xem `docs/CREDENTIAL-HANDOFF.md`) | Không áp dụng — founder/developer thực hiện thủ công |
-| 3 | Agent xác thực kết nối database (chỉ kiểm tra connect thành công/thất bại, không đọc/in giá trị) | **CÓ** — cần xác nhận trước khi chạy, vì đây là lần đầu chạm vào credential thật |
-| 4 | Backup web root mặc định hiện tại (`index.htm`) trước khi thay đổi bất cứ gì trong `public_html` | **CÓ** — thao tác ghi đầu tiên lên `public_html` |
-| 5 | Tạo cấu trúc `apps/lylishop/{releases,shared}` và `shared/{.env,uploads,logs,backups}` | **CÓ** — tạo thư mục mới trên production |
-| 6 | Upload release artifact đã build (từ máy dev/CI) lên `releases/<timestamp>/` | **CÓ** — đưa code thật lên host |
-| 7 | Symlink hoặc copy `shared/.env` vào release | **CÓ** — chạm credential thật lần đầu trong release |
+| # | Bước | Trạng thái | Cần xác nhận rõ ràng? |
+|---|---|---|---|
+| 1 | Founder tạo database trong OnePanel (tên DB, user, password, charset `utf8mb4`) | **ĐÃ XONG** (founder, trước phiên 2026-08-05) | Không áp dụng — founder tự thực hiện, ngoài phạm vi agent |
+| 2 | Credential được lưu ngoài repository (trực tiếp trên `commerce-host`, xem `docs/CREDENTIAL-HANDOFF.md`) | **ĐÃ XONG** 2026-08-05 — `.env` upload vào `shared/.env`, quyền 600, ngoài `public_html` | Không áp dụng — founder/developer thực hiện thủ công |
+| 3 | Agent xác thực kết nối database (chỉ kiểm tra connect thành công/thất bại, không đọc/in giá trị) | **ĐÃ XONG** 2026-08-05 — kết nối PASS, MariaDB 11.4.10, 0 bảng, privilege probe PASS | Đã xác nhận và thực hiện trong phiên credential handoff |
+| 4 | Backup web root mặc định hiện tại (`index.htm`) trước khi thay đổi bất cứ gì trong `public_html` | Chưa làm | **CÓ** — thao tác ghi đầu tiên lên `public_html` |
+| 5 | Tạo cấu trúc `apps/lylishop/{releases,shared}` và `shared/{.env,uploads,logs,backups}` | **MỘT PHẦN** — `apps/lylishop/shared/` đã tạo (quyền 700) để chứa `.env`; `releases/`, `shared/uploads`, `shared/logs`, `shared/backups` chưa tạo | **CÓ** cho phần còn lại — tạo thư mục mới trên production |
+| 6 | Upload release artifact đã build (từ máy dev/CI) lên `releases/<timestamp>/` | Chưa làm | **CÓ** — đưa code thật lên host |
+| 7 | Symlink hoặc copy `shared/.env` vào release | Chưa làm (release chưa tồn tại) | **CÓ** — chạm credential thật lần đầu trong release |
 | 8 | Cài WordPress qua WP-CLI (`wp core install` + cấu hình locale/timezone/VND) | **CÓ — thao tác không thể đảo ngược dễ dàng, cần xác nhận rõ ràng riêng, không gộp chung với bước khác** |
 | 9 | Kích hoạt WooCommerce, Botiga, `shop-child` | **CÓ** — thay đổi trạng thái site hiển thị công khai (một khi domain đã trỏ đúng) |
 | 10 | Tạo các trang bắt buộc (Cửa hàng, Giỏ hàng, Thanh toán, Tài khoản, v.v. qua WooCommerce setup) | **CÓ** — nội dung công khai |
@@ -26,4 +26,5 @@ Trình tự **tương lai**, chưa thực thi bước nào. Mỗi bước ghi r�
 * Mọi bước đánh dấu **CÓ** phải dừng lại và xin xác nhận rõ ràng trước khi chạy, kể cả khi bước trước đó đã được cho phép — không suy ra sự cho phép cho bước tiếp theo.
 * Bước 8 (cài WordPress) và bước 14 (xoá `index.htm`) là hai điểm không thể đảo ngược dễ dàng nhất trong toàn runbook — luôn tách riêng, không gộp vào một lần phê duyệt chung với các bước khác.
 * Rollback: nếu bất kỳ bước 4–11 thất bại, dùng `scripts/production-rollback.sh` để phục hồi release trước hoặc database từ backup bước 4 — xem `docs/DEPLOYMENT.md` và `docs/BACKUP-RESTORE.md`.
-* DNS: nếu tới thời điểm chạy runbook này mà `lylishop.online` vẫn trỏ ngoài hosting account (ví dụ Vercel như phát hiện ở `docs/INSTALLATION-PREPARATION.md`), phải giải quyết việc này **trước** bước 9 (kích hoạt theme công khai) — kích hoạt site trong khi DNS trỏ sai chỗ không gây hại nhưng cũng không có ý nghĩa kiểm thử thật; cần founder xác nhận DNS đã đúng trước khi coi go-live là hoàn tất.
+* DNS: **đã xác nhận đúng** kể từ 2026-08-05 (`lylishop.online` → IP hosting) — không còn là điều kiện chặn bước 9. SSL công khai vẫn là self-signed placeholder (`docs/ONEPANEL-CHECKLIST.md` mục 1) — nên phát hành chứng chỉ thật trước khi coi go-live công khai là hoàn tất, dù điều này không chặn các bước cài đặt qua SSH/WP-CLI.
+* WP-CLI `--path`: mọi lệnh `wp` trong runbook và trong `scripts/production-deploy.sh` phải trỏ vào thư mục Bedrock `web/` (nơi có `wp-config.php`), **không phải** `web/wp` (chỉ chứa core WordPress) — một lỗi dùng sai `web/wp` đã được tìm thấy và sửa trong `scripts/production-deploy.sh` ngày 2026-08-05 (`docs/INSTALLATION-PREPARATION.md`).

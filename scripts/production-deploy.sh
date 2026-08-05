@@ -41,7 +41,7 @@ if [ "$APPLY" != "--apply" ]; then
     echo "  5. ssh $SSH_HOST_ALIAS tar -xzf ~/${RELEASE_PATH}/release.tar.gz -C ~/${RELEASE_PATH}"
     echo "  6. ssh $SSH_HOST_ALIAS ln -sfn ~/${REMOTE_APP_DIR}/shared/.env ~/${RELEASE_PATH}/.env"
     echo "  7. ssh $SSH_HOST_ALIAS ln -sfn ~/${REMOTE_APP_DIR}/shared/uploads ~/${RELEASE_PATH}/web/app/uploads"
-    echo "  8. ssh $SSH_HOST_ALIAS /opt/alt/php83/usr/bin/php ~/${REMOTE_APP_DIR}/shared/wp-cli.phar core update-db --path=~/${RELEASE_PATH}/web/wp"
+    echo "  8. ssh $SSH_HOST_ALIAS /opt/alt/php83/usr/bin/php ~/${REMOTE_APP_DIR}/shared/wp-cli.phar core update-db --path=~/${RELEASE_PATH}/web"
     echo "  9. ssh $SSH_HOST_ALIAS ln -sfn ~/${RELEASE_PATH} ~/${REMOTE_APP_DIR}/current"
     echo " 10. ssh $SSH_HOST_ALIAS wp maintenance-mode deactivate --path=~/${REMOTE_APP_DIR}/current/web"
     echo "Then run: scripts/production-health-check.sh"
@@ -74,7 +74,10 @@ ssh "$SSH_HOST_ALIAS" "ln -sfn ~/${REMOTE_APP_DIR}/shared/.env ~/${RELEASE_PATH}
 ssh "$SSH_HOST_ALIAS" "ln -sfn ~/${REMOTE_APP_DIR}/shared/uploads ~/${RELEASE_PATH}/web/app/uploads"
 
 echo "Step 8/9: running WP-CLI database migration..."
-ssh "$SSH_HOST_ALIAS" "/opt/alt/php83/usr/bin/php ~/${REMOTE_APP_DIR}/shared/wp-cli.phar core update-db --path=~/${RELEASE_PATH}/web/wp"
+# --path must be the Bedrock web/ directory (where wp-config.php resolves), not
+# web/wp (the WordPress core subdirectory) — verified during installation
+# preparation (docs/INSTALLATION-PREPARATION.md).
+ssh "$SSH_HOST_ALIAS" "/opt/alt/php83/usr/bin/php ~/${REMOTE_APP_DIR}/shared/wp-cli.phar core update-db --path=~/${RELEASE_PATH}/web"
 
 echo "Step 9/9: switching current release symlink..."
 ssh "$SSH_HOST_ALIAS" "ln -sfn ~/${RELEASE_PATH} ~/${REMOTE_APP_DIR}/current"

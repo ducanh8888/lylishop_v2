@@ -97,14 +97,96 @@ Tạo file văn bản ngẫu nhiên ngoài `public_html`, tạo symlink tên ng�
 
 **Kết luận:** mô hình deploy `public_html -> apps/lylishop/current/web` (`docs/DEPLOYMENT.md`) được xác nhận khả thi ở tầng web server thật, không chỉ ở tầng filesystem như audit trước — không còn là giả định.
 
-## Còn lại (blocker trước go-live thật, không chặn việc chuẩn bị repo)
+## Còn lại tại 2026-08-04 (lịch sử — xem cập nhật 2026-08-05 bên dưới)
 
-1. **DNS `lylishop.online` chưa trỏ vào hosting account này** (đang trỏ Vercel) — founder cần xác nhận và xử lý trước go-live; không tự ý thay đổi.
-2. Web PHP Selector chưa chọn 8.3 (đang 8.1.34) — hành động panel thủ công.
-3. Module PHP 8.3 web chưa xác minh (chỉ mới biết PHP 8.1 web).
-4. Database + user MySQL chưa tạo — chỉ tạo được qua OnePanel.
+1. ~~DNS `lylishop.online` chưa trỏ vào hosting account này~~ — **ĐÃ GIẢI QUYẾT**, xem mục dưới.
+2. ~~Web PHP Selector chưa chọn 8.3~~ — **ĐÃ GIẢI QUYẾT**, xem mục dưới.
+3. ~~Module PHP 8.3 web chưa xác minh~~ — **ĐÃ XÁC MINH**, xem mục dưới.
+4. Database + user MySQL chưa tạo — **ĐÃ TẠO** (founder), kết nối đã xác minh, xem mục dưới.
 5. Màu nền/kem cuối cùng và thiết kế placeholder ảnh — vẫn mở theo `docs/THEME-DECISION-BRIEF.md`, không liên quan cài đặt kỹ thuật.
+
+---
+
+## Cập nhật 2026-08-05 — Credential handoff và full pre-install verification
+
+Task riêng, sau khi founder đã tự thực hiện chuẩn bị OnePanel + DNS. Vẫn không cài WordPress, không tạo database (database đã được founder tạo sẵn trước phiên này), không deploy production, không kích hoạt theme/plugin. Không có giá trị credential nào được in ra, log lại, hay lưu trong repository ở bất kỳ bước nào — chỉ PASS/FAIL và metadata an toàn.
+
+### Web PHP re-probe — PASS, gate đạt
+
+Probe mới (tên file ngẫu nhiên 41 ký tự hex, xoá ngay sau khi đọc, xác nhận 404 sau xoá, `index.htm` xác nhận không đổi cả trước/sau — 1036 byte, cùng SHA-256 như mục audit trước) xác nhận:
+
+* **`PHP_VERSION: 8.3.30`** — PHP Selector đã được chuyển sang 8.3 thành công. Gate "web PHP phải là 8.3.x" **đạt**.
+* `PHP_SAPI: litespeed`, `SERVER_SOFTWARE: LiteSpeed` — xác nhận lại LiteSpeed.
+* `DOCUMENT_ROOT: /home/erxwskxohosting/public_html` — không đổi.
+* `memory_limit 512M`, `max_execution_time/max_input_time/max_input_vars 3000`, `upload_max_filesize 10240M`, `post_max_size 512M`, `open_basedir` rỗng — giống hệt cấu hình đã ghi nhận ở PHP 8.1 web, chỉ đổi version.
+
+Extension matrix (PHP 8.3 web, phân loại theo yêu cầu):
+
+| Extension | Trạng thái | Phân loại |
+|---|---|---|
+| curl, mbstring, mysqli, pdo_mysql, dom, xml, gd, exif, fileinfo | PRESENT | — |
+| zip | ABSENT | RECOMMENDED BUT NON-BLOCKING (Composer tự fallback qua `unzip` binary) |
+| intl | ABSENT | RECOMMENDED BUT NON-BLOCKING (không bắt buộc cho WP/WC core) |
+| imagick | ABSENT | RECOMMENDED BUT NON-BLOCKING (GD có sẵn làm fallback xử lý ảnh) |
+| opcache | ABSENT | RECOMMENDED BUT NON-BLOCKING (chỉ ảnh hưởng hiệu năng) |
+| sodium | ABSENT | RECOMMENDED BUT NON-BLOCKING (WordPress core tự bundle `sodium_compat`) |
+
+**Không có REQUIRED BLOCKER nào.**
+
+### DNS và SSL — DNS đã đúng, SSL CHƯA hợp lệ
+
+* **DNS A record:** `lylishop.online` → `103.75.184.20` (đúng IP hosting) — **đã được founder xử lý**, không còn trỏ Vercel. AAAA: không có bản ghi (bình thường). NS: `sapa.vclouddns.com`.
+* **SSL: CHƯA hợp lệ.** Chứng chỉ hiện phục vụ tại `lylishop.online:443` là **self-signed placeholder** (`subject=CN=localhost`, `issuer=CN=localhost`, không có SAN extension) — không phải chứng chỉ thật cho domain. Nhiều khả năng do hệ thống AutoSSL/Let's Encrypt của panel cần DNS trỏ đúng trước khi phát hành được, và DNS chỉ mới đúng gần đây. **Cần hành động panel:** trigger phát hành/gia hạn SSL (Let's Encrypt hoặc tương đương) cho domain qua OnePanel — xem `docs/ONEPANEL-CHECKLIST.md`.
+* Vercel edge (`216.198.79.1`) vẫn phản hồi `403` khi ép Host header `lylishop.online` — cấu hình phía Vercel không bị đụng tới, chỉ là quan sát read-only, không có hành động nào thực hiện trên Vercel.
+* `public_html` xác nhận vẫn chỉ có `index.htm` — không có file nào khác còn sót lại.
+
+### `.env` production — ĐÃ UPLOAD
+
+* Đường dẫn: `/home/erxwskxohosting/apps/lylishop/shared/.env`.
+* Thư mục `shared/` tạo với quyền `700`; file `.env` quyền `600`; owner `erxwskxohosting:erxwskxohosting`; xác nhận là regular file, không phải symlink; resolved path nằm ngoài `public_html`.
+* Không có `.env` nào tồn tại từ trước tại đường dẫn này (không có conflict, không ghi đè gì).
+* Toàn vẹn transfer xác nhận PASS bằng cách so sánh SHA-256 hai phía — **giá trị hash không được in ra** ở bất kỳ đâu, chỉ kết quả so khớp.
+* Parse các key bắt buộc: `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `WP_ENV`, `WP_HOME`, `WP_SITEURL` — **tất cả present và non-empty (PASS)**.
+* `WP_ENV` = `production` ✓ khớp yêu cầu. `WP_HOME` = `https://lylishop.online` ✓ khớp yêu cầu. `WP_SITEURL` (dạng nguồn `${WP_HOME}/wp`) resolve thành `https://lylishop.online/wp` ✓ khớp yêu cầu.
+
+### Kết nối database — PASS
+
+* Kết nối: **PASS**. Máy chủ: **MariaDB 11.4.10-MariaDB-cll-lve-log**.
+* Database đã chọn: **PASS**.
+* Charset: `utf8mb4`. Collation: `utf8mb4_general_ci` — **lưu ý:** khác với khuyến nghị `utf8mb4_unicode_ci` ghi trong `docs/HOSTING-AUDIT.md`/`docs/ONEPANEL-CHECKLIST.md`; không phải lỗi chặn cài đặt (Bedrock/WordPress hoạt động bình thường với `utf8mb4_general_ci`), nhưng nên xác nhận với founder có muốn đổi lại `utf8mb4_unicode_ci` trước khi `wp core install` hay chấp nhận collation hiện tại — chưa tự ý đổi.
+* Số bảng ban đầu: **0** — safety gate PASS ("zero application tables, probe authorized").
+* **Privilege probe: PASS toàn bộ** — CREATE TABLE, INSERT, SELECT (xác minh đúng giá trị ghi vào), UPDATE, CREATE INDEX, ALTER TABLE, DROP TABLE đều thành công trên một bảng tên ngẫu nhiên (prefix `privtest_` + 16 hex ngẫu nhiên), giới hạn trong đúng database Lyli. Không test CREATE/DROP DATABASE, quyền toàn cục, FILE/SUPER, hay truy cập database khác.
+* Sau khi DROP, số bảng quay lại đúng **0** — xác nhận dọn dẹp sạch, không còn bảng tạm nào.
+* Không có `DB_PASSWORD`, DSN đầy đủ, hay thông báo lỗi mang credential nào được in ra trong toàn bộ quá trình.
+
+### Repository re-validation — PASS toàn bộ (lặp lại độc lập với lần trước)
+
+| Check | Kết quả |
+|---|---|
+| `composer validate` | PASS |
+| `composer install --dry-run` (từ `composer.lock` đã commit) | PASS |
+| `composer audit --locked` | PASS — không có advisory |
+| `php -l` — 11/11 file `.php` | PASS |
+| `bash -n` — 7/7 file `.sh` | PASS |
+| JSON parse — `composer.json` | PASS |
+| YAML parse — `.github/workflows/validate.yml` (công cụ local, remote không có PyYAML) | PASS |
+| Secret/sensitivity scan | PASS — sạch |
+| `.env`, `vendor/`, XLSX không được track | PASS |
+
+### CI — quan sát thật, không suy đoán
+
+Không có commit mới trước bước này nên không có run mới cần chờ — dùng lại run đã quan sát cho đúng HEAD hiện tại (`2dad3aae41...`): **run ID `30915464847`, conclusion `success`**, xác nhận lại qua GitHub API tại thời điểm viết báo cáo này (vẫn `completed`/`success`, không phải cache cũ).
+
+### Bug tìm thấy trong review deployment readiness — ĐÃ SỬA
+
+`scripts/production-deploy.sh` dùng `--path=~/${RELEASE_PATH}/web/wp` cho lệnh `wp core update-db` (2 chỗ) — sai so với quy ước Bedrock: `--path` của WP-CLI phải trỏ vào thư mục chứa `wp-config.php` (tức `web/`), không phải `web/wp` (chỉ chứa core WordPress, không có `wp-config.php` của Bedrock). Các lệnh `wp maintenance-mode` khác trong cùng file đã dùng đúng `.../web`. Đã sửa cả 2 chỗ về `--path=~/${RELEASE_PATH}/web` — sửa hẹp, không đổi logic khác của script.
+
+### Còn lại sau phiên 2026-08-05
+
+1. **SSL chưa hợp lệ cho domain** — cần trigger AutoSSL/Let's Encrypt qua OnePanel trước khi go-live công khai qua HTTPS thật (không chặn việc cài đặt qua SSH/WP-CLI).
+2. Xác nhận với founder về collation `utf8mb4_general_ci` (thực tế) so với `utf8mb4_unicode_ci` (khuyến nghị ban đầu) — quyết định giữ nguyên hay đổi trước `wp core install`.
+3. Màu nền/kem cuối cùng và thiết kế placeholder ảnh — vẫn mở theo `docs/THEME-DECISION-BRIEF.md`, không liên quan cài đặt kỹ thuật.
 
 ## Ranh giới credential (nhắc lại, không đổi)
 
-Không có bất kỳ credential nào (database, SMTP, SePay, ngân hàng, admin password, license key, backup service) được yêu cầu, đọc, truyền hay lưu trong quá trình chuẩn bị này. Không có `.env` thật nào được tạo. Danh sách biến môi trường cần trong tương lai: `docs/CREDENTIAL-HANDOFF.md`.
+Không có giá trị `DB_NAME`/`DB_USER`/`DB_PASSWORD`/`DB_HOST` nào được in ra, log lại hay lưu trong repository ở bất kỳ bước nào của phiên 2026-08-05. `.env` thật đã được upload lên `commerce-host` (ngoài repository, ngoài `public_html`) — không copy vào repo, không copy vào release artifact. Danh sách biến môi trường: `docs/CREDENTIAL-HANDOFF.md`.

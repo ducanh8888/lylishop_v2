@@ -2,13 +2,26 @@
 
 Tài liệu này ghi **tên biến và vị trí file**, không bao giờ ghi giá trị thật. Không có credential nào được tạo, đọc, hay lưu trong repository ở bất kỳ thời điểm nào. Credential được cấp ngoài GitHub và ghi trực tiếp qua `commerce-host`.
 
-## File secret sản xuất (chưa tồn tại)
+## File secret sản xuất — ĐÃ UPLOAD (2026-08-05)
 
 ```
 /home/erxwskxohosting/apps/lylishop/shared/.env
 ```
 
-File này **chưa được tạo**. Nó sẽ được founder/developer ghi trực tiếp trên host qua SSH (`commerce-host`) khi bắt đầu cài đặt thật — không bao giờ đi qua Git, không bao giờ nằm trong release artifact (xem `.gitignore`, `docs/DEPLOYMENT.md` mục "Giữ nguyên dữ liệu chia sẻ").
+**Trạng thái:** đã tồn tại trên `commerce-host`, upload trực tiếp từ file cục bộ `C:\Users\ADMIN\.secrets\lylishop-prod.env` (không đi qua Git, không nằm trong repository, không nằm trong bất kỳ release artifact nào — xem `.gitignore`, `docs/DEPLOYMENT.md` mục "Giữ nguyên dữ liệu chia sẻ").
+
+| Thuộc tính | Giá trị |
+|---|---|
+| Đường dẫn | `/home/erxwskxohosting/apps/lylishop/shared/.env` |
+| Owner | `erxwskxohosting:erxwskxohosting` |
+| Quyền file | `600` |
+| Quyền thư mục `shared/` | `700` |
+| Loại | Regular file (không phải symlink) |
+| Nằm ngoài `public_html`? | Có, xác nhận qua resolved path |
+| Toàn vẹn transfer | Xác nhận PASS (so sánh SHA-256 hai phía nội bộ — giá trị hash không được ghi vào tài liệu này hay bất kỳ đâu) |
+| Required keys present/non-empty | Tất cả `DB_NAME`/`DB_USER`/`DB_PASSWORD`/`DB_HOST`/`WP_ENV`/`WP_HOME`/`WP_SITEURL` — PASS |
+
+Chi tiết đầy đủ quá trình xác minh: `docs/INSTALLATION-PREPARATION.md` mục "Cập nhật 2026-08-05".
 
 ## Biến môi trường cần trong tương lai
 
@@ -19,10 +32,10 @@ Tên biến khớp với `.env.example` đã có trong repo — không đổi t�
 | `WP_ENV` | `production` (không có `staging`) | Cố định, không phải secret |
 | `WP_HOME` | `https://lylishop.online` | Cố định, không phải secret |
 | `WP_SITEURL` | `${WP_HOME}/wp` | Cố định, không phải secret |
-| `DB_NAME` | Tên database WooCommerce | Founder tạo qua OnePanel (`docs/ONEPANEL-CHECKLIST.md`) |
-| `DB_USER` | User MySQL cho database trên | Founder tạo qua OnePanel |
-| `DB_PASSWORD` | Mật khẩu user MySQL trên | Founder tạo qua OnePanel, không chia sẻ ngoài kênh an toàn |
-| `DB_HOST` | Thường là `localhost` trên shared hosting này | Xác nhận khi database được tạo |
+| `DB_NAME` | Tên database WooCommerce | **Đã tạo bởi founder, đã có trong `.env` production** (2026-08-05) — giá trị không ghi ở đây |
+| `DB_USER` | User MySQL cho database trên | **Đã tạo, đã có trong `.env` production** |
+| `DB_PASSWORD` | Mật khẩu user MySQL trên | **Đã tạo, đã có trong `.env` production** — không chia sẻ ngoài kênh an toàn |
+| `DB_HOST` | Host kết nối MySQL/MariaDB | **Đã có trong `.env` production** — kết nối đã xác minh PASS (`docs/INSTALLATION-PREPARATION.md`) |
 | `AUTH_KEY`, `SECURE_AUTH_KEY`, `LOGGED_IN_KEY`, `NONCE_KEY`, `AUTH_SALT`, `SECURE_AUTH_SALT`, `LOGGED_IN_SALT`, `NONCE_SALT` | WordPress unique keys/salts | Sinh ngẫu nhiên lúc cài đặt (không phải do founder cung cấp — có thể agent tự sinh bằng WP-CLI hoặc trình sinh salt, không cần founder nhập tay) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` | FluentSMTP | Founder cung cấp khi cấu hình email |
 | `SEPAY_API_KEY`, `SEPAY_WEBHOOK_SECRET` | Cổng thanh toán SePay | Founder cung cấp khi đăng ký SePay |
