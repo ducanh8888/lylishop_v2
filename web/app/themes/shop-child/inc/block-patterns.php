@@ -45,7 +45,7 @@ function register_patterns(): void
         return;
     }
 
-    $primary = COLOR_TOKENS['brand-primary'];
+    $primary = \ShopChild\COLOR_TOKENS['brand-primary'];
 
     $patterns = [
         'lyli-hero' => [

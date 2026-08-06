@@ -191,6 +191,27 @@ check(
     ! isset($theme_json['templates']) || empty($theme_json['templates'])
 );
 
+/* 11. Namespaced constant references in sub-namespace inc/ files must be
+ * fully qualified (\ShopChild\COLOR_TOKENS), not bare COLOR_TOKENS which
+ * would resolve to ShopChild\<Sub>\COLOR_TOKENS and fatal at load. */
+$unqualified_constant_refs = [];
+foreach (glob("$root/web/app/themes/shop-child/inc/*.php") as $inc_file) {
+    $code = (string) file_get_contents($inc_file);
+    if (preg_match('/const (COLOR_TOKENS|TYPOGRAPHY_TOKENS)/', $code)) {
+        continue; // definition file
+    }
+    foreach (['COLOR_TOKENS', 'TYPOGRAPHY_TOKENS', 'google_fonts_url'] as $sym) {
+        if (preg_match('/(?<!\\\\)\b' . preg_quote($sym, '/') . '\b/', $code)) {
+            $unqualified_constant_refs[] = basename($inc_file) . ': ' . $sym;
+        }
+    }
+}
+check(
+    'No unqualified ShopChild symbol references in inc/ sub-namespaces',
+    empty($unqualified_constant_refs),
+    implode(', ', $unqualified_constant_refs)
+);
+
 /* composer.json validate script updated? */
 check(
     'composer.json has validate:storefront script',

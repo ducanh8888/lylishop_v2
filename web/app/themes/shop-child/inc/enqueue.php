@@ -15,7 +15,7 @@ if (! defined('ABSPATH')) {
 
 /**
  * Enqueue the Google Fonts stylesheet (frontend).
- * google_fonts_url() resolves from ShopChild\ within the same namespace.
+ * The URL builder function lives in the ShopChild root namespace.
  */
 add_action('wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_google_fonts', 11);
 function enqueue_google_fonts(): void
