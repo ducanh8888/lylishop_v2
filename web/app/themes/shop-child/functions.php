@@ -1,31 +1,58 @@
 <?php
 /**
- * shop-child functions — presentation only.
- * No cart/checkout/voucher business logic here (PLAN.md section 6.1).
- * Parent theme: Botiga Free 2.4.7 (docs/THEME-DECISION.md, accepted 2026-08-04).
+ * Lyli Shop child theme — functions.
+ * Presentation only (PLAN.md §6.1 / THEME-DECISION.md §8):
+ * brand design tokens, typography, spacing, homepage presentation,
+ * product card/archive/single styling, Classic Cart & Checkout styling,
+ * responsive/accessibility, controlled Gutenberg block patterns.
+ * Contains NO order/payment/voucher/business logic.
  *
- * No manual style enqueue here — verified against the real Botiga 2.4.7
- * source (docs/INSTALLATION-PREPARATION.md, Phase 3): Botiga's own
- * botiga_style_css() (wp_enqueue_scripts, priority 12) already enqueues
- * get_stylesheet_uri() under the handle `botiga-style`, which resolves to
- * THIS theme's style.css automatically once shop-child is active — that is
- * the standard WordPress parent/child mechanism, not something a child
- * theme needs to repeat. An earlier version of this file manually
- * re-enqueued the same URL under a second handle (`shop-child`), producing
- * two <link> tags for one file, and separately enqueued Botiga's *root*
- * style.css (`botiga-parent`) as a dependency even though that file is only
- * the 23-line theme header block with no CSS rules — Botiga's real parent
- * stylesheet is assets/css/styles.min.css, already enqueued by Botiga
- * itself under the handle `botiga-style-min`. Both were removed.
+ * Parent: Botiga Free 2.4.7 (docs/THEME-DECISION.md, accepted 2026-08-04).
  *
- * If shop-child later needs its own additional asset (a separate CSS/JS
- * file distinct from style.css), add a narrowly-scoped enqueue here that
- * depends on the real parent handle `botiga-style-min`, not on Botiga's
- * root style.css.
+ * Enqueue note (verified against real Botiga 2.4.7 source):
+ * Botiga's botiga_style_css() (wp_enqueue_scripts, priority 12) enqueues
+ * get_stylesheet_uri() under `botiga-style` — which automatically loads THIS
+ * theme's style.css once active. We therefore must NOT re-enqueue style.css
+ * manually (would double-load). We DO enqueue the Google Fonts here and keep
+ * them functionally separate.
  */
 
 namespace ShopChild;
 
 if (! defined('ABSPATH')) {
     exit;
+}
+
+require_once __DIR__ . '/inc/design-tokens.php';
+require_once __DIR__ . '/inc/enqueue.php';
+require_once __DIR__ . '/inc/announcement.php';
+require_once __DIR__ . '/inc/footer.php';
+require_once __DIR__ . '/inc/accessibility.php';
+require_once __DIR__ . '/inc/block-patterns.php';
+require_once __DIR__ . '/inc/woocommerce.php';
+
+/**
+ * Theme setup — narrow additions only.
+ * Because this is a child theme of Botiga, we do NOT re-declare
+ * add_theme_support() items Botiga already provides.
+ */
+add_action('after_setup_theme', __NAMESPACE__ . '\\setup');
+function setup(): void
+{
+    // Editor color presets + typography presets come from theme.json
+    // (canonical source for WP 5.9+). No add_theme_support needed here.
+
+    // Load Google Fonts into the classic editor so previews match the frontend.
+    // Fonts are runtime-delivered (no committed binaries) per THEME-DECISION.md §11.
+    add_editor_style(\ShopChild\google_fonts_url());
+}
+
+/**
+ * Content width — child won't override Botiga's width, but we define a safe
+ * fallback for blocks that query it when the parent isn't loaded yet.
+ */
+add_action('after_setup_theme', __NAMESPACE__ . '\\content_width', 5);
+function content_width(): void
+{
+    $GLOBALS['content_width'] = 1140;
 }

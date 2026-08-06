@@ -74,7 +74,7 @@ Nhắc lại — không đổi bởi quyết định theme này:
 **Vẫn còn mở (chi tiết thị giác duy nhất còn lại liên quan ảnh):**
 
 * **Thiết kế placeholder ảnh cụ thể** (hình minh họa, bố cục, có dùng màu token ở trên hay không) cho sản phẩm chưa có ảnh thật — đây là chi tiết thiết kế thị giác **duy nhất** còn treo trong nhóm quyết định ảnh sản phẩm.
-* Việc build thiết kế thị giác đầy đủ (trang chủ, template trang, component thật) **chưa được thực hiện trong tác vụ này** — chỉ mới có token nền tảng (mục 11) và metadata skeleton của `shop-child`.
+* **Hiện trạng cập nhật 2026-08-06:** nhiệm vụ founder cấp phép một lần (xem `docs/PRODUCTION-STATUS.md`) sẽ triển khai thiết kế thị giác V1 đầy đủ trong `shop-child` — trang chủ, template trang, component thật, block pattern Gutenberg được kiểm soát, style Classic Cart/Checkout, responsive/accessibility. Kết quả thực tế kèm bằng chứng sẽ được ghi vào `docs/PRODUCTION-STATUS.md` và báo cáo baseline. Ghi chú lịch sử: mục này từng ghi (2026-08-04) rằng thiết kế thị giác "chưa được thực hiện" — trạng thái đó chỉ còn là lịch sử.
 
 ## 10. Điều kiện mở lại quyết định này
 
@@ -87,9 +87,9 @@ Quyết định Botiga Free chỉ nên được xem xét lại (không phải "c
 
 Không mở lại quyết định chỉ vì sở thích thị giác hoặc vì một theme khác có demo hấp dẫn hơn.
 
-## 11. Design tokens (nền tảng, chưa implement CSS đầy đủ)
+## 11. Design tokens (nền tảng — đã wire vào output từ 2026-08-06)
 
-Ghi lại token đã được founder chốt (2026-08-04, vòng 2) làm nền tảng cho bước "5. Đưa design token vào" của `docs/THEME-IMPLEMENTATION-PLAN.md`. Đây là **token foundation**, không phải CSS hoàn chỉnh — chưa style hóa component nào. File tương ứng trong code: `web/app/themes/shop-child/inc/design-tokens.php` (chưa được `require` từ `functions.php`, chỉ là nguồn tham chiếu cho bước implement sau).
+Ghi lại token đã được founder chốt (2026-08-04, vòng 2) làm nền tảng cho bước "5. Đưa design token vào" của `docs/THEME-IMPLEMENTATION-PLAN.md`. **Cập nhật trạng thái 2026-08-06:** token đã được wire vào output thật trong `shop-child` — `inc/design-tokens.php` được `functions.php` nạp, CSS custom properties + editor presets (theme.json child) được sinh từ token; các component V1 (header, product card, CTA, footer, Classic Cart/Checkout) đã style bằng token này. Ghi chú lịch sử: trước 2026-08-06 file này chỉ là "token foundation chưa implement" — chỉ còn là lịch sử.
 
 ### Màu — đã chốt
 
@@ -110,11 +110,11 @@ Hai bộ nền/kem/accent phụ trong workbook (`docs/THEME-DECISION-BRIEF.md` m
 * Heading: **Fraunces**.
 * Body & CTA: **Be Vietnam Pro**.
 * Aristotelica Pro: chỉ nơi asset logo chính thức yêu cầu — **không commit file font Aristotelica Pro vào repository** (bản quyền, chỉ dùng trong asset logo đã có sẵn ngoài repo).
-* Fraunces/Be Vietnam Pro cũng **chưa commit file font nào** vào repository ở bước này — chỉ ghi tên family; phương án tải (self-host hay Google Fonts) là quyết định implementation sau, chưa chốt.
+* Fraunces/Be Vietnam Pro **không commit file font nào** vào repository — tải qua Google Fonts lúc runtime (quyết định implementation 2026-08-06, ghi trong `docs/THEME-IMPLEMENTATION-PLAN.md`); fallback an toàn (serif/sans-serif hệ thống) trong stack. Aristotelica Pro vẫn chỉ dùng qua asset logo ngoài repo nếu có.
 
 ### Không thuộc phạm vi bước này
 
-* Không có CSS component nào được viết (button, card, header thật).
-* Không có file font nhị phân nào được thêm vào repository.
-* Không có màu nền/kem cuối cùng nào được chọn.
-* Không có thiết kế placeholder ảnh nào được tạo.
+* *(Lịch sử, hết hiệu lực 2026-08-06)* Không có CSS component nào được viết (button, card, header thật) — **đã thay đổi:** component V1 đầy đủ trong `shop-child`.
+* Không có file font nhị phân nào được thêm vào repository — **vẫn đúng:** font Fraunces/Be Vietnam Pro tải qua Google Fonts (runtime), không commit binary; Aristotelica Pro vẫn chỉ dùng qua asset logo ngoài repo nếu có.
+* Không có màu nền/kem cuối cùng nào được chọn — **vẫn đúng:** dùng nền trắng/mặc định Botiga; 2 candidate kem chưa chốt vẫn ghi ở mục "Màu nền/kem".
+* Không có thiết kế placeholder ảnh nào được tạo — **vẫn đúng:** chưa tạo placeholder ảnh; sản phẩm thiếu ảnh thật giữ draft theo chính sách đã chốt.

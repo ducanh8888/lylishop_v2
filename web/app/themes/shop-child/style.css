@@ -1,13 +1,540 @@
 /*
-Theme Name: Shop Child
+Theme Name: Lyli Shop
+Theme URI: https://lylishop.online
+Author: lylishop developer
+Author URI: https://github.com/ducanh8888/lylishop_v2
+Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
+Version: 1.0.0
+Requires at least: 7.0.2
+Tested up to: 7.0
+Requires PHP: 8.3
 Template: botiga
-Description: Child theme for lylishop.online — brand identity, typography, color, spacing and Cart/Checkout styling only. No order, payment, voucher or business logic per PLAN.md section 6.1 and TECH_STACK.md section 3.1. Parent theme decision: docs/THEME-DECISION.md (Botiga Free, accepted 2026-08-04).
-Version: 0.1.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: shop-child
+Tags: e-commerce, custom-menu, custom-logo, grid-layout, featured-images, right-sidebar, custom-colors, translation-ready
 
-No visual styling, final colors, production assets, or copied demo content
-have been added yet — this file is metadata only. The background/cream
-palette and the final placeholder-image visual design remain open
-(docs/THEME-DECISION-BRIEF.md); primary brown, secondary brown, and
-navigation are already decided (docs/THEME-DECISION.md).
+Accepted tokens: #7A3B17 (primary), #8A4A23 (secondary) — docs/THEME-DECISION.md §11.
+Unresolved final background/cream palette: NOT used — neutral white/default surfaces only.
 */
+
+/* ==========================================================================
+   1. Design tokens (CSS custom properties)
+   ========================================================================== */
+
+:root {
+    --lyli-color-primary: #7A3B17;
+    --lyli-color-secondary: #8A4A23;
+    --lyli-color-text: #2D2A26;
+    --lyli-color-muted: #6B6560;
+    --lyli-color-border: #E4DED8;
+    --lyli-color-surface: #FFFFFF;
+    --lyli-color-surface-soft: #F8F5F2;
+    --lyli-font-heading: "Fraunces", "Georgia", "Times New Roman", serif;
+    --lyli-font-body: "Be Vietnam Pro", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --lyli-radius-sm: 4px;
+    --lyli-radius-md: 8px;
+    --lyli-radius-lg: 14px;
+    --lyli-shadow-card: 0 1px 3px rgba(45, 42, 38, 0.08), 0 4px 14px rgba(45, 42, 38, 0.05);
+    --lyli-shadow-card-hover: 0 4px 12px rgba(45, 42, 38, 0.12), 0 10px 28px rgba(45, 42, 38, 0.10);
+    --lyli-transition: 200ms ease;
+    --lyli-content-width: 1140px;
+    --lyli-gutter: clamp(16px, 4vw, 40px);
+}
+
+/* ==========================================================================
+   2. Base typography
+   ========================================================================== */
+
+body,
+button,
+input,
+select,
+optgroup,
+textarea {
+    font-family: var(--lyli-font-body);
+    color: var(--lyli-color-text);
+    line-height: 1.7;
+}
+
+h1, h2, h3, h4, h5, h6,
+.entry-title,
+.page-title,
+.product_title {
+    font-family: var(--lyli-font-heading);
+    font-weight: 600;
+    color: var(--lyli-color-primary);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+}
+
+.site-title {
+    font-family: var(--lyli-font-heading);
+    font-weight: 700;
+}
+
+/* Buttons / CTA */
+a.button,
+button.button,
+input.button,
+.wc-block-components-button,
+.wp-block-button__link,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button {
+    font-family: var(--lyli-font-body);
+    font-weight: 600;
+    border-radius: var(--lyli-radius-md);
+}
+
+/* ==========================================================================
+   3. Announcement bar
+   ========================================================================== */
+
+.lyli-announcement {
+    background: var(--lyli-color-primary);
+    color: #fff;
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+}
+
+.lyli-announcement p {
+    margin: 0;
+}
+
+/* ==========================================================================
+   4. Header / navigation (presentation only — layout from Botiga)
+   ========================================================================== */
+
+.botiga-site-header {
+    border-bottom: 1px solid var(--lyli-color-border);
+}
+
+.botiga-site-header .main-navigation a,
+.botiga-site-header .main-navigation .menu-item > a {
+    color: var(--lyli-color-text);
+    font-family: var(--lyli-font-body);
+}
+
+.botiga-site-header .main-navigation .current-menu-item > a,
+.botiga-site-header .main-navigation .current_page_item > a {
+    color: var(--lyli-color-primary);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   5. Homepage sections (Gutenberg patterns)
+   ========================================================================== */
+
+.lyli-pattern {
+    margin-bottom: clamp(40px, 8vw, 80px);
+}
+
+.lyli-hero {
+    background: var(--lyli-color-surface-soft);
+    border-radius: var(--lyli-radius-lg);
+    padding: clamp(28px, 6vw, 64px) var(--lyli-gutter);
+}
+
+.lyli-hero__title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 0.5em;
+}
+
+.lyli-hero__subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--lyli-color-muted);
+    max-width: 46ch;
+}
+
+.lyli-pattern .is-style-outline .wp-block-button__link,
+.lyli-btn-outline {
+    background: transparent;
+    border: 2px solid var(--lyli-color-primary);
+    color: var(--lyli-color-primary);
+}
+
+.lyli-pattern .is-style-outline .wp-block-button__link:hover,
+.lyli-btn-outline:hover {
+    background: var(--lyli-color-primary);
+    color: #fff;
+}
+
+.lyli-featured-categories .lyli-cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 16px;
+}
+
+.lyli-cat-card {
+    display: block;
+    background: var(--lyli-color-surface);
+    border: 1px solid var(--lyli-color-border);
+    border-radius: var(--lyli-radius-md);
+    padding: 22px 16px;
+    text-align: center;
+    color: var(--lyli-color-text);
+    text-decoration: none;
+    transition: box-shadow var(--lyli-transition), transform var(--lyli-transition);
+}
+
+.lyli-cat-card:hover {
+    box-shadow: var(--lyli-shadow-card-hover);
+    transform: translateY(-2px);
+    color: var(--lyli-color-primary);
+}
+
+.lyli-usp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+.lyli-usp {
+    border-top: 3px solid var(--lyli-color-primary);
+    padding-top: 16px;
+}
+
+.lyli-usp h3 {
+    margin-bottom: 6px;
+}
+
+/* ==========================================================================
+   6. Shop archive / product card
+   ========================================================================== */
+
+.woocommerce ul.products li.product,
+.products .product {
+    background: var(--lyli-color-surface);
+    border: 1px solid var(--lyli-color-border);
+    border-radius: var(--lyli-radius-md);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow var(--lyli-transition), transform var(--lyli-transition);
+}
+
+.woocommerce ul.products li.product:hover,
+.products .product:hover {
+    box-shadow: var(--lyli-shadow-card-hover);
+    transform: translateY(-3px);
+}
+
+.woocommerce ul.products li.product .woocommerce-loop-product__title,
+.products .product .woocommerce-loop-product__title {
+    font-family: var(--lyli-font-heading);
+    font-weight: 600;
+    color: var(--lyli-color-text);
+    padding: 0.4em 0 0.2em;
+}
+
+.woocommerce ul.products li.product .price,
+.products .product .price {
+    color: var(--lyli-color-primary);
+    font-weight: 600;
+}
+
+/* One-image stable layout: aspect-ratio fixed, object-fit cover */
+.woocommerce ul.products li.product .loop-image-wrap,
+.products .product .loop-image-wrap {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: var(--lyli-radius-sm);
+}
+
+.woocommerce ul.products li.product .loop-image-wrap img,
+.products .product .loop-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.woocommerce ul.products li.product .button,
+.products .product .button {
+    margin-top: auto;
+    background: var(--lyli-color-primary);
+    color: #fff;
+    border-radius: var(--lyli-radius-md);
+}
+
+.woocommerce ul.products li.product .button:hover,
+.products .product .button:hover {
+    background: var(--lyli-color-secondary);
+    color: #fff;
+}
+
+/* Empty archive */
+.woocommerce-no-products-found,
+.woocommerce-info {
+    border-top-color: var(--lyli-color-primary);
+}
+
+/* ==========================================================================
+   7. Single product
+   ========================================================================== */
+
+.woocommerce div.product div.images img {
+    border-radius: var(--lyli-radius-md);
+    border: 1px solid var(--lyli-color-border);
+}
+
+.woocommerce div.product .product_title {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    margin-bottom: 0.4em;
+}
+
+.woocommerce div.product p.price {
+    color: var(--lyli-color-primary);
+    font-weight: 600;
+    font-size: 1.4rem;
+}
+
+.woocommerce div.product form.cart .button,
+.woocommerce div.product form.cart button.single_add_to_cart_button {
+    background: var(--lyli-color-primary);
+    color: #fff;
+    border-radius: var(--lyli-radius-md);
+}
+
+.woocommerce div.product form.cart .button:hover,
+.woocommerce div.product form.cart button.single_add_to_cart_button:hover {
+    background: var(--lyli-color-secondary);
+    color: #fff;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li.active a {
+    color: var(--lyli-color-primary);
+}
+
+.woocommerce .related.products > h2,
+.woocommerce .upsells.products > h2 {
+    font-family: var(--lyli-font-heading);
+    color: var(--lyli-color-primary);
+}
+
+/* ==========================================================================
+   8. Classic Cart / Checkout (presentation only)
+   ========================================================================== */
+
+.woocommerce table.shop_table {
+    border-radius: var(--lyli-radius-md);
+    border-color: var(--lyli-color-border);
+}
+
+.woocommerce table.shop_table th {
+    background: var(--lyli-color-surface-soft);
+    font-weight: 600;
+}
+
+.woocommerce table.shop_table td,
+.woocommerce table.shop_table th {
+    padding: 14px 16px;
+}
+
+.woocommerce a.remove {
+    color: var(--lyli-color-primary) !important;
+}
+
+.woocommerce a.remove:hover {
+    background: var(--lyli-color-primary);
+    color: #fff !important;
+}
+
+.woocommerce #respond input#submit,
+.woocommerce a.button.alt,
+.woocommerce button.button.alt,
+.woocommerce input.button.alt,
+.woocommerce button.button,
+.woocommerce a.button,
+.woocommerce input.button,
+.woocommerce .cart .button,
+.woocommerce .checkout-button {
+    background: var(--lyli-color-primary);
+    color: #fff;
+    border-radius: var(--lyli-radius-md);
+}
+
+.woocommerce #respond input#submit:hover,
+.woocommerce a.button.alt:hover,
+.woocommerce button.button.alt:hover,
+.woocommerce input.button.alt:hover,
+.woocommerce button.button:hover,
+.woocommerce a.button:hover,
+.woocommerce input.button:hover {
+    background: var(--lyli-color-secondary);
+    color: #fff;
+}
+
+.woocommerce .coupon input.input-text {
+    border-radius: var(--lyli-radius-sm);
+    border-color: var(--lyli-color-border);
+}
+
+.woocommerce form .form-row input.input-text,
+.woocommerce form .form-row textarea,
+.woocommerce form .form-row select,
+.woocommerce form.checkout_coupon,
+.woocommerce form.login,
+.woocommerce form.register {
+    border-radius: var(--lyli-radius-md);
+    border-color: var(--lyli-color-border);
+}
+
+.woocommerce form .form-row input.input-text:focus,
+.woocommerce form .form-row textarea:focus,
+.woocommerce form .form-row select:focus {
+    border-color: var(--lyli-color-primary);
+    box-shadow: 0 0 0 1px var(--lyli-color-primary);
+}
+
+.woocommerce-checkout #payment {
+    border-radius: var(--lyli-radius-md);
+    background: var(--lyli-color-surface-soft);
+}
+
+.woocommerce-checkout #payment div.payment_box {
+    background: var(--lyli-color-surface);
+}
+
+/* ==========================================================================
+   9. My Account
+   ========================================================================== */
+
+.woocommerce-account .woocommerce-MyAccount-navigation ul li a {
+    color: var(--lyli-color-text);
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation ul li.is-active a {
+    color: var(--lyli-color-primary);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   10. Footer
+   ========================================================================== */
+
+.botiga-site-footer {
+    border-top: 1px solid var(--lyli-color-border);
+}
+
+.lyli-footer-contact,
+.lyli-footer-social {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.95rem;
+}
+
+.lyli-footer-social a {
+    color: var(--lyli-color-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.lyli-footer-social a:hover {
+    color: var(--lyli-color-secondary);
+    text-decoration: underline;
+}
+
+.lyli-footer-intro {
+    color: var(--lyli-color-muted);
+    max-width: 52ch;
+}
+
+/* ==========================================================================
+   11. Forms / general
+   ========================================================================== */
+
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="tel"],
+input[type="number"],
+input[type="password"],
+select,
+textarea {
+    border-color: var(--lyli-color-border);
+    border-radius: var(--lyli-radius-sm);
+}
+
+/* ==========================================================================
+   12. Accessibility
+   ========================================================================== */
+
+:focus-visible {
+    outline: 3px solid var(--lyli-color-secondary);
+    outline-offset: 2px;
+}
+
+/* Skip link */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100000;
+    background: var(--lyli-color-primary);
+    color: #fff;
+    padding: 8px 16px;
+}
+
+.skip-link:focus {
+    left: 8px;
+    top: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ==========================================================================
+   13. Responsive
+   ========================================================================== */
+
+/* 768px and below */
+@media (max-width: 768px) {
+    .lyli-hero {
+        padding: 24px 18px;
+    }
+
+    .lyli-usp-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .woocommerce ul.products[class*="columns-"],
+    .products.columns-2,
+    .products.columns-3,
+    .products.columns-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 375px and below */
+@media (max-width: 420px) {
+    .woocommerce ul.products[class*="columns-"],
+    .products.columns-2,
+    .products.columns-3,
+    .products.columns-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .woocommerce div.product div.images {
+        margin-bottom: 24px;
+    }
+}
+
+/* Avoid horizontal overflow at every viewport */
+html,
+body {
+    overflow-x: hidden;
+}

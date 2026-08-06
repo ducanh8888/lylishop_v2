@@ -4,11 +4,11 @@ Hành động thủ công **founder/developer phải tự làm qua giao diện O
 
 ## Bắt buộc trước khi go-live công khai thật (còn mở)
 
-1. **Phát hành/gia hạn chứng chỉ SSL thật cho `lylishop.online`.** Xác nhận thật (2026-08-05): domain hiện phục vụ một **chứng chỉ self-signed placeholder** (`subject=CN=localhost`, `issuer=CN=localhost`, không có SAN) — không phải chứng chỉ hợp lệ cho tên miền. DNS đã trỏ đúng (xem mục "Đã giải quyết" bên dưới), nên hệ thống AutoSSL/Let's Encrypt của panel giờ có thể chạy domain validation — vào OnePanel → SSL, trigger phát hành/gia hạn chứng chỉ cho `lylishop.online`, xác nhận auto-renew bật.
+1. ~~**Phát hành/gia hạn chứng chỉ SSL thật cho `lylishop.online`.**~~ — **ĐÃ XONG.** Xác nhận thật (2026-08-05): domain trước đây phục vụ một **chứng chỉ self-signed placeholder** (`subject=CN=localhost`, `issuer=CN=localhost`, không có SAN). Xác nhận lại (2026-08-06): **SSL đã hợp lệ cho `lylishop.online`** — Let's Encrypt/AutoSSL với SAN đúng domain, xác minh qua Python ssl + curl `--resolve` (xem `docs/PRODUCTION-STATUS.md`). Không còn là mục bắt buộc mở; chỉ giữ lại yêu cầu theo dõi auto-renew của panel.
 
 ## Cần founder xác nhận (không phải lỗi kỹ thuật, chỉ là quyết định)
 
-2. **Collation database thực tế là `utf8mb4_general_ci`**, khác với khuyến nghị ban đầu `utf8mb4_unicode_ci` trong tài liệu trước đây. Không chặn cài đặt — WordPress/WooCommerce chạy bình thường với `utf8mb4_general_ci`. Founder xác nhận giữ nguyên hay đổi lại trước khi chạy `wp core install` (đổi collation sau khi đã có dữ liệu sẽ phức tạp hơn).
+2. ~~**Collation database cần founder xác nhận** (`utf8mb4_general_ci` so với khuyến nghị `utf8mb4_unicode_ci`).~~ — **ĐÃ GIẢI QUYẾT.** Xác nhận lại (2026-08-06): schema production Lyli có `DEFAULT_CHARACTER_SET_NAME=utf8mb4` / `DEFAULT_COLLATION_NAME=utf8mb4_unicode_ci` — đúng khuyến nghị ban đầu. Không cần đổi; database sẵn sàng cho `wp core install`.
 
 ## Tuỳ chọn / theo nhu cầu vận hành
 

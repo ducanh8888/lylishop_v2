@@ -84,12 +84,12 @@ Probe: tạo file PHP tên ngẫu nhiên 40 ký tự hex, chỉ xuất JSON các
 
 ### Diễn giải
 
-* **Web PHP hiện tại là 8.1.34, chưa phải 8.3.** PHP Selector chưa được chuyển sang 8.3 cho domain — cần hành động thủ công qua OnePanel (`docs/ONEPANEL-CHECKLIST.md`). Không thử bypass qua file công khai.
+* **Web PHP hiện tại là 8.1.34, chưa phải 8.3.** *(Ghi chú lịch sử — vẫn còn đúng cho thời điểm 2026-08-04; đã được giải quyết 2026-08-05 khi PHP Selector chuyển sang 8.3, xem "Cập nhật 2026-08-05 — Web PHP re-probe" bên dưới: web xác nhận `PHP_VERSION: 8.3.30`.)* PHP Selector chưa được chuyển sang 8.3 cho domain — cần hành động thủ công qua OnePanel (`docs/ONEPANEL-CHECKLIST.md`). Không thử bypass qua file công khai.
 * **Web server là LiteSpeed thật** (không phải Apache+mod_lsapi như suy đoán trước đây) — xác nhận dứt điểm unknown #4 trong `docs/HOSTING-AUDIT.md`. Hệ quả: dùng **LiteSpeed Cache**, không dùng WP Super Cache, theo đúng nguyên tắc TECH_STACK.md mục 8.3.
 * Document root xác nhận đúng: `/home/erxwskxohosting/public_html`.
 * `open_basedir` rỗng ở web runtime (giống CLI) — không giới hạn traversal giữa site khác trên server dùng chung; đã ghi nhận là rủi ro cần lưu ý ở `docs/HOSTING-AUDIT.md` mục 7, không phải phát hiện mới.
-* Module thiếu ở PHP 8.1 web (`zip`, `intl`, `imagick`, `opcache`, `sodium`) khớp đúng pattern đã biết ở CLI PHP 8.1. **Chưa biết** module set của PHP 8.3 web vì 8.3 chưa được chọn làm runtime — sẽ cần probe lại (hoặc kiểm tra qua panel) sau khi PHP Selector được đổi.
-* SSL: **hoạt động** khi kết nối thẳng tới IP hosting với SNI đúng tên miền — vhost/chứng chỉ cho `lylishop.online` đã tồn tại phía server dù DNS công khai chưa trỏ tới.
+* *(Lịch sử 2026-08-04)* Module thiếu ở PHP 8.1 web (`zip`, `intl`, `imagick`, `opcache`, `sodium`) khớp đúng pattern đã biết ở CLI PHP 8.1. **Chưa biết** module set của PHP 8.3 web vì 8.3 chưa được chọn làm runtime — **đã giải quyết 2026-08-05:** PHP 8.3 web xác nhận PRESENT `curl/mbstring/mysqli/pdo_mysql/dom/xml/gd/exif/fileinfo`, ABSENT `zip/intl/imagick/opcache/sodium` (đều non-blocking) — xem "Cập nhật 2026-08-05".
+* *(Lịch sử 2026-08-04)* SSL: **hoạt động** khi kết nối thẳng tới IP hosting với SNI đúng tên miền — vhost/chứng chỉ cho `lylishop.online` đã tồn tại phía server dù DNS công khai chưa trỏ tới. **Cập nhật:** DNS đã trỏ đúng (2026-08-05) và SSL đã hợp lệ cho domain (2026-08-06) — xem `docs/PRODUCTION-STATUS.md`.
 
 ## Symlink probe — HOÀN TẤT, XÁC NHẬN LAYOUT DEPLOY KHẢ THI
 
@@ -136,7 +136,7 @@ Extension matrix (PHP 8.3 web, phân loại theo yêu cầu):
 ### DNS và SSL — DNS đã đúng, SSL CHƯA hợp lệ
 
 * **DNS A record:** `lylishop.online` → `103.75.184.20` (đúng IP hosting) — **đã được founder xử lý**, không còn trỏ Vercel. AAAA: không có bản ghi (bình thường). NS: `sapa.vclouddns.com`.
-* **SSL: CHƯA hợp lệ.** Chứng chỉ hiện phục vụ tại `lylishop.online:443` là **self-signed placeholder** (`subject=CN=localhost`, `issuer=CN=localhost`, không có SAN extension) — không phải chứng chỉ thật cho domain. Nhiều khả năng do hệ thống AutoSSL/Let's Encrypt của panel cần DNS trỏ đúng trước khi phát hành được, và DNS chỉ mới đúng gần đây. **Cần hành động panel:** trigger phát hành/gia hạn SSL (Let's Encrypt hoặc tương đương) cho domain qua OnePanel — xem `docs/ONEPANEL-CHECKLIST.md`.
+* **SSL: CHƯA hợp lệ** *(trạng thái 2026-08-05, đã lỗi thời — xem cập nhật 2026-08-06 bên dưới).* Chứng chỉ hiện phục vụ tại `lylishop.online:443` là **self-signed placeholder** (`subject=CN=localhost`, `issuer=CN=localhost`, không có SAN extension) — không phải chứng chỉ thật cho domain. Nhiều khả năng do hệ thống AutoSSL/Let's Encrypt của panel cần DNS trỏ đúng trước khi phát hành được, và DNS chỉ mới đúng gần đây. **Cần hành động panel:** trigger phát hành/gia hạn SSL (Let's Encrypt hoặc tương đương) cho domain qua OnePanel — xem `docs/ONEPANEL-CHECKLIST.md`. **Cập nhật 2026-08-06: SSL ĐÃ HỢP LỆ** — xác minh thật (Python ssl + curl `--resolve https://lylishop.online`) cho `lylishop.online` với SAN đúng domain (Let's Encrypt/AutoSSL). Mục "SSL phải hợp lệ" đã đạt; chi tiết bằng chứng tại `docs/PRODUCTION-STATUS.md`.
 * Vercel edge (`216.198.79.1`) vẫn phản hồi `403` khi ép Host header `lylishop.online` — cấu hình phía Vercel không bị đụng tới, chỉ là quan sát read-only, không có hành động nào thực hiện trên Vercel.
 * `public_html` xác nhận vẫn chỉ có `index.htm` — không có file nào khác còn sót lại.
 
@@ -153,7 +153,7 @@ Extension matrix (PHP 8.3 web, phân loại theo yêu cầu):
 
 * Kết nối: **PASS**. Máy chủ: **MariaDB 11.4.10-MariaDB-cll-lve-log**.
 * Database đã chọn: **PASS**.
-* Charset: `utf8mb4`. Collation: `utf8mb4_general_ci` — **lưu ý:** khác với khuyến nghị `utf8mb4_unicode_ci` ghi trong `docs/HOSTING-AUDIT.md`/`docs/ONEPANEL-CHECKLIST.md`; không phải lỗi chặn cài đặt (Bedrock/WordPress hoạt động bình thường với `utf8mb4_general_ci`), nhưng nên xác nhận với founder có muốn đổi lại `utf8mb4_unicode_ci` trước khi `wp core install` hay chấp nhận collation hiện tại — chưa tự ý đổi.
+* Charset: `utf8mb4`. Collation: `utf8mb4_general_ci` *(trạng thái 2026-08-05 — đã lỗi thời, xem cập nhật 2026-08-06 cuối tài liệu)* — **lưu ý lịch sử:** phát hiện này đọc server default mà không chọn đúng schema; xác nhận lại 2026-08-06 trên đúng schema Lyli cho kết quả `utf8mb4` / `utf8mb4_unicode_ci` — **đúng khuyến nghị ban đầu, không cần đổi**.
 * Số bảng ban đầu: **0** — safety gate PASS ("zero application tables, probe authorized").
 * **Privilege probe: PASS toàn bộ** — CREATE TABLE, INSERT, SELECT (xác minh đúng giá trị ghi vào), UPDATE, CREATE INDEX, ALTER TABLE, DROP TABLE đều thành công trên một bảng tên ngẫu nhiên (prefix `privtest_` + 16 hex ngẫu nhiên), giới hạn trong đúng database Lyli. Không test CREATE/DROP DATABASE, quyền toàn cục, FILE/SUPER, hay truy cập database khác.
 * Sau khi DROP, số bảng quay lại đúng **0** — xác nhận dọn dẹp sạch, không còn bảng tạm nào.
@@ -183,8 +183,8 @@ Không có commit mới trước bước này nên không có run mới cần ch
 
 ### Còn lại sau phiên 2026-08-05
 
-1. **SSL chưa hợp lệ cho domain** — cần trigger AutoSSL/Let's Encrypt qua OnePanel trước khi go-live công khai qua HTTPS thật (không chặn việc cài đặt qua SSH/WP-CLI).
-2. Xác nhận với founder về collation `utf8mb4_general_ci` (thực tế) so với `utf8mb4_unicode_ci` (khuyến nghị ban đầu) — quyết định giữ nguyên hay đổi trước `wp core install`.
+1. ~~**SSL chưa hợp lệ cho domain**~~ — **ĐÃ GIẢI QUYẾT 2026-08-06:** SSL hợp lệ cho `lylishop.online` (xác minh Python ssl + curl `--resolve`; SAN đúng domain). Chi tiết: `docs/PRODUCTION-STATUS.md`.
+2. ~~Xác nhận với founder về collation `utf8mb4_general_ci`~~ — **ĐÃ GIẢI QUYẾT 2026-08-06:** schema Lyli thực tế là `utf8mb4_unicode_ci` (probe đúng schema; KQ cũ là server default). Không cần đổi.
 3. Màu nền/kem cuối cùng và thiết kế placeholder ảnh — vẫn mở theo `docs/THEME-DECISION-BRIEF.md`, không liên quan cài đặt kỹ thuật.
 
 ## Ranh giới credential (nhắc lại, không đổi)

@@ -9,7 +9,7 @@ Trạng thái tại thời điểm audit (2026-08-03): **chưa có plugin nào �
 | Theme | Version baseline | Nguồn | License | Trạng thái | Ghi chú |
 |---|---|---|---|---|---|
 | Botiga Free | 2.4.7 | wpackagist (`wpackagist-theme/botiga`) — xác nhận trực tiếp qua `composer show --all` trên `commerce-host` (2026-08-04) | GPL | Đã chốt theme cha V1, đã có trong `composer.json` (`docs/THEME-DECISION.md`) | Bản Pro không được phép mua/dùng (`docs/THEME-DECISION.md`) |
-| `shop-child` | 0.1.0 (skeleton + design tokens) | `web/app/themes/shop-child/` trong repo này | Nội bộ | Đã chốt là child theme, token màu/typography đã ghi nhận, chưa style hóa CSS | `Template: botiga`; token tại `inc/design-tokens.php` (chưa wire vào output) |
+| `shop-child` | 1.0.0 (V1 storefront đầy đủ) | `web/app/themes/shop-child/` trong repo này | Nội bộ | Đã chốt là child theme; token màu/typography đã wire vào output; storefront V1 (trang chủ, product archive/single, Classic Cart/Checkout styling, block patterns Gutenberg, responsive/accessibility) — `docs/PRODUCTION-STATUS.md` | `Template: botiga`; token tại `inc/design-tokens.php` (đã được `functions.php` nạp); versions: `Requires at least`/`Requires PHP` khớp test thực tế |
 | Storefront | 4.6.2 | wpackagist (`wpackagist-theme/storefront`, đã có trong `composer.json`) | GPL | Fallback cấp 2, không phải lựa chọn chính | Giữ trong `composer.json` làm baseline tương thích khẩn cấp — xem `docs/THEME-DECISION.md` điều kiện kích hoạt |
 
 ## Plugin bắt buộc (Tier A)

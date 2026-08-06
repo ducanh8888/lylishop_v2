@@ -69,3 +69,12 @@ jobs:
 
       - name: composer audit
         run: composer audit --locked
+
+      - name: Storefront static validation (theme, MU plugins, patterns, hygiene)
+        # Credential-free repository validator: required shop-child/site-settings/
+        # bootstrap files, Template: botiga header, no page builders/Botiga Pro,
+        # no WooCommerce template overrides, manifest allow-list, no committed
+        # secrets/fonts/uploads, Settings API sanitizers + nonce + capability
+        # checks, 8 controlled block patterns, bootstrap --apply guard,
+        # theme.json parses and declares no FSE block templates.
+        run: php scripts/validate-storefront.php

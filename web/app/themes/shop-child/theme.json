@@ -1,0 +1,140 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.0/theme.json",
+  "version": 2,
+  "settings": {
+    "appearanceTools": true,
+    "layout": {
+      "contentSize": "730px",
+      "wideSize": "1140px"
+    },
+    "color": {
+      "palette": [
+        {
+          "name": "Nâu chính (primary)",
+          "slug": "lyli-primary",
+          "color": "#7A3B17"
+        },
+        {
+          "name": "Nâu phụ (secondary)",
+          "slug": "lyli-secondary",
+          "color": "#8A4A23"
+        },
+        {
+          "name": "Nền trắng",
+          "slug": "lyli-white",
+          "color": "#FFFFFF"
+        },
+        {
+          "name": "Nền nhạt trung tính",
+          "slug": "lyli-surface-soft",
+          "color": "#F8F5F2"
+        },
+        {
+          "name": "Chữ chính",
+          "slug": "lyli-text",
+          "color": "#2D2A26"
+        },
+        {
+          "name": "Chữ mờ",
+          "slug": "lyli-text-muted",
+          "color": "#6B6560"
+        },
+        {
+          "name": "Viền",
+          "slug": "lyli-border",
+          "color": "#E4DED8"
+        }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "fontFamily": "\"Fraunces\", Georgia, \"Times New Roman\", serif",
+          "slug": "lyli-heading",
+          "name": "Lyli Heading"
+        },
+        {
+          "fontFamily": "\"Be Vietnam Pro\", \"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
+          "slug": "lyli-body",
+          "name": "Lyli Body"
+        }
+      ],
+      "fontSizes": [
+        {
+          "name": "Small",
+          "slug": "small",
+          "size": "14px"
+        },
+        {
+          "name": "Normal",
+          "slug": "normal",
+          "size": "16px"
+        },
+        {
+          "name": "Large",
+          "slug": "large",
+          "size": "18px"
+        },
+        {
+          "name": "Larger",
+          "slug": "larger",
+          "size": "24px"
+        },
+        {
+          "name": "Extra large",
+          "slug": "extra-large",
+          "size": "32px"
+        },
+        {
+          "name": "Huge",
+          "slug": "huge",
+          "size": "48px"
+        },
+        {
+          "name": "Gigantic",
+          "slug": "gigantic",
+          "size": "64px"
+        }
+      ]
+    },
+    "spacing": {
+      "spacingSizes": [
+        {
+          "name": "xxs",
+          "slug": "20",
+          "size": "0.5rem"
+        },
+        {
+          "name": "xs",
+          "slug": "30",
+          "size": "0.75rem"
+        },
+        {
+          "name": "sm",
+          "slug": "40",
+          "size": "1rem"
+        },
+        {
+          "name": "md",
+          "slug": "50",
+          "size": "1.5rem"
+        },
+        {
+          "name": "lg",
+          "slug": "60",
+          "size": "2rem"
+        },
+        {
+          "name": "xl",
+          "slug": "70",
+          "size": "3rem"
+        },
+        {
+          "name": "xxl",
+          "slug": "80",
+          "size": "4rem"
+        }
+      ]
+    }
+  }
+}

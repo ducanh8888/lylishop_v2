@@ -2,6 +2,8 @@
 
 Trình tự **tương lai**. Mỗi bước ghi rõ có cần **xác nhận rõ ràng (explicit authorization)** trước khi chạy hay không, và trạng thái thực tế tính đến 2026-08-05. Đây vẫn là kế hoạch cho các bước chưa làm, không phải cho phép tự động tiếp tục. Điều kiện tiên quyết trước khi bắt đầu bước 8: DNS đã đúng (✅ xác nhận 2026-08-05) và web PHP là 8.3.x (✅ xác nhận 2026-08-05) — cả hai xem `docs/INSTALLATION-PREPARATION.md`.
 
+**Cập nhật 2026-08-06 — cấp phép một lần (one-time authorization):** founder cấp một lần cho nhiệm vụ triển khai storefront V1 (xem `docs/PRODUCTION-STATUS.md`) bao gồm cả các bước 8–15 của bảng dưới và public cutover có kiểm soát — **không** làm suy yếu chính sách phê duyệt chung cho các lần deploy sau, và **không** tái sử dụng làm ủy quyền cho bất kỳ nhiệm vụ tương lai nào.
+
 | # | Bước | Trạng thái | Cần xác nhận rõ ràng? |
 |---|---|---|---|
 | 1 | Founder tạo database trong OnePanel (tên DB, user, password, charset `utf8mb4`) | **ĐÃ XONG** (founder, trước phiên 2026-08-05) | Không áp dụng — founder tự thực hiện, ngoài phạm vi agent |
@@ -26,5 +28,5 @@ Trình tự **tương lai**. Mỗi bước ghi rõ có cần **xác nhận rõ r
 * Mọi bước đánh dấu **CÓ** phải dừng lại và xin xác nhận rõ ràng trước khi chạy, kể cả khi bước trước đó đã được cho phép — không suy ra sự cho phép cho bước tiếp theo.
 * Bước 8 (cài WordPress) và bước 14 (xoá `index.htm`) là hai điểm không thể đảo ngược dễ dàng nhất trong toàn runbook — luôn tách riêng, không gộp vào một lần phê duyệt chung với các bước khác.
 * Rollback: nếu bất kỳ bước 4–11 thất bại, dùng `scripts/production-rollback.sh` để phục hồi release trước hoặc database từ backup bước 4 — xem `docs/DEPLOYMENT.md` và `docs/BACKUP-RESTORE.md`.
-* DNS: **đã xác nhận đúng** kể từ 2026-08-05 (`lylishop.online` → IP hosting) — không còn là điều kiện chặn bước 9. SSL công khai vẫn là self-signed placeholder (`docs/ONEPANEL-CHECKLIST.md` mục 1) — nên phát hành chứng chỉ thật trước khi coi go-live công khai là hoàn tất, dù điều này không chặn các bước cài đặt qua SSH/WP-CLI.
+* DNS: **đã xác nhận đúng** kể từ 2026-08-05 (`lylishop.online` → IP hosting) — không còn là điều kiện chặn bước 9. ~~SSL công khai vẫn là self-signed placeholder~~ — **ĐÃ HẾT HIỆU LỰC:** xác nhận 2026-08-06 SSL hợp lệ cho `lylishop.online` (Let's Encrypt/AutoSSL, SAN đúng domain) — xem `docs/ONEPANEL-CHECKLIST.md` mục 1 (đã đánh dấu ĐÃ XONG) và `docs/PRODUCTION-STATUS.md`.
 * WP-CLI `--path`: mọi lệnh `wp` trong runbook và trong `scripts/production-deploy.sh` phải trỏ vào thư mục Bedrock `web/` (nơi có `wp-config.php`), **không phải** `web/wp` (chỉ chứa core WordPress) — một lỗi dùng sai `web/wp` đã được tìm thấy và sửa trong `scripts/production-deploy.sh` ngày 2026-08-05 (`docs/INSTALLATION-PREPARATION.md`).
