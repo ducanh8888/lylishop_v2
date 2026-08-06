@@ -1,0 +1,61 @@
+# Lyli Shop — Bedrock webroot routing (LiteSpeed/Apache compatible).
+# Portable, no hosting paths hard-coded. Rooted at <docroot = apps/lylishop/<release>/web>.
+#
+# Bedrock layout:
+#   /wp/                 WordPress core (web/wp)
+#   /index.php           WordPress view bootstrapper (front controller)
+#   /app/                wp-content equivalent (CONTENT_DIR=/app)
+#   /.env                shared secret (never served)
+#
+# This file is deployed inside the release (tracked), not hand-edited after.
+
+# ---------------------------------------------------------------------------
+# Pretty permalinks (front controller to web/index.php)
+# ---------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# If the request is not for an existing file or directory, send it to the
+# WordPress front controller (Bedrock web/index.php -> web/wp/wp-blog-header.php).
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Deny hidden files (incl. .env, .git, composer metadata, backups)
+# ---------------------------------------------------------------------------
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Explicitly deny well-known sensitive files anywhere under the webroot.
+<FilesMatch "\.(env|sql|sql\.gz|gz|tar|tar\.gz|zip|bak|log|ini|pem|key|ppk)$">
+    Require all denied
+</FilesMatch>
+
+# Deny Composer metadata (composer.json / composer.lock) — not needed publicly.
+<FilesMatch "^(composer\.json|composer\.lock|auth\.json)$">
+    Require all denied
+</FilesMatch>
+
+# Deny directory listing everywhere.
+Options -Indexes
+
+# ---------------------------------------------------------------------------
+# Hardening headers (best-effort)
+# ---------------------------------------------------------------------------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Performance (safe defaults)
+# ---------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>

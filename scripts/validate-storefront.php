@@ -41,6 +41,7 @@ $required_theme_files = [
     'web/app/themes/shop-child/style.css',
     'web/app/themes/shop-child/functions.php',
     'web/app/themes/shop-child/theme.json',
+    'web/.htaccess',
     'web/app/themes/shop-child/inc/design-tokens.php',
     'web/app/themes/shop-child/inc/enqueue.php',
     'web/app/themes/shop-child/inc/announcement.php',
