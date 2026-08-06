@@ -43,6 +43,14 @@ jobs:
       - name: composer install (from committed composer.lock)
         run: composer install --no-interaction --prefer-dist --no-progress --no-scripts
 
+      - name: Bedrock bootstrap validation (synthetic .env, no DB)
+        # Requires web/wp-config.php and web/index.php to exist and be tracked,
+        # loads config/application.php with a temporary synthetic non-secret .env,
+        # asserts ABSPATH / WP_CONTENT_DIR / WP_CONTENT_URL / charset / collation /
+        # WP_ENV / WP_ENVIRONMENT_TYPE / production hardening, then deletes the
+        # synthetic .env. Fails CI if any of those are wrong or missing.
+        run: php scripts/validate-bedrock-bootstrap.php
+
       - name: PHP lint (php -l on every tracked .php file)
         run: |
           status=0

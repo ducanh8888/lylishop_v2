@@ -43,7 +43,8 @@ Tên biến khớp với `.env.example` đã có trong repo — không đổi t�
 
 ## Không thuộc phạm vi `.env` nhưng cũng là credential tương lai
 
-* Mật khẩu tài khoản WordPress Administrator (`developer_admin`) — tạo lúc `wp core install`, không lưu trong `.env`.
+* WP_ADMIN_EMAIL / WP_ADMIN_USER / WP_ADMIN_PASSWORD — **installation inputs** chỉ dùng cho `wp core install` (được đọc từ `.env` lúc cài, như `docs/PRODUCTION-INSTALL-RUNBOOK.md` bước 8), **không phải** hằng số cấu hình runtime của WordPress và không được đọc bởi `config/application.php`. Không bao giờ in hoặc expose giá trị của chúng.
+* Mật khẩu tài khoản WordPress Administrator — được truyền qua `WP_ADMIN_PASSWORD` ở bước cài đặt, không lưu dưới bất kỳ hình thức nào trong repository.
 * License key của plugin thương mại (WooCommerce Product Bundles, Smart Coupons, SePay Gateway, Vietnam Store Toolkit nếu trả phí) — lưu theo cơ chế riêng của từng plugin, không lưu trong repo (`docs/PLUGIN-MANIFEST.md`).
 * Thông tin tài khoản ngân hàng cho BACS/SePay — cấu hình trong WooCommerce settings sau khi cài, không phải biến môi trường.
 * Backup-service credentials (nếu UpdraftPlus dùng remote storage) — cấu hình trong plugin, không lưu trong repo.

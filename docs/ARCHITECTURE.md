@@ -45,6 +45,19 @@ Xem `web/app/mu-plugins/site-policy/` — đăng ký role, capability, ẩn menu
 
 `WP_ENV` chọn giữa `development` (DDEV local) và `production` — không có `staging` (Amendment 2026-08-03). Override tương ứng nằm trong `config/environments/`. Biến môi trường thật nằm trong `.env` (không commit); mẫu ở `.env.example`.
 
+## Executable bootstrap (Bedrock entrypoints — TRACKED)
+
+`web/wp-config.php` và `web/index.php` là entrypoint Bedrock được track trong repository (không phải file sinh bởi Composer):
+
+- `web/wp-config.php` — nạp `vendor/autoload.php` → `config/application.php` → `ABSPATH . 'wp-settings.php'`.
+- `web/index.php` — frontend bootstrapper chuẩn Bedrock (`WP_USE_THEMES` + `web/wp/wp-blog-header.php`).
+
+Cấu hình thật nằm ở `config/application.php` + `config/environments/`, **không** sửa hai entrypoint này. Kiểm tra bootstrap bắt buộc chạy trong CI: `scripts/validate-bedrock-bootstrap.php` (synthetic `.env`, không DB, không `wp-settings.php`).
+
+## Debug log production (quyết định 2026-08-06)
+
+`WP_DEBUG_LOG = false` trong `config/application.php` và `config/environments/production.php`. Lý do: khi `WP_CONTENT_DIR` trỏ vào `web/app`, một giá trị `true` sẽ tạo `web/app/debug.log` nằm trong document root công khai (LiteSpeed serve `web/` trực tiếp). Chưa có cơ chế log-path không công khai di động cho mô hình shared-host này, nên chọn tắt debug logging production thay vì expose log.
+
 ## Hạ tầng thực tế (đã audit)
 
 Xem toàn bộ `docs/HOSTING-AUDIT.md`. Tóm tắt:
