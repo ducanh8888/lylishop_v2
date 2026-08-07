@@ -6,6 +6,38 @@
 
 namespace SitePolicy\Menu;
 
+/**
+ * Botiga hard-codes manage_options for its dashboard page. Give shop owners
+ * access only while rendering that exact page; never persist or broadly grant
+ * manage_options, and never extend the exception to AJAX/action endpoints.
+ *
+ * @param array<string,bool> $allcaps
+ * @param string[]           $caps
+ * @param mixed[]            $args
+ * @return array<string,bool>
+ */
+function allow_owner_botiga_dashboard(array $allcaps, array $caps, array $args, \WP_User $user): array
+{
+    if (($args[0] ?? '') !== 'manage_options') {
+        return $allcaps;
+    }
+
+    if (! in_array(\SitePolicy\ROLE_OWNER, (array) $user->roles, true)) {
+        return $allcaps;
+    }
+
+    if (! is_admin() || wp_doing_ajax() || ($GLOBALS['pagenow'] ?? '') !== 'admin.php') {
+        return $allcaps;
+    }
+
+    $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
+    if ($page === 'botiga-dashboard' && ! empty($allcaps[\SitePolicy\MANAGE_LYLI_SITE])) {
+        $allcaps['manage_options'] = true;
+    }
+
+    return $allcaps;
+}
+
 function filter_admin_menu(): void
 {
     $user = wp_get_current_user();
@@ -79,6 +111,7 @@ function render_appearance_page(): void
         <p>
             <a class="button button-primary" href="<?php echo esc_url($customize_url); ?>"><?php esc_html_e('Mở Logo & giao diện', 'site-policy'); ?></a>
             <a class="button" href="<?php echo esc_url(admin_url('nav-menus.php')); ?>"><?php esc_html_e('Sửa menu điều hướng', 'site-policy'); ?></a>
+            <a class="button" href="<?php echo esc_url(admin_url('admin.php?page=botiga-dashboard')); ?>"><?php esc_html_e('Mở Botiga Dashboard', 'site-policy'); ?></a>
         </p>
         <p class="description"><?php esc_html_e('Cài đặt, đổi hoặc sửa mã giao diện bị khóa và cần nhà phát triển.', 'site-policy'); ?></p>
     </div>
