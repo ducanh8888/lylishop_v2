@@ -21,7 +21,7 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 
 | Mục | Kết quả |
 |---|---|
-| Deployed source commit | `ae16b451e896c0a40b16767f6c9daf220ab3d8d6` |
+| Deployed source commit | `66c2105aa1345bfc47bfeb4b40c6a7f63bebafa8` |
 | Deployment gate | WSL/local validators; GitHub Actions chỉ cung cấp thông tin, không chặn deploy |
 | Domain/DNS | `lylishop.online` → `103.75.184.20` — đúng hosting |
 | SSL/public routes | HTTPS hợp lệ; Home, Shop, Cart, Checkout, My Account và trang đăng nhập admin trả HTTP 200 |
@@ -32,9 +32,10 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 | Code policy | `DISALLOW_FILE_MODS=true`, `DISALLOW_FILE_EDIT=true`; nội dung/cấu hình cửa hàng vẫn chỉnh trong WP Admin |
 | WP-CLI path trên host | `--path=apps/lylishop/current/web/wp` |
 | `public_html` | Symlink → `apps/lylishop/current/web`; bản provider cũ giữ tại `shared/rollback/provider-public_html-20260807135123` |
-| `apps/lylishop/current` | → `releases/20260807183254` |
-| Release rollback | `releases/20260807164746` |
-| Backup gần nhất | `shared/backups/20260807183505/database.sql.gz` (qua `gzip -t`) |
+| Theme integration | Một semantic footer do Botiga render; nội dung Lyli đi qua hook nội bộ của footer builder; `theme.json` là nguồn token chuẩn và không còn bị palette Botiga ghi đè |
+| `apps/lylishop/current` | → `releases/20260807185540` |
+| Release rollback | `releases/20260807183254` |
+| Backup gần nhất | `shared/backups/20260807185653/database.sql.gz` (qua `gzip -t`) |
 | `.env` | `shared/.env` mode 600, ngoài `public_html`, owner đúng |
 | Baseline content | 8 trang publish, 4 policy draft, 5 danh mục sản phẩm, 0 sản phẩm; mọi payment gateway tắt |
 | Mốc đạt được | 1–5; chưa đạt commerce launch readiness |
@@ -53,3 +54,4 @@ Chính sách phê duyệt chung cho lần deploy sau **không** bị suy yếu. 
 - **2026-08-06 (trước nhiệm vụ này):** phát hiện thiếu `web/wp-config.php`/`web/index.php` → sửa Bedrock bootstrap (commit `f1f6049`), CI xanh; SSL đã hợp lệ; schema collation xác nhận `utf8mb4_unicode_ci`; release baseline `20260806144016-f1f6049` build/upload/extract xong.
 - **2026-08-06–07:** hoàn tất storefront V1, cài WordPress/WooCommerce, bootstrap nội dung nền và public cutover; release `20260807164746` được giữ làm rollback.
 - **2026-08-07:** phase ổn định kiến trúc: pin plugin drift vào Composer, clean-snapshot artifact, khôi phục production code locks, gỡ Botiga capability shim, deploy release `20260807183254`; MCP Lyli và public smoke test PASS.
+- **2026-08-07:** phase tích hợp theme: loại footer kép, giữ một footer semantic của Botiga, chuyển token sang `theme.json`, chặn Botiga ghi đè palette và thêm cache version riêng cho child stylesheet; deploy release `20260807185540`.

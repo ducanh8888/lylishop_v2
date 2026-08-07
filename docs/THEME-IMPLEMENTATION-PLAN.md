@@ -15,7 +15,7 @@ Mô tả trình tự triển khai **trong tương lai**. Không có bước nào
 4. **Enqueue asset cha/con đúng cách.**
    `wp_enqueue_style` cho style cha (Botiga) làm dependency của style con — đã có khung enqueue tối thiểu trong `functions.php` (handle `botiga-parent`); tôn trọng cấu trúc asset thật của Botiga (không giả định tên file `style.css` là toàn bộ CSS cha — cần kiểm tra Botiga có tách CSS theo module hay không, chỉ xác nhận được sau khi cài đặt thật, chưa làm ở bước này).
 5. **Đưa design token vào — NỀN TẢNG ĐÃ GHI, CHƯA WIRE VÀO OUTPUT.**
-   Màu nâu chính/phụ đã chốt 2026-08-04 (vòng 2): `#7A3B17` primary, `#8A4A23` secondary/soft. Token đã ghi lại tại `web/app/themes/shop-child/inc/design-tokens.php` và `docs/THEME-DECISION.md` mục 11 — **file này chưa được `require` từ `functions.php` và chưa xuất ra CSS nào**, chỉ là nguồn tham chiếu. Bước này (wire token thành CSS custom properties thật, dùng trong component) vẫn là việc **chưa làm**, cần thực hiện khi bắt đầu style hóa thật. Màu nền/kem vẫn là candidate — xem `docs/THEME-DECISION.md` mục 11.
+   Màu nâu chính/phụ đã chốt 2026-08-04 (vòng 2): `#7A3B17` primary, `#8A4A23` secondary/soft. **Hoàn tất 2026-08-07:** token nằm tại `web/app/themes/shop-child/theme.json`, được WordPress resolve thành preset cho frontend/Gutenberg; CSS child chỉ dùng alias semantic. Filter palette của Botiga 2.4.7 đã được gỡ có kiểm soát để không ghi đè token child.
 6. **Đăng ký typography.**
    Fraunces (heading), Be Vietnam Pro (body/CTA), Aristotelica Pro (chỉ nơi logo yêu cầu) — self-hosted hoặc qua phương án đã duyệt, không phụ thuộc Google Fonts runtime nếu chính sách privacy/hiệu năng yêu cầu khác (cần xác nhận riêng, chưa có quyết định).
 7. **Header và mobile navigation.**

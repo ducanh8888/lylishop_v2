@@ -89,7 +89,7 @@ Không mở lại quyết định chỉ vì sở thích thị giác hoặc vì m
 
 ## 11. Design tokens (nền tảng — đã wire vào output từ 2026-08-06)
 
-Ghi lại token đã được founder chốt (2026-08-04, vòng 2) làm nền tảng cho bước "5. Đưa design token vào" của `docs/THEME-IMPLEMENTATION-PLAN.md`. **Cập nhật trạng thái 2026-08-06:** token đã được wire vào output thật trong `shop-child` — `inc/design-tokens.php` được `functions.php` nạp, CSS custom properties + editor presets (theme.json child) được sinh từ token; các component V1 (header, product card, CTA, footer, Classic Cart/Checkout) đã style bằng token này. Ghi chú lịch sử: trước 2026-08-06 file này chỉ là "token foundation chưa implement" — chỉ còn là lịch sử.
+Ghi lại token đã được founder chốt (2026-08-04, vòng 2) làm nền tảng cho bước "5. Đưa design token vào" của `docs/THEME-IMPLEMENTATION-PLAN.md`. **Cập nhật trạng thái 2026-08-07:** `shop-child/theme.json` là nguồn token chuẩn; frontend/editor CSS tham chiếu các biến preset WordPress thay vì lặp lại palette trong PHP. Child theme gỡ đúng filter `botiga_filter_theme_json_data_theme` vì Botiga 2.4.7 dùng filter này để ghi đè toàn bộ palette child bằng palette Customizer. Các component V1 vẫn dùng token semantic.
 
 ### Màu — đã chốt
 
