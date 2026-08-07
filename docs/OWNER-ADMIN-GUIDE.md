@@ -8,12 +8,12 @@ Sau khi đăng nhập, WordPress mở **Lyli Shop — Khu vực chủ cửa hàn
 
 - **Sửa trang chủ:** mở trang chủ trong trình sửa khối. Bấm trực tiếp vào chữ để sửa; kéo khối để đổi thứ tự; mở menu ba chấm của khối để ẩn/xóa một mục.
 - **Đổi ảnh hero hoặc ảnh trong trang:** chọn vùng ảnh, bấm **Thay thế**, rồi chọn ảnh trong Media hoặc tải ảnh mới lên. Nhập văn bản thay thế ngắn gọn cho ảnh.
-- **Sản phẩm:** vào **Sản phẩm** để sửa; **Thêm sản phẩm** để tạo mới. Điền tên, mô tả, ảnh, giá, danh mục và thuộc tính/biến thể nếu cần. Lưu nháp trước khi xem lại.
+- **Sản phẩm:** hiện để trống theo quyết định của chủ shop. Chỉ vào **Sản phẩm → Thêm sản phẩm** khi shop sẵn sàng mở catalogue; không cần tạo sản phẩm để sửa nội dung trang hoặc gallery.
 - **Danh mục:** vào **Danh mục** dưới Sản phẩm. Năm danh mục chính là Móc khóa len, Gấu bông len, Hoa len, Hộp quà và Đặt mẫu theo yêu cầu.
 - **Menu:** vào **Giao diện → Menu điều hướng**. Thêm/bớt trang, kéo để đổi thứ tự, rồi bấm lưu menu.
 - **Logo và giao diện:** vào **Giao diện → Logo & giao diện**. Dùng Customizer để đổi logo, nhận diện website và các tùy chọn Botiga được phép; bấm **Đăng** để lưu.
 - **Footer, liên hệ, mạng xã hội, thông báo:** vào **Lyli Shop → Cài đặt giao diện**. Để trống trường nào thì phần tương ứng sẽ tự ẩn.
-- **Trang và bài viết:** dùng **Trang** cho nội dung tĩnh; dùng **Bài viết** cho blog. Các trang chính sách giữ ở trạng thái nháp cho tới khi nội dung thật được duyệt.
+- **Trang và bài viết:** dùng **Trang** để sửa toàn bộ section Gutenberg đã publish; dùng **Bài viết** để sửa 5 bài blog và featured image. Privacy, Terms, Shipping và Returns đều đang public từ nội dung nguồn đã duyệt cho lần import này.
 - **Media:** quản lý ảnh đã tải lên. Nên dùng ảnh rõ, cùng tỷ lệ và dung lượng vừa phải.
 - **Đơn hàng:** mở **Đơn hàng** hoặc màn hình WooCommerce tương ứng để xử lý vận hành.
 

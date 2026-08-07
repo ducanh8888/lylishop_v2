@@ -17,27 +17,27 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 
 > Mốc 6 yêu cầu phê duyệt riêng và **không** thuộc phạm vi nhiệm vụ hiện tại.
 
-## Trạng thái hiện tại (2026-08-07)
+## Trạng thái hiện tại (2026-08-08)
 
 | Mục | Kết quả |
 |---|---|
-| Deployed source commit | `90bc591ef184c51b1bcdd57feb56b21445ca0134` |
+| Deployed source commit | `ea79f4ef688c285883637e738a4b0cd515afa7a4` |
 | Deployment gate | WSL/local validators; GitHub Actions chỉ cung cấp thông tin, không chặn deploy |
 | Domain/DNS | `lylishop.online` → `103.75.184.20` — đúng hosting |
 | SSL/public routes | HTTPS hợp lệ; Home, Shop, Cart, Checkout, My Account và trang đăng nhập admin trả HTTP 200 |
 | Web PHP | `8.3.30` (LiteSpeed) |
 | WordPress/storefront | WordPress 7.0.2 đã cài; `shop-child` active trên Botiga 2.4.7; WooCommerce 10.9.4 active |
 | Plugin runtime | AI Engine 3.7.0 và WooCommerce 10.9.4 active; aThemes Starter Sites đã deactivate và gỡ khỏi Composer/artifact vì không có runtime dependency |
-| MU plugin / CLI | Bedrock autoloader active; Lyli settings hook có mặt; `wp lyli bootstrap init --dry-run` chạy thành công |
+| MU plugin / CLI | Bedrock autoloader active; Lyli settings hook có mặt; `wp lyli bootstrap` và `wp lyli editorial` khả dụng |
 | Code policy | `DISALLOW_FILE_MODS=true`, `DISALLOW_FILE_EDIT=true`; nội dung/cấu hình cửa hàng vẫn chỉnh trong WP Admin |
 | WP-CLI path trên host | `--path=apps/lylishop/current/web/wp` |
 | `public_html` | Symlink → `apps/lylishop/current/web`; bản provider cũ giữ tại `shared/rollback/provider-public_html-20260807135123` |
-| Theme integration | Một semantic footer do Botiga render; `theme.json` là nguồn token chuẩn; child CSS còn 494 dòng trong một visual system; compatibility layer loại Starter Sites khi importer không khả dụng để Botiga Dashboard không redirect sang page lỗi |
-| `apps/lylishop/current` | → `releases/20260807205828` |
-| Release rollback | `releases/20260807190413` |
-| Backup gần nhất | `shared/backups/20260807190537/database.sql.gz` (qua `gzip -t`) |
+| Theme integration | Giữ Gutenberg storefront gốc; thêm editorial gallery/FAQ/contact/blog cards; header desktop hai hàng để menu nguồn không chồng lấn |
+| `apps/lylishop/current` | → `releases/20260808001500` |
+| Release rollback | `releases/20260808001052`; full pre-editorial rollback `releases/20260807205828` |
+| Backup gần nhất | `shared/backups/20260808001000/{database.sql.gz,uploads.tar.gz}` (gzip/tar integrity pass) |
 | `.env` | `shared/.env` mode 600, ngoài `public_html`, owner đúng |
-| Baseline content | 8 trang publish, 4 policy draft, 5 danh mục sản phẩm, 0 sản phẩm; mọi payment gateway tắt |
+| Baseline content | 5 blog, 25 ảnh nguồn, 9 trang editorial/policy publish, 0 sản phẩm; promotion tắt; mọi payment gateway tắt |
 | Mốc đạt được | 1–5; chưa đạt commerce launch readiness |
 
 ## Bản ghi cấp phép một lần (2026-08-06)
@@ -57,3 +57,4 @@ Chính sách phê duyệt chung cho lần deploy sau **không** bị suy yếu. 
 - **2026-08-07:** phase tích hợp theme: loại footer kép, giữ một footer semantic của Botiga, chuyển token sang `theme.json`, chặn Botiga ghi đè palette và thêm cache version riêng cho child stylesheet; deploy release `20260807185540`.
 - **2026-08-07:** phase dọn storefront: xóa khối CSS legacy trùng lặp (923 → 494 dòng), nâng `shop-child` lên 1.2.0 và gỡ aThemes Starter Sites khỏi runtime; deploy release `20260807190413`.
 - **2026-08-07:** sửa Botiga Dashboard tương thích với `DISALLOW_FILE_MODS`: loại tab/menu Starter Sites khi importer không có hook, giữ nguyên code locks và deploy release `20260807205828`.
+- **2026-08-08:** bổ sung editorial content theo cấu trúc Gutenberg hiện có: 5 blog, 25 ảnh, 4 policy public, menu nguồn; giữ 0 sản phẩm và promotion tắt; deploy release `20260808001500`. Chi tiết tại `docs/EDITORIAL-CONTENT-IMPORT-2026-08-08.md`.

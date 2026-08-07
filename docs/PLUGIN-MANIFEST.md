@@ -26,6 +26,12 @@ Manifest này phản ánh dependency có thể tái tạo từ `composer.lock`. 
 | Simple History | 5.29.0 | wpackagist (`simple-history`) | GPL | Bắt buộc | Developer | Audit log (DB table riêng) | DB dump | Deactivate | Thấp |
 | `site-policy` (MU plugin nội bộ) | 0.1.0 | `web/app/mu-plugins/site-policy/` trong repo này | Nội bộ | Bắt buộc | Developer | Không lưu dữ liệu ngoài role/capability trong DB WP chuẩn | DB dump | Xóa thư mục — role về mặc định WordPress | Thấp — không chứa business logic (giới hạn ở `site-policy.php` mục doc-block) |
 
+## MU plugin editorial nội bộ
+
+| Plugin | Nguồn | Vai trò | Dữ liệu |
+|---|---|---|---|
+| `lyli-editorial-import` | `web/app/mu-plugins/lyli-editorial-import/` | Import idempotent pages/blog/media/menu/settings; không tạo sản phẩm | WordPress posts, attachments, options và menu; manifest tracking trong option `lyli_editorial_import_manifest` |
+
 ## Plugin thương mại bắt buộc theo phạm vi (⚠️ xem mâu thuẫn #1, `docs/HOSTING-AUDIT.md` mục 14)
 
 | Extension | Version baseline | Nguồn | License | Trạng thái | Ghi chú |
