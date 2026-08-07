@@ -281,7 +281,7 @@ a:hover { color: var(--lyli-color-secondary); }
     border-radius: 50%;
 }
 .lyli-hero-grid { gap: clamp(28px, 5vw, 72px); }
-.lyli-hero h1 { font-size: clamp(2.7rem, 5.7vw, 5rem) !important; max-width: 12ch; margin: 14px 0 22px; }
+.lyli-hero h1 { font-size: clamp(2.8rem, 4.2vw, 3.75rem) !important; max-width: 15ch; margin: 14px 0 22px; word-break: normal; overflow-wrap: normal; }
 .lyli-hero-copy { max-width: 48ch; color: var(--lyli-color-muted); margin-bottom: 30px; }
 .lyli-hero-visual {
     overflow: hidden;
