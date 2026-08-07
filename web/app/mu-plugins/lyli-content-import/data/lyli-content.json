@@ -1,0 +1,2725 @@
+{
+  "schemaVersion": 1,
+  "source": "C:/Users/ADMIN/Music/web_lyli",
+  "site": {
+    "name": "LyliShop",
+    "domain": "lylishop.online",
+    "url": "https://lylishop.online",
+    "locale": "vi_VN",
+    "title": "Móc Khóa Len Handmade Cute | LyliShop",
+    "brandDescription": "Shop móc khóa len handmade cute, nhận làm móc khóa len theo yêu cầu, phù hợp làm quà tặng dễ thương cho học sinh, sinh viên và người yêu thích đồ handmade.",
+    "description": "Móc khóa len handmade cute từ LyliShop: phụ kiện len nhỏ xinh, đóng gói làm quà, nhận chọn màu theo yêu cầu và đặt nhanh qua Zalo/Facebook.",
+    "keywords": [
+      "móc khóa len",
+      "móc khoá len",
+      "móc khóa len handmade",
+      "móc khoá len handmade",
+      "móc khóa handmade",
+      "móc khóa crochet",
+      "móc khóa thú len",
+      "móc khóa dễ thương",
+      "quà tặng handmade",
+      "quà tặng nhỏ xinh",
+      "thú len handmade",
+      "quà tặng crochet",
+      "phụ kiện len handmade",
+      "móc treo len",
+      "móc khóa thỏ handmade"
+    ],
+    "ogImage": "/og.png",
+    "twitterImage": "/twitter-card.png",
+    "logo": "/apple-touch-icon-lylishop-v3.png",
+    "phone": "0356839196",
+    "email": "lylishopstr@gmail.com",
+    "socials": {
+      "instagram": "https://www.instagram.com/lylishopstr/",
+      "tiktok": "https://www.tiktok.com/@lylistr1105",
+      "facebook": "https://www.facebook.com/profile.php?id=61579372469264",
+      "zalo": "https://zalo.me/0356839196"
+    }
+  },
+  "products": [
+    {
+      "slug": "crochet-bear-keychain",
+      "name": "Móc khóa len thỏ con",
+      "detailHeading": "Thú bông len Handmade thỏ con",
+      "category": "Móc khóa thú len handmade",
+      "tags": [
+        "thỏ",
+        "móc khóa thú len",
+        "móc khóa len cute",
+        "quà tặng handmade"
+      ],
+      "priceVnd": 89000,
+      "shortDescription": "Thỏ con được làm thủ công từ len Milk Cotton mềm tay, phù hợp làm quà tặng nhỏ cho người thích phụ kiện dễ thương. Mẫu có thể dùng để treo balo, túi xách hoặc trang trí góc học tập. LyliShop nhận phối màu, đổi chi tiết nhỏ và làm theo yêu cầu sau khi bạn gửi ý tưởng hoặc ảnh mẫu tham khảo.",
+      "longDescription": "Móc khóa thỏ con handmade\n\n• Nhóm thú bông len tập trung vào cảm giác mềm mại, đáng yêu và có thể dùng như món quà nhỏ để trang trí.\n• Mẫu thỏ con hợp với người thích phụ kiện có dáng tròn, màu nhẹ và không quá rườm rà khi treo lên túi.\n• Vì được làm thủ công, bạn có thể trao đổi trước màu thân thỏ, màu tai hoặc chi tiết muốn giữ giống ảnh.\n• Nếu đặt làm quà, mẫu này phù hợp với sinh nhật, quà cảm ơn hoặc món tự thưởng cho người yêu đồ handmade.\n• Khi dùng hằng ngày, nên cầm vào khoen kim loại thay vì kéo phần thân len để giữ form sản phẩm tốt hơn.\n\nKích thước:\n• Thú bông len có kích thước tùy mẫu, shop xác nhận trước khi làm.\n\nNhận theo yêu cầu:\n• Có thể đổi màu thân, phụ kiện hoặc gửi ảnh mẫu tham khảo.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.",
+      "metaDescription": "Móc khóa len thỏ con handmade bằng len mềm, kèm khoen vàng chắc chắn, phù hợp treo túi, chìa khóa hoặc làm quà tặng nhỏ xinh.",
+      "material": "Len Milk Cotton, khoen kim loại",
+      "orderOptions": [
+        {
+          "id": "mau-tho-con-giong-anh",
+          "name": "Mẫu thỏ con giống ảnh",
+          "price": 89000,
+          "isCustom": false
+        },
+        {
+          "id": "doi-mau-theo-yeu-cau",
+          "name": "Đổi màu theo yêu cầu",
+          "price": 99000,
+          "isCustom": true
+        },
+        {
+          "id": "dat-theo-yeu-cau",
+          "name": "Đặt theo yêu cầu",
+          "price": 99000,
+          "isCustom": true
+        }
+      ],
+      "information": {
+        "material": "Len Milk Cotton, khoen kim loại",
+        "size": "Tùy mẫu thú bông, shop xác nhận trước khi làm",
+        "colors": "Hồng, trắng, kem hoặc phối theo yêu cầu",
+        "production": "Handmade",
+        "care": "Tránh ngâm nước và hạn chế kéo mạnh phần thân len"
+      },
+      "benefits": [
+        "Tạo hình thỏ nhỏ xinh, dễ treo hằng ngày",
+        "Treo chìa khóa, balo, túi xách hoặc hộp bút",
+        "Có thể trao đổi màu sắc và chi tiết nhỏ trước khi làm",
+        "Phù hợp làm quà tặng handmade nhỏ xinh"
+      ],
+      "image": {
+        "src": "/images/products/thu-bong-len/thu-bong-len-tho-hong-cover.webp",
+        "alt": "Thú bông len thỏ hồng handmade của LyliShop",
+        "width": 900,
+        "height": 1200
+      },
+      "highlights": [
+        "Đóng gói sẵn để tặng",
+        "Len mềm cao cấp",
+        "Khoen vàng chắc chắn"
+      ],
+      "featured": false,
+      "id": "crochet-bear-keychain",
+      "price": 89000,
+      "priceText": "89.000đ",
+      "description": "Móc khóa thỏ con handmade\n\n• Nhóm thú bông len tập trung vào cảm giác mềm mại, đáng yêu và có thể dùng như món quà nhỏ để trang trí.\n• Mẫu thỏ con hợp với người thích phụ kiện có dáng tròn, màu nhẹ và không quá rườm rà khi treo lên túi.\n• Vì được làm thủ công, bạn có thể trao đổi trước màu thân thỏ, màu tai hoặc chi tiết muốn giữ giống ảnh.\n• Nếu đặt làm quà, mẫu này phù hợp với sinh nhật, quà cảm ơn hoặc món tự thưởng cho người yêu đồ handmade.\n• Khi dùng hằng ngày, nên cầm vào khoen kim loại thay vì kéo phần thân len để giữ form sản phẩm tốt hơn.\n\nKích thước:\n• Thú bông len có kích thước tùy mẫu, shop xác nhận trước khi làm.\n\nNhận theo yêu cầu:\n• Có thể đổi màu thân, phụ kiện hoặc gửi ảnh mẫu tham khảo.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.",
+      "faqs": [
+        {
+          "id": "flower-care",
+          "question": "Có cách bảo quản khi sử dụng không?",
+          "answer": "Có. Hoa len nên được giữ khô, tránh bị đè lâu trong balo và hạn chế kéo mạnh phần cánh hoặc lá. Khi bám bụi nhẹ, bạn có thể phủi bằng khăn khô mềm."
+        },
+        {
+          "id": "flower-custom-bouquet",
+          "question": "Có bó theo yêu cầu không?",
+          "answer": "Có. Bạn có thể trao đổi màu hoa, số lượng bông, kiểu gói và tone tổng thể. LyliShop sẽ tư vấn lại trước khi bắt đầu làm để bó hoa phù hợp hơn với người nhận."
+        },
+        {
+          "id": "flower-gift-wrap",
+          "question": "Có gói quà không?",
+          "answer": "Có thể hỗ trợ gói quà theo nhu cầu. Bạn hãy ghi chú khi đặt hoặc nhắn trực tiếp để LyliShop xác nhận cách gói phù hợp với mẫu hoa."
+        },
+        {
+          "id": "flower-card",
+          "question": "Có kèm thiệp không?",
+          "answer": "Có thể thêm thiệp nếu bạn cần. Nội dung thiệp và cách chuẩn bị sẽ được LyliShop xác nhận qua tin nhắn trước khi hoàn thiện đơn."
+        }
+      ],
+      "availableColors": [
+        "Trắng",
+        "Kem",
+        "Hồng",
+        "Tím",
+        "Xanh",
+        "Nâu",
+        "Vàng",
+        "Khác"
+      ],
+      "allowCustom": true,
+      "allowPhotoReference": true,
+      "allowGiftWrap": true,
+      "allowGreetingCard": true
+    },
+    {
+      "slug": "strawberry-yarn-charm",
+      "name": "Móc khóa len dâu tây",
+      "detailHeading": "Móc khóa len Mini Handmade dâu tây",
+      "category": "Móc khóa len handmade",
+      "tags": [
+        "dâu tây",
+        "móc khóa len cute",
+        "phụ kiện len cute",
+        "quà tặng handmade"
+      ],
+      "priceVnd": 79000,
+      "shortDescription": "Móc khóa len mini dâu tây được làm thủ công từ len Milk Cotton, nhỏ gọn và hợp làm quà tặng dễ thương. Mẫu phù hợp treo ví, chìa khóa, balo hoặc túi nhỏ mà không gây nặng. LyliShop nhận phối màu thân quả, lá và chi tiết trang trí theo yêu cầu để món quà có cảm giác riêng hơn.",
+      "longDescription": "Móc khóa dâu tây handmade\n\n• Nhóm móc khóa mini phù hợp khi bạn cần một món quà nhỏ, giá dễ tiếp cận và có thể đặt theo combo.\n• Form dâu tây gọn, lên màu vui mắt và dễ treo hằng ngày trên chìa khóa, ví nhỏ hoặc balo.\n• Nếu mua theo nhóm, bạn có thể chọn cùng một mẫu dâu nhưng đổi tone màu để mỗi món vẫn có nét riêng.\n• Khi đặt theo yêu cầu, nên giữ độ tương phản giữa thân quả và lá để mẫu vẫn dễ nhận ra khi treo.\n• Lưu ý hạn chế kéo mạnh phần lá vì đây là chi tiết nhỏ, cần dùng nhẹ tay để sản phẩm giữ form lâu hơn.\n\nKích thước:\n• Mini: 3-4 cm.\n\nNhận theo yêu cầu:\n• Có thể chọn combo cùng màu, phối màu ngẫu nhiên hoặc gửi ý tưởng riêng.\n\nGiá sản phẩm thay đổi theo số lượng, mẫu chọn và độ chi tiết khi đặt riêng.",
+      "metaDescription": "Móc khóa len dâu tây handmade nhỏ gọn, thêu hạt tỉ mỉ, dễ treo túi, ví hoặc chìa khóa và có thể tùy chỉnh màu theo yêu cầu.",
+      "material": "Len Milk Cotton, khoen kim loại",
+      "orderOptions": [
+        {
+          "id": "mau-giong-anh",
+          "name": "Mẫu giống ảnh",
+          "isCustom": false
+        },
+        {
+          "id": "doi-mau-theo-yeu-cau",
+          "name": "Đổi màu theo yêu cầu",
+          "isCustom": true
+        },
+        {
+          "id": "dat-theo-yeu-cau",
+          "name": "Đặt theo yêu cầu",
+          "isCustom": true
+        }
+      ],
+      "information": {
+        "material": "Len Milk Cotton, khoen kim loại",
+        "size": "Mini: 3-4 cm",
+        "colors": "Đỏ, hồng, xanh lá hoặc phối màu theo yêu cầu",
+        "production": "Handmade",
+        "care": "Tránh ngâm nước và hạn chế kéo mạnh phần thân len"
+      },
+      "benefits": [
+        "Tạo hình dâu tây nhỏ gọn, màu sắc ngọt ngào",
+        "Treo chìa khóa, balo, túi xách hoặc hộp bút",
+        "Có thể trao đổi màu sắc và chi tiết nhỏ trước khi làm",
+        "Phù hợp làm quà tặng handmade nhỏ xinh"
+      ],
+      "image": {
+        "src": "/images/products/moc-khoa-mini/moc-khoa-mini-nhieu-mau-cover.webp",
+        "alt": "Bộ móc khóa len mini nhiều màu của LyliShop",
+        "width": 1000,
+        "height": 1000
+      },
+      "images": [
+        {
+          "src": "/images/products/moc-khoa-mini/moc-khoa-mini-nhieu-mau-cover.webp",
+          "alt": "Bộ móc khóa len mini nhiều màu của LyliShop",
+          "width": 1000,
+          "height": 1000
+        },
+        {
+          "src": "/images/products/moc-khoa-mini/moc-khoa-mini-hang-tang-lylishop.webp",
+          "alt": "Nhiều mẫu móc khóa len mini đang chuẩn bị tại LyliShop",
+          "width": 1200,
+          "height": 1200
+        },
+        {
+          "src": "/images/products/moc-khoa-mini/moc-khoa-mini-dong-goi-nhieu-mau.webp",
+          "alt": "Móc khóa len mini đóng gói nhiều màu",
+          "width": 1000,
+          "height": 1000
+        }
+      ],
+      "highlights": [
+        "Nhẹ và bền",
+        "Mũi len gọn",
+        "Phù hợp làm quà"
+      ],
+      "featured": false,
+      "id": "strawberry-yarn-charm",
+      "price": 79000,
+      "priceText": "79.000đ",
+      "description": "Móc khóa dâu tây handmade\n\n• Nhóm móc khóa mini phù hợp khi bạn cần một món quà nhỏ, giá dễ tiếp cận và có thể đặt theo combo.\n• Form dâu tây gọn, lên màu vui mắt và dễ treo hằng ngày trên chìa khóa, ví nhỏ hoặc balo.\n• Nếu mua theo nhóm, bạn có thể chọn cùng một mẫu dâu nhưng đổi tone màu để mỗi món vẫn có nét riêng.\n• Khi đặt theo yêu cầu, nên giữ độ tương phản giữa thân quả và lá để mẫu vẫn dễ nhận ra khi treo.\n• Lưu ý hạn chế kéo mạnh phần lá vì đây là chi tiết nhỏ, cần dùng nhẹ tay để sản phẩm giữ form lâu hơn.\n\nKích thước:\n• Mini: 3-4 cm.\n\nNhận theo yêu cầu:\n• Có thể chọn combo cùng màu, phối màu ngẫu nhiên hoặc gửi ý tưởng riêng.\n\nGiá sản phẩm thay đổi theo số lượng, mẫu chọn và độ chi tiết khi đặt riêng.",
+      "faqs": [
+        {
+          "id": "flower-care",
+          "question": "Có cách bảo quản khi sử dụng không?",
+          "answer": "Có. Hoa len nên được giữ khô, tránh bị đè lâu trong balo và hạn chế kéo mạnh phần cánh hoặc lá. Khi bám bụi nhẹ, bạn có thể phủi bằng khăn khô mềm."
+        },
+        {
+          "id": "flower-custom-bouquet",
+          "question": "Có bó theo yêu cầu không?",
+          "answer": "Có. Bạn có thể trao đổi màu hoa, số lượng bông, kiểu gói và tone tổng thể. LyliShop sẽ tư vấn lại trước khi bắt đầu làm để bó hoa phù hợp hơn với người nhận."
+        },
+        {
+          "id": "flower-gift-wrap",
+          "question": "Có gói quà không?",
+          "answer": "Có thể hỗ trợ gói quà theo nhu cầu. Bạn hãy ghi chú khi đặt hoặc nhắn trực tiếp để LyliShop xác nhận cách gói phù hợp với mẫu hoa."
+        },
+        {
+          "id": "flower-card",
+          "question": "Có kèm thiệp không?",
+          "answer": "Có thể thêm thiệp nếu bạn cần. Nội dung thiệp và cách chuẩn bị sẽ được LyliShop xác nhận qua tin nhắn trước khi hoàn thiện đơn."
+        }
+      ],
+      "availableColors": [
+        "Trắng",
+        "Kem",
+        "Hồng",
+        "Tím",
+        "Xanh",
+        "Nâu",
+        "Vàng",
+        "Khác"
+      ],
+      "allowCustom": true,
+      "allowPhotoReference": true,
+      "allowGiftWrap": true,
+      "allowGreetingCard": true
+    },
+    {
+      "slug": "tulip-crochet-keychain",
+      "name": "Móc khóa len hoa tulip",
+      "detailHeading": "Hoa len Handmade hoa tulip",
+      "category": "Móc khóa hoa len handmade",
+      "tags": [
+        "hoa tulip",
+        "móc khóa crochet handmade",
+        "móc khóa len treo balo",
+        "quà tặng handmade"
+      ],
+      "priceVnd": 59000,
+      "shortDescription": "Hoa len tulip được làm thủ công từ len Milk Cotton, phù hợp làm quà tặng nhẹ nhàng cho người thích hoa nhưng muốn lưu giữ lâu. Mẫu không héo, dễ treo kèm balo, túi tote hoặc đặt trong hộp quà nhỏ. LyliShop nhận phối màu cánh hoa, lá và làm theo yêu cầu để hợp với người nhận.",
+      "longDescription": "Móc khóa hoa tulip handmade\n\n• Hoa len là lựa chọn hợp với người thích quà tặng có ý nghĩa lưu giữ lâu, không héo như hoa tươi.\n• Mẫu tulip có dáng gọn, ít chi tiết rườm rà nhưng vẫn tạo điểm nhấn handmade khi treo lên túi.\n• Có thể dùng làm quà sinh nhật, quà cảm ơn hoặc món kèm trong hộp quà cho người thích phong cách nhẹ nhàng.\n• Bạn có thể trao đổi màu cánh hoa, màu lá và tone tổng thể trước khi shop bắt đầu làm.\n• Nếu dùng thường xuyên, nên tránh để phần cánh hoa bị đè nặng lâu trong balo để giữ dáng hoa tốt hơn.\n\nKích thước:\n• Hoa len có kích thước tùy loại hoa và cách bó/treo.\n\nNhận theo yêu cầu:\n• Có thể trao đổi màu hoa, màu lá và phong cách gói trước khi làm.\n\nGiá sản phẩm thay đổi theo loại hoa, số lượng bông và độ chi tiết của mẫu.",
+      "metaDescription": "Móc khóa len hoa tulip handmade dáng gọn, màu dịu, phù hợp treo balo, túi tote, hộp bút hoặc làm quà tặng tinh tế.",
+      "material": "Len Milk Cotton, khoen kim loại",
+      "orderOptions": [
+        {
+          "id": "hoa-tulip-giong-anh",
+          "name": "Hoa tulip giống ảnh",
+          "price": 59000,
+          "isCustom": false
+        },
+        {
+          "id": "doi-mau-hoa",
+          "name": "Đổi màu hoa",
+          "isCustom": true
+        },
+        {
+          "id": "dat-theo-yeu-cau",
+          "name": "Đặt theo yêu cầu",
+          "isCustom": true
+        }
+      ],
+      "information": {
+        "material": "Len Milk Cotton, khoen kim loại",
+        "size": "Tùy loại hoa, shop xác nhận trước khi làm",
+        "colors": "Hồng, tím, vàng, xanh hoặc phối theo yêu cầu",
+        "production": "Handmade",
+        "care": "Tránh ngâm nước và hạn chế kéo mạnh phần thân len"
+      },
+      "benefits": [
+        "Dáng hoa tulip gọn, dễ phối với balo hoặc túi tote",
+        "Treo chìa khóa, balo, túi xách hoặc hộp bút",
+        "Có thể trao đổi màu sắc và chi tiết nhỏ trước khi làm",
+        "Phù hợp làm quà tặng handmade nhỏ xinh"
+      ],
+      "image": {
+        "src": "/images/products/hoa-len/hoa-len-bo-hoa-handmade-cover.webp",
+        "alt": "Bó hoa len handmade nhiều màu của LyliShop",
+        "width": 900,
+        "height": 1200
+      },
+      "images": [
+        {
+          "src": "/images/products/hoa-len/hoa-len-bo-hoa-handmade-cover.webp",
+          "alt": "Bó hoa len handmade nhiều màu của LyliShop",
+          "width": 900,
+          "height": 1200
+        },
+        {
+          "src": "/images/products/hoa-len/hoa-len-nhieu-mau-quy-trinh.webp",
+          "alt": "Hoa len nhiều màu trong quá trình chuẩn bị",
+          "width": 900,
+          "height": 1200
+        },
+        {
+          "src": "/images/products/hoa-len/hoa-len-mini-treo-tui.webp",
+          "alt": "Hoa len mini dùng làm phụ kiện treo túi",
+          "width": 900,
+          "height": 1200
+        }
+      ],
+      "highlights": [
+        "Dáng gọn đẹp",
+        "Phong cách nhẹ nhàng",
+        "Phù hợp đi học"
+      ],
+      "featured": false,
+      "id": "tulip-crochet-keychain",
+      "price": 59000,
+      "priceText": "59.000đ",
+      "description": "Móc khóa hoa tulip handmade\n\n• Hoa len là lựa chọn hợp với người thích quà tặng có ý nghĩa lưu giữ lâu, không héo như hoa tươi.\n• Mẫu tulip có dáng gọn, ít chi tiết rườm rà nhưng vẫn tạo điểm nhấn handmade khi treo lên túi.\n• Có thể dùng làm quà sinh nhật, quà cảm ơn hoặc món kèm trong hộp quà cho người thích phong cách nhẹ nhàng.\n• Bạn có thể trao đổi màu cánh hoa, màu lá và tone tổng thể trước khi shop bắt đầu làm.\n• Nếu dùng thường xuyên, nên tránh để phần cánh hoa bị đè nặng lâu trong balo để giữ dáng hoa tốt hơn.\n\nKích thước:\n• Hoa len có kích thước tùy loại hoa và cách bó/treo.\n\nNhận theo yêu cầu:\n• Có thể trao đổi màu hoa, màu lá và phong cách gói trước khi làm.\n\nGiá sản phẩm thay đổi theo loại hoa, số lượng bông và độ chi tiết của mẫu.",
+      "faqs": [
+        {
+          "id": "flower-care",
+          "question": "Có cách bảo quản khi sử dụng không?",
+          "answer": "Có. Hoa len nên được giữ khô, tránh bị đè lâu trong balo và hạn chế kéo mạnh phần cánh hoặc lá. Khi bám bụi nhẹ, bạn có thể phủi bằng khăn khô mềm."
+        },
+        {
+          "id": "flower-custom-bouquet",
+          "question": "Có bó theo yêu cầu không?",
+          "answer": "Có. Bạn có thể trao đổi màu hoa, số lượng bông, kiểu gói và tone tổng thể. LyliShop sẽ tư vấn lại trước khi bắt đầu làm để bó hoa phù hợp hơn với người nhận."
+        },
+        {
+          "id": "flower-gift-wrap",
+          "question": "Có gói quà không?",
+          "answer": "Có thể hỗ trợ gói quà theo nhu cầu. Bạn hãy ghi chú khi đặt hoặc nhắn trực tiếp để LyliShop xác nhận cách gói phù hợp với mẫu hoa."
+        },
+        {
+          "id": "flower-card",
+          "question": "Có kèm thiệp không?",
+          "answer": "Có thể thêm thiệp nếu bạn cần. Nội dung thiệp và cách chuẩn bị sẽ được LyliShop xác nhận qua tin nhắn trước khi hoàn thiện đơn."
+        }
+      ],
+      "availableColors": [
+        "Trắng",
+        "Kem",
+        "Hồng",
+        "Tím",
+        "Xanh",
+        "Nâu",
+        "Vàng",
+        "Khác"
+      ],
+      "allowCustom": true,
+      "allowPhotoReference": true,
+      "allowGiftWrap": true,
+      "allowGreetingCard": true
+    },
+    {
+      "slug": "bunny-plush-charm",
+      "name": "Móc khóa thú len thỏ bông",
+      "detailHeading": "Thú bông len Handmade thỏ bông",
+      "category": "Móc khóa thú len handmade",
+      "tags": [
+        "thỏ bông",
+        "móc khóa thú len",
+        "móc khóa len cute",
+        "quà tặng handmade"
+      ],
+      "priceVnd": 99000,
+      "shortDescription": "Thú bông len thỏ bông được làm thủ công từ len Milk Cotton, dáng mềm và hợp làm quà tặng cho người thích đồ dễ thương. Mẫu có thể dùng để treo túi, balo hoặc trang trí góc nhỏ. LyliShop nhận phối màu tai, thân, phụ kiện và làm theo yêu cầu để món quà gần với ý tưởng của bạn hơn.",
+      "longDescription": "Móc khóa thỏ bông handmade\n\n• Nhóm thú bông len phù hợp với người thích quà tặng mềm mại, có thể treo hoặc đặt trang trí.\n• Mẫu thỏ bông nổi bật hơn form mini nhờ phần tai dài và dáng bo tròn tạo cảm giác đáng yêu.\n• Sản phẩm hợp làm quà sinh nhật, quà cho bạn thân hoặc món trang trí nhỏ trên bàn học.\n• Khi đặt riêng, bạn có thể trao đổi màu thân, màu tai hoặc phụ kiện để mẫu thỏ hợp người nhận hơn.\n• Nên treo ở vị trí ít móc vào vật sắc để phần tai và thân len giữ dáng đẹp khi dùng lâu.\n\nKích thước:\n• Thú bông len có kích thước tùy mẫu, shop xác nhận trước khi làm.\n\nNhận theo yêu cầu:\n• Có thể đổi màu thân, phụ kiện hoặc gửi ảnh mẫu tham khảo.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.",
+      "metaDescription": "Móc khóa thú len thỏ bông handmade mềm tay, tai dài đáng yêu, phù hợp treo túi, balo, chìa khóa hoặc tặng bạn bè.",
+      "material": "Len Milk Cotton, khoen kim loại",
+      "orderOptions": [
+        {
+          "id": "mau-tho-bong-giong-anh",
+          "name": "Mẫu thỏ bông giống ảnh",
+          "price": 99000,
+          "isCustom": false
+        },
+        {
+          "id": "doi-mau-tai-than-tho",
+          "name": "Đổi màu tai/thân thỏ",
+          "isCustom": true
+        },
+        {
+          "id": "dat-theo-yeu-cau",
+          "name": "Đặt theo yêu cầu",
+          "isCustom": true
+        }
+      ],
+      "information": {
+        "material": "Len Milk Cotton, khoen kim loại",
+        "size": "Tùy mẫu thú bông, shop xác nhận trước khi làm",
+        "colors": "Hồng, trắng, kem hoặc phối theo yêu cầu",
+        "production": "Handmade",
+        "care": "Tránh ngâm nước và hạn chế kéo mạnh phần thân len"
+      },
+      "benefits": [
+        "Tạo hình thỏ tai dài mềm mại, nổi bật khi treo túi",
+        "Treo chìa khóa, balo, túi xách hoặc hộp bút",
+        "Có thể trao đổi màu sắc và chi tiết nhỏ trước khi làm",
+        "Phù hợp làm quà tặng handmade nhỏ xinh"
+      ],
+      "image": {
+        "src": "/images/products/thu-bong-len/thu-bong-len-tho-hong-cover.webp",
+        "alt": "Thú bông len thỏ hồng handmade của LyliShop",
+        "width": 900,
+        "height": 1200
+      },
+      "highlights": [
+        "Mềm tay",
+        "Tai dài đặc trưng",
+        "Làm thủ công tỉ mỉ"
+      ],
+      "featured": false,
+      "id": "bunny-plush-charm",
+      "price": 99000,
+      "priceText": "99.000đ",
+      "description": "Móc khóa thỏ bông handmade\n\n• Nhóm thú bông len phù hợp với người thích quà tặng mềm mại, có thể treo hoặc đặt trang trí.\n• Mẫu thỏ bông nổi bật hơn form mini nhờ phần tai dài và dáng bo tròn tạo cảm giác đáng yêu.\n• Sản phẩm hợp làm quà sinh nhật, quà cho bạn thân hoặc món trang trí nhỏ trên bàn học.\n• Khi đặt riêng, bạn có thể trao đổi màu thân, màu tai hoặc phụ kiện để mẫu thỏ hợp người nhận hơn.\n• Nên treo ở vị trí ít móc vào vật sắc để phần tai và thân len giữ dáng đẹp khi dùng lâu.\n\nKích thước:\n• Thú bông len có kích thước tùy mẫu, shop xác nhận trước khi làm.\n\nNhận theo yêu cầu:\n• Có thể đổi màu thân, phụ kiện hoặc gửi ảnh mẫu tham khảo.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.",
+      "faqs": [
+        {
+          "id": "flower-care",
+          "question": "Có cách bảo quản khi sử dụng không?",
+          "answer": "Có. Hoa len nên được giữ khô, tránh bị đè lâu trong balo và hạn chế kéo mạnh phần cánh hoặc lá. Khi bám bụi nhẹ, bạn có thể phủi bằng khăn khô mềm."
+        },
+        {
+          "id": "flower-custom-bouquet",
+          "question": "Có bó theo yêu cầu không?",
+          "answer": "Có. Bạn có thể trao đổi màu hoa, số lượng bông, kiểu gói và tone tổng thể. LyliShop sẽ tư vấn lại trước khi bắt đầu làm để bó hoa phù hợp hơn với người nhận."
+        },
+        {
+          "id": "flower-gift-wrap",
+          "question": "Có gói quà không?",
+          "answer": "Có thể hỗ trợ gói quà theo nhu cầu. Bạn hãy ghi chú khi đặt hoặc nhắn trực tiếp để LyliShop xác nhận cách gói phù hợp với mẫu hoa."
+        },
+        {
+          "id": "flower-card",
+          "question": "Có kèm thiệp không?",
+          "answer": "Có thể thêm thiệp nếu bạn cần. Nội dung thiệp và cách chuẩn bị sẽ được LyliShop xác nhận qua tin nhắn trước khi hoàn thiện đơn."
+        }
+      ],
+      "availableColors": [
+        "Trắng",
+        "Kem",
+        "Hồng",
+        "Tím",
+        "Xanh",
+        "Nâu",
+        "Vàng",
+        "Khác"
+      ],
+      "allowCustom": true,
+      "allowPhotoReference": true,
+      "allowGiftWrap": true,
+      "allowGreetingCard": true
+    },
+    {
+      "slug": "cat-paw-crochet-accessory",
+      "name": "Móc khóa len bàn chân mèo",
+      "detailHeading": "Móc khóa len Size S Handmade bàn chân mèo",
+      "category": "Móc khóa thú len handmade",
+      "tags": [
+        "bàn chân mèo",
+        "móc khóa thú len",
+        "phụ kiện len cute",
+        "móc khóa len treo balo"
+      ],
+      "priceVnd": 69000,
+      "shortDescription": "Móc khóa len size S bàn chân mèo được làm thủ công từ len Milk Cotton, kích thước gọn nên dễ treo chìa khóa, balo hoặc túi nhỏ. Mẫu hợp làm quà tặng cho người thích mèo và phụ kiện cute. LyliShop nhận phối màu nền, màu đệm chân và làm theo yêu cầu trước khi chốt mẫu.",
+      "longDescription": "Móc khóa bàn chân mèo handmade\n\n• Nhóm size S là lựa chọn dễ dùng nhất vì đủ nhỏ để treo chìa khóa nhưng vẫn nhìn rõ chi tiết.\n• Mẫu bàn chân mèo hợp với người thích mèo, thích phụ kiện nhỏ vui mắt hoặc muốn một món quà dễ dùng hằng ngày.\n• Form bàn chân gọn nên phù hợp treo túi mini, balo, chìa khóa hoặc dây điện thoại.\n• Có thể trao đổi màu nền và màu đệm chân trước khi làm để sản phẩm mang dấu ấn cá nhân hơn.\n• Khi vệ sinh, nên chấm nhẹ phần đệm thêu và tránh chà mạnh để giữ chi tiết nổi rõ.\n\nKích thước:\n• Sản phẩm size S: 5-7 cm.\n\nNhận theo yêu cầu:\n• Size S: 5-7 cm.\n• Size M: 8-10 cm.\n• Size L: 10-12 cm.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.",
+      "metaDescription": "Móc khóa len bàn chân mèo handmade bằng len mềm, thêu đệm chân dễ thương, hợp treo chìa khóa, túi mini hoặc dây điện thoại.",
+      "material": "Len Milk Cotton, khoen kim loại",
+      "orderOptions": [
+        {
+          "id": "ban-chan-meo-giong-anh",
+          "name": "Bàn chân mèo giống ảnh",
+          "price": 69000,
+          "isCustom": false
+        },
+        {
+          "id": "doi-mau-dem-chan",
+          "name": "Đổi màu đệm chân",
+          "isCustom": true
+        },
+        {
+          "id": "dat-theo-yeu-cau",
+          "name": "Đặt theo yêu cầu",
+          "isCustom": true
+        }
+      ],
+      "information": {
+        "material": "Len Milk Cotton, khoen kim loại",
+        "size": "Size S: 5-7 cm",
+        "colors": "Trắng, hồng, nâu, đen hoặc phối theo yêu cầu",
+        "production": "Handmade",
+        "care": "Tránh ngâm nước và hạn chế kéo mạnh phần thân len"
+      },
+      "benefits": [
+        "Chi tiết đệm chân mèo thêu nổi bật, dễ kẹp và dễ treo",
+        "Treo chìa khóa, balo, túi xách hoặc hộp bút",
+        "Có thể trao đổi màu sắc và chi tiết nhỏ trước khi làm",
+        "Phù hợp làm quà tặng handmade nhỏ xinh"
+      ],
+      "image": {
+        "src": "/images/products/moc-khoa-size-s/moc-khoa-size-s-nhieu-mau-cover.webp",
+        "alt": "Móc khóa len size S nhiều mẫu dễ thương",
+        "width": 1000,
+        "height": 1000
+      },
+      "highlights": [
+        "Dễ thương",
+        "Thêu gọn đẹp",
+        "Dễ kẹp, dễ treo"
+      ],
+      "featured": false,
+      "id": "cat-paw-crochet-accessory",
+      "price": 69000,
+      "priceText": "69.000đ",
+      "description": "Móc khóa bàn chân mèo handmade\n\n• Nhóm size S là lựa chọn dễ dùng nhất vì đủ nhỏ để treo chìa khóa nhưng vẫn nhìn rõ chi tiết.\n• Mẫu bàn chân mèo hợp với người thích mèo, thích phụ kiện nhỏ vui mắt hoặc muốn một món quà dễ dùng hằng ngày.\n• Form bàn chân gọn nên phù hợp treo túi mini, balo, chìa khóa hoặc dây điện thoại.\n• Có thể trao đổi màu nền và màu đệm chân trước khi làm để sản phẩm mang dấu ấn cá nhân hơn.\n• Khi vệ sinh, nên chấm nhẹ phần đệm thêu và tránh chà mạnh để giữ chi tiết nổi rõ.\n\nKích thước:\n• Sản phẩm size S: 5-7 cm.\n\nNhận theo yêu cầu:\n• Size S: 5-7 cm.\n• Size M: 8-10 cm.\n• Size L: 10-12 cm.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.",
+      "faqs": [
+        {
+          "id": "flower-care",
+          "question": "Có cách bảo quản khi sử dụng không?",
+          "answer": "Có. Hoa len nên được giữ khô, tránh bị đè lâu trong balo và hạn chế kéo mạnh phần cánh hoặc lá. Khi bám bụi nhẹ, bạn có thể phủi bằng khăn khô mềm."
+        },
+        {
+          "id": "flower-custom-bouquet",
+          "question": "Có bó theo yêu cầu không?",
+          "answer": "Có. Bạn có thể trao đổi màu hoa, số lượng bông, kiểu gói và tone tổng thể. LyliShop sẽ tư vấn lại trước khi bắt đầu làm để bó hoa phù hợp hơn với người nhận."
+        },
+        {
+          "id": "flower-gift-wrap",
+          "question": "Có gói quà không?",
+          "answer": "Có thể hỗ trợ gói quà theo nhu cầu. Bạn hãy ghi chú khi đặt hoặc nhắn trực tiếp để LyliShop xác nhận cách gói phù hợp với mẫu hoa."
+        },
+        {
+          "id": "flower-card",
+          "question": "Có kèm thiệp không?",
+          "answer": "Có thể thêm thiệp nếu bạn cần. Nội dung thiệp và cách chuẩn bị sẽ được LyliShop xác nhận qua tin nhắn trước khi hoàn thiện đơn."
+        }
+      ],
+      "availableColors": [
+        "Trắng",
+        "Kem",
+        "Hồng",
+        "Tím",
+        "Xanh",
+        "Nâu",
+        "Vàng",
+        "Khác"
+      ],
+      "allowCustom": true,
+      "allowPhotoReference": true,
+      "allowGiftWrap": true,
+      "allowGreetingCard": true
+    },
+    {
+      "slug": "set-moc-khoa-len-6-mau-cute",
+      "name": "Móc khóa thú mini size S đồng giá 45k",
+      "detailHeading": "Móc khóa len Size S Handmade",
+      "category": "Set móc khóa thú len mini",
+      "tags": [
+        "móc khóa thú mini",
+        "size S",
+        "móc khóa len cute",
+        "quà tặng handmade giá tốt"
+      ],
+      "priceVnd": 45000,
+      "shortDescription": "Móc khóa len size S được làm thủ công từ len Milk Cotton, là nhóm có nhiều mẫu dễ chọn nhất cho nhu cầu treo chìa khóa, balo hoặc túi xách. Kích thước gọn, giá dễ tiếp cận và phù hợp làm quà tặng nhỏ. LyliShop nhận phối màu, chọn mẫu theo sở thích và làm theo yêu cầu trước khi chốt đơn.",
+      "longDescription": "Móc khóa thú len mini size S đồng giá 45k\n\n• Size S là nhóm mẫu linh hoạt nhất vì nhỏ gọn, dễ treo chìa khóa và vẫn đủ nổi bật khi dùng hằng ngày.\n• Phù hợp khi bạn cần quà nhỏ cho nhóm bạn, lớp học hoặc nhiều người nhận cùng lúc.\n• Các mẫu như gấu trúc, cún, hổ hoặc Stitch có thể chọn theo sở thích của người nhận.\n• Nên gửi số lượng, mẫu muốn chọn và tone màu trước để shop kiểm tra khả năng làm đồng bộ.\n• Nếu đặt theo nhóm, bạn có thể chọn cùng một form nhưng đổi màu để mỗi món quà vẫn có nét riêng.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.\n• Giá sp từ 45k / size S: 5-7 cm.\n• Giá sp từ 59k / size M: 8-10 cm.\n• Giá sp từ 69k / size L: 10-12 cm.",
+      "metaDescription": "Móc khóa thú mini size S đồng giá 45k tại LyliShop, handmade bằng len mềm, phù hợp treo balo, túi xách hoặc làm quà tặng dễ thương.",
+      "material": "Len Milk Cotton, khoen kim loại",
+      "orderOptions": [
+        {
+          "id": "gau-truc",
+          "name": "Gấu trúc",
+          "isCustom": false
+        },
+        {
+          "id": "cun-xam",
+          "name": "Cún xám",
+          "isCustom": false
+        },
+        {
+          "id": "cun-vang",
+          "name": "Cún vàng",
+          "isCustom": false
+        },
+        {
+          "id": "ho",
+          "name": "Hổ",
+          "isCustom": false
+        },
+        {
+          "id": "stitch",
+          "name": "Stitch",
+          "isCustom": false
+        },
+        {
+          "id": "dat-theo-yeu-cau",
+          "name": "Đặt theo yêu cầu",
+          "isCustom": true
+        }
+      ],
+      "information": {
+        "material": "Len Milk Cotton, khoen kim loại",
+        "size": "Size S: 5-7 cm",
+        "colors": "Trắng, kem, hồng, tím, xanh, nâu, vàng hoặc phối theo yêu cầu",
+        "production": "Handmade",
+        "care": "Tránh ngâm nước và hạn chế kéo mạnh phần thân len"
+      },
+      "benefits": [
+        "Nhiều mẫu thú mini size S dễ chọn theo nhóm",
+        "Treo chìa khóa, balo, túi xách hoặc hộp bút",
+        "Có thể trao đổi màu sắc và chi tiết nhỏ trước khi làm",
+        "Phù hợp làm quà tặng handmade nhỏ xinh"
+      ],
+      "image": {
+        "src": "/images/products/moc-khoa-size-s/moc-khoa-size-s-nhieu-mau-cover.webp",
+        "alt": "Móc khóa len size S nhiều mẫu dễ thương",
+        "width": 1000,
+        "height": 1000
+      },
+      "images": [
+        {
+          "src": "/images/products/moc-khoa-size-s/moc-khoa-size-s-nhieu-mau-cover.webp",
+          "alt": "Móc khóa len size S nhiều mẫu dễ thương",
+          "width": 1000,
+          "height": 1000
+        }
+      ],
+      "highlights": [
+        "Đồng giá 45k size S",
+        "Mẫu thú mini",
+        "Có ưu đãi hiện hành"
+      ],
+      "promotion": {
+        "title": "CHỈ 5 SUẤT QUÀ TẶNG",
+        "eyebrow": "Ưu đãi móc khóa len handmade",
+        "summary": "Mua 3 tặng 1 hoặc rủ bạn mua cùng nhận quà đôi 45K.",
+        "items": [
+          "Mua 3 móc khóa len handmade bất kỳ, tặng 1 Túi Mù Size S trị giá 45.000đ. Chỉ áp dụng cho 3 khách hàng đầu tiên.",
+          "Rủ bạn mua cùng tại LyliShop, mỗi người nhận 1 móc khóa Size S trị giá 45.000đ. Chỉ áp dụng cho 2 cặp khách hàng đầu tiên."
+        ],
+        "notes": [
+          "Tổng số lượng quà tặng: 5 suất.",
+          "Mỗi khách hàng chỉ được áp dụng 1 chương trình ưu đãi.",
+          "Không áp dụng đồng thời 2 chương trình.",
+          "Quà tặng không quy đổi thành tiền mặt.",
+          "Chương trình kết thúc khi hết quà tặng."
+        ],
+        "href": "/#featured",
+        "ctaLabel": "Xem ưu đãi"
+      },
+      "featured": true,
+      "id": "set-moc-khoa-len-6-mau-cute",
+      "price": 45000,
+      "priceText": "45.000đ",
+      "description": "Móc khóa thú len mini size S đồng giá 45k\n\n• Size S là nhóm mẫu linh hoạt nhất vì nhỏ gọn, dễ treo chìa khóa và vẫn đủ nổi bật khi dùng hằng ngày.\n• Phù hợp khi bạn cần quà nhỏ cho nhóm bạn, lớp học hoặc nhiều người nhận cùng lúc.\n• Các mẫu như gấu trúc, cún, hổ hoặc Stitch có thể chọn theo sở thích của người nhận.\n• Nên gửi số lượng, mẫu muốn chọn và tone màu trước để shop kiểm tra khả năng làm đồng bộ.\n• Nếu đặt theo nhóm, bạn có thể chọn cùng một form nhưng đổi màu để mỗi món quà vẫn có nét riêng.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.\n• Giá sp từ 45k / size S: 5-7 cm.\n• Giá sp từ 59k / size M: 8-10 cm.\n• Giá sp từ 69k / size L: 10-12 cm.",
+      "faqs": [
+        {
+          "id": "flower-care",
+          "question": "Có cách bảo quản khi sử dụng không?",
+          "answer": "Có. Hoa len nên được giữ khô, tránh bị đè lâu trong balo và hạn chế kéo mạnh phần cánh hoặc lá. Khi bám bụi nhẹ, bạn có thể phủi bằng khăn khô mềm."
+        },
+        {
+          "id": "flower-custom-bouquet",
+          "question": "Có bó theo yêu cầu không?",
+          "answer": "Có. Bạn có thể trao đổi màu hoa, số lượng bông, kiểu gói và tone tổng thể. LyliShop sẽ tư vấn lại trước khi bắt đầu làm để bó hoa phù hợp hơn với người nhận."
+        },
+        {
+          "id": "flower-gift-wrap",
+          "question": "Có gói quà không?",
+          "answer": "Có thể hỗ trợ gói quà theo nhu cầu. Bạn hãy ghi chú khi đặt hoặc nhắn trực tiếp để LyliShop xác nhận cách gói phù hợp với mẫu hoa."
+        },
+        {
+          "id": "flower-card",
+          "question": "Có kèm thiệp không?",
+          "answer": "Có thể thêm thiệp nếu bạn cần. Nội dung thiệp và cách chuẩn bị sẽ được LyliShop xác nhận qua tin nhắn trước khi hoàn thiện đơn."
+        }
+      ],
+      "availableColors": [
+        "Trắng",
+        "Kem",
+        "Hồng",
+        "Tím",
+        "Xanh",
+        "Nâu",
+        "Vàng",
+        "Khác"
+      ],
+      "allowCustom": true,
+      "allowPhotoReference": true,
+      "allowGiftWrap": true,
+      "allowGreetingCard": true
+    },
+    {
+      "slug": "set-moc-khoa-len-6-mau-qua-tang",
+      "name": "Combo 3 móc khóa len Mini",
+      "detailHeading": "Móc khóa len Mini Handmade combo 3 chiếc",
+      "category": "Combo móc khóa len Mini",
+      "tags": [
+        "combo móc khóa mini",
+        "móc khóa len mini",
+        "quà tặng handmade",
+        "móc khóa len theo yêu cầu"
+      ],
+      "priceVnd": 49000,
+      "shortDescription": "Combo 3 móc khóa len Mini được làm thủ công từ len Milk Cotton, phù hợp khi bạn cần set quà nhỏ để tặng bạn bè hoặc treo chìa khóa, balo, túi mini. LyliShop gợi ý các mẫu cún con, mèo, thỏ, cừu với màu xanh lá, đỏ hoặc hồng; bạn vẫn có thể nhắn shop để đổi mẫu, đổi màu hoặc gửi ảnh tham khảo trước khi làm.",
+      "longDescription": "Combo 3 móc khóa len Mini handmade\n\n• Nhóm mini phù hợp nhất khi bạn muốn một món quà nhỏ, giá tốt và có thể đặt theo combo.\n• Kích thước gọn giúp sản phẩm dễ treo chìa khóa, túi tote, balo hoặc hộp bút mà không vướng.\n• Gợi ý mẫu gồm cún con, mèo, thỏ, cừu hoặc các mẫu mini có form đơn giản để set 3 chiếc nhìn đồng bộ.\n• Màu gợi ý gồm xanh lá, đỏ và hồng; có thể đổi sang tone khác nếu bạn muốn set quà hợp người nhận hơn.\n• Shop xác nhận mẫu, size, số lượng và thời gian hoàn thiện trước khi chốt đơn qua tin nhắn.\n\nKích thước:\n• Mini: 3-4 cm.\n\nNhận theo yêu cầu:\n• Có thể chọn combo cùng màu, phối màu ngẫu nhiên hoặc gửi ý tưởng riêng.\n\nGiá sản phẩm thay đổi theo số lượng, mẫu chọn và độ chi tiết khi đặt riêng.",
+      "metaDescription": "Combo 3 móc khóa len Mini handmade tại LyliShop, gợi ý mẫu cún con, mèo, thỏ, cừu và nhận chọn màu theo yêu cầu.",
+      "material": "Len Milk Cotton, khoen kim loại",
+      "orderOptions": [
+        {
+          "id": "combo-3-mau-cung-mau",
+          "name": "Combo 3 mẫu cùng màu",
+          "price": 49000,
+          "isCustom": false,
+          "description": "Phù hợp khi muốn set quà nhỏ đồng bộ."
+        },
+        {
+          "id": "combo-3-mau-phoi-mau-ngau-nhien",
+          "name": "Combo 3 mẫu phối màu ngẫu nhiên",
+          "price": 49000,
+          "isCustom": false,
+          "description": "Shop phối màu dễ thương theo mẫu có sẵn."
+        },
+        {
+          "id": "dat-theo-yeu-cau",
+          "name": "Đặt theo yêu cầu",
+          "price": 59000,
+          "isCustom": true,
+          "description": "Trao đổi mẫu, màu và chi tiết trước khi làm."
+        }
+      ],
+      "information": {
+        "material": "Len Milk Cotton, khoen kim loại",
+        "size": "Mini: 3-4 cm",
+        "colors": "Trắng, kem, hồng, tím, xanh, nâu, vàng hoặc phối theo yêu cầu",
+        "production": "Handmade",
+        "care": "Tránh ngâm nước và hạn chế kéo mạnh phần thân len"
+      },
+      "benefits": [
+        "Combo 3 chiếc dễ chọn làm quà nhỏ",
+        "Treo chìa khóa, balo, túi xách hoặc hộp bút",
+        "Có thể trao đổi màu sắc và chi tiết nhỏ trước khi làm",
+        "Phù hợp làm quà tặng handmade nhỏ xinh"
+      ],
+      "image": {
+        "src": "/images/products/moc-khoa-mini/moc-khoa-mini-dong-goi-nhieu-mau.webp",
+        "alt": "Móc khóa len mini đóng gói nhiều màu",
+        "width": 1000,
+        "height": 1000
+      },
+      "images": [
+        {
+          "src": "/images/products/moc-khoa-mini/moc-khoa-mini-dong-goi-nhieu-mau.webp",
+          "alt": "Móc khóa len mini đóng gói nhiều màu",
+          "width": 1000,
+          "height": 1000
+        },
+        {
+          "src": "/images/products/moc-khoa-mini/moc-khoa-mini-nhieu-mau-cover.webp",
+          "alt": "Bộ móc khóa len mini nhiều màu của LyliShop",
+          "width": 1000,
+          "height": 1000
+        },
+        {
+          "src": "/images/products/moc-khoa-mini/moc-khoa-mini-hang-tang-lylishop.webp",
+          "alt": "Nhiều mẫu móc khóa len mini đang chuẩn bị tại LyliShop",
+          "width": 1200,
+          "height": 1200
+        }
+      ],
+      "highlights": [
+        "Combo 3 chiếc",
+        "Gợi ý cún, mèo, thỏ, cừu",
+        "Chọn màu trước khi làm"
+      ],
+      "promotion": {
+        "title": "CHỈ 5 SUẤT QUÀ TẶNG",
+        "eyebrow": "Ưu đãi móc khóa len handmade",
+        "summary": "Mua 3 tặng 1 hoặc rủ bạn mua cùng nhận quà đôi 45K.",
+        "items": [
+          "Mua 3 móc khóa len handmade bất kỳ, tặng 1 Túi Mù Size S trị giá 45.000đ. Chỉ áp dụng cho 3 khách hàng đầu tiên.",
+          "Rủ bạn mua cùng tại LyliShop, mỗi người nhận 1 móc khóa Size S trị giá 45.000đ. Chỉ áp dụng cho 2 cặp khách hàng đầu tiên."
+        ],
+        "notes": [
+          "Tổng số lượng quà tặng: 5 suất.",
+          "Mỗi khách hàng chỉ được áp dụng 1 chương trình ưu đãi.",
+          "Không áp dụng đồng thời 2 chương trình.",
+          "Quà tặng không quy đổi thành tiền mặt.",
+          "Chương trình kết thúc khi hết quà tặng."
+        ],
+        "href": "/#featured",
+        "ctaLabel": "Xem ưu đãi"
+      },
+      "featured": true,
+      "id": "set-moc-khoa-len-6-mau-qua-tang",
+      "price": 49000,
+      "priceText": "49.000đ",
+      "description": "Combo 3 móc khóa len Mini handmade\n\n• Nhóm mini phù hợp nhất khi bạn muốn một món quà nhỏ, giá tốt và có thể đặt theo combo.\n• Kích thước gọn giúp sản phẩm dễ treo chìa khóa, túi tote, balo hoặc hộp bút mà không vướng.\n• Gợi ý mẫu gồm cún con, mèo, thỏ, cừu hoặc các mẫu mini có form đơn giản để set 3 chiếc nhìn đồng bộ.\n• Màu gợi ý gồm xanh lá, đỏ và hồng; có thể đổi sang tone khác nếu bạn muốn set quà hợp người nhận hơn.\n• Shop xác nhận mẫu, size, số lượng và thời gian hoàn thiện trước khi chốt đơn qua tin nhắn.\n\nKích thước:\n• Mini: 3-4 cm.\n\nNhận theo yêu cầu:\n• Có thể chọn combo cùng màu, phối màu ngẫu nhiên hoặc gửi ý tưởng riêng.\n\nGiá sản phẩm thay đổi theo số lượng, mẫu chọn và độ chi tiết khi đặt riêng.",
+      "faqs": [
+        {
+          "id": "flower-care",
+          "question": "Có cách bảo quản khi sử dụng không?",
+          "answer": "Có. Hoa len nên được giữ khô, tránh bị đè lâu trong balo và hạn chế kéo mạnh phần cánh hoặc lá. Khi bám bụi nhẹ, bạn có thể phủi bằng khăn khô mềm."
+        },
+        {
+          "id": "flower-custom-bouquet",
+          "question": "Có bó theo yêu cầu không?",
+          "answer": "Có. Bạn có thể trao đổi màu hoa, số lượng bông, kiểu gói và tone tổng thể. LyliShop sẽ tư vấn lại trước khi bắt đầu làm để bó hoa phù hợp hơn với người nhận."
+        },
+        {
+          "id": "flower-gift-wrap",
+          "question": "Có gói quà không?",
+          "answer": "Có thể hỗ trợ gói quà theo nhu cầu. Bạn hãy ghi chú khi đặt hoặc nhắn trực tiếp để LyliShop xác nhận cách gói phù hợp với mẫu hoa."
+        },
+        {
+          "id": "flower-card",
+          "question": "Có kèm thiệp không?",
+          "answer": "Có thể thêm thiệp nếu bạn cần. Nội dung thiệp và cách chuẩn bị sẽ được LyliShop xác nhận qua tin nhắn trước khi hoàn thiện đơn."
+        }
+      ],
+      "availableColors": [
+        "Trắng",
+        "Kem",
+        "Hồng",
+        "Tím",
+        "Xanh",
+        "Nâu",
+        "Vàng",
+        "Khác"
+      ],
+      "allowCustom": true,
+      "allowPhotoReference": true,
+      "allowGiftWrap": true,
+      "allowGreetingCard": true
+    },
+    {
+      "slug": "set-moc-khoa-len-10-mau-mix",
+      "name": "Móc khóa len đồng giá từ 45k",
+      "detailHeading": "Móc khóa len Size M Handmade",
+      "category": "Set móc khóa len đồng giá",
+      "tags": [
+        "móc khóa len đồng giá từ 45k",
+        "móc khóa len giá tốt",
+        "đặt móc khóa len số lượng",
+        "móc khóa len cute"
+      ],
+      "priceVnd": 45000,
+      "shortDescription": "Móc khóa len size M được làm thủ công từ len Milk Cotton, nổi bật hơn size nhỏ nên hợp làm quà tặng cần gây ấn tượng. Nhóm mẫu này phù hợp treo balo, túi xách hoặc đặt số lượng cho nhóm bạn, lớp học. LyliShop nhận phối màu, chọn mẫu mix và làm theo yêu cầu trước khi xác nhận đơn.",
+      "longDescription": "Móc khóa len đồng giá từ 45k\n\n• Size M phù hợp khi bạn muốn món quà nổi bật hơn size mini nhưng vẫn đủ gọn để treo balo hoặc túi xách.\n• Nhóm mẫu mix dễ dùng cho quà lớp, quà nhóm bạn hoặc các dịp cần nhiều món quà handmade cùng lúc.\n• Khi đặt nhiều mẫu, bạn nên thống nhất trước tone màu, size và số lượng từng loại để shop tư vấn nhanh hơn.\n• Các mẫu size M tạo cảm giác đầy đặn hơn, phù hợp với người thích phụ kiện nhìn rõ từ xa.\n• Nếu cần đồng bộ theo nhóm, hãy gửi danh sách mẫu hoặc màu mong muốn trước khi shop xác nhận thời gian làm.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.\n• Giá sp từ 45k / size S: 5-7 cm.\n• Giá sp từ 59k / size M: 8-10 cm.\n• Giá sp từ 69k / size L: 10-12 cm.",
+      "metaDescription": "Móc khóa len đồng giá từ 45k tại LyliShop, 10 mẫu mix handmade, phù hợp đặt số lượng, quà lớp, quà nhóm và nhận tư vấn màu trên toàn Việt Nam.",
+      "material": "Len Milk Cotton, khoen kim loại",
+      "orderOptions": [
+        {
+          "id": "gau-teddy",
+          "name": "Gấu Teddy",
+          "isCustom": false
+        },
+        {
+          "id": "ga-vang",
+          "name": "Gà vàng",
+          "isCustom": false
+        },
+        {
+          "id": "ga-tho",
+          "name": "Gà thỏ",
+          "isCustom": false
+        },
+        {
+          "id": "bo-hoa-mini",
+          "name": "Bó hoa mini",
+          "isCustom": false
+        },
+        {
+          "id": "dat-theo-yeu-cau",
+          "name": "Đặt theo yêu cầu",
+          "isCustom": true
+        }
+      ],
+      "information": {
+        "material": "Len Milk Cotton, khoen kim loại",
+        "size": "Size M: 8-10 cm",
+        "colors": "Trắng, kem, hồng, tím, xanh, nâu, vàng hoặc phối theo yêu cầu",
+        "production": "Handmade",
+        "care": "Tránh ngâm nước và hạn chế kéo mạnh phần thân len"
+      },
+      "benefits": [
+        "Giá tốt từ 45k, dễ đặt theo nhóm hoặc làm quà lớp",
+        "Treo chìa khóa, balo, túi xách hoặc hộp bút",
+        "Có thể trao đổi màu sắc và chi tiết nhỏ trước khi làm",
+        "Phù hợp làm quà tặng handmade nhỏ xinh"
+      ],
+      "image": {
+        "src": "/images/products/moc-khoa-size-m/moc-khoa-size-m-kem-hong-xanh.webp",
+        "alt": "Móc khóa len size M nhiều màu trên khay tre",
+        "width": 1200,
+        "height": 1062
+      },
+      "images": [
+        {
+          "src": "/images/products/moc-khoa-size-m/moc-khoa-size-m-kem-hong-xanh.webp",
+          "alt": "Móc khóa len size M nhiều màu trên khay tre",
+          "width": 1200,
+          "height": 1062
+        }
+      ],
+      "highlights": [
+        "Đồng giá từ 45k",
+        "Hợp đặt số lượng",
+        "10 mẫu mix dễ chọn"
+      ],
+      "featured": true,
+      "id": "set-moc-khoa-len-10-mau-mix",
+      "price": 45000,
+      "priceText": "45.000đ",
+      "description": "Móc khóa len đồng giá từ 45k\n\n• Size M phù hợp khi bạn muốn món quà nổi bật hơn size mini nhưng vẫn đủ gọn để treo balo hoặc túi xách.\n• Nhóm mẫu mix dễ dùng cho quà lớp, quà nhóm bạn hoặc các dịp cần nhiều món quà handmade cùng lúc.\n• Khi đặt nhiều mẫu, bạn nên thống nhất trước tone màu, size và số lượng từng loại để shop tư vấn nhanh hơn.\n• Các mẫu size M tạo cảm giác đầy đặn hơn, phù hợp với người thích phụ kiện nhìn rõ từ xa.\n• Nếu cần đồng bộ theo nhóm, hãy gửi danh sách mẫu hoặc màu mong muốn trước khi shop xác nhận thời gian làm.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.\n• Giá sp từ 45k / size S: 5-7 cm.\n• Giá sp từ 59k / size M: 8-10 cm.\n• Giá sp từ 69k / size L: 10-12 cm.",
+      "faqs": [
+        {
+          "id": "flower-care",
+          "question": "Có cách bảo quản khi sử dụng không?",
+          "answer": "Có. Hoa len nên được giữ khô, tránh bị đè lâu trong balo và hạn chế kéo mạnh phần cánh hoặc lá. Khi bám bụi nhẹ, bạn có thể phủi bằng khăn khô mềm."
+        },
+        {
+          "id": "flower-custom-bouquet",
+          "question": "Có bó theo yêu cầu không?",
+          "answer": "Có. Bạn có thể trao đổi màu hoa, số lượng bông, kiểu gói và tone tổng thể. LyliShop sẽ tư vấn lại trước khi bắt đầu làm để bó hoa phù hợp hơn với người nhận."
+        },
+        {
+          "id": "flower-gift-wrap",
+          "question": "Có gói quà không?",
+          "answer": "Có thể hỗ trợ gói quà theo nhu cầu. Bạn hãy ghi chú khi đặt hoặc nhắn trực tiếp để LyliShop xác nhận cách gói phù hợp với mẫu hoa."
+        },
+        {
+          "id": "flower-card",
+          "question": "Có kèm thiệp không?",
+          "answer": "Có thể thêm thiệp nếu bạn cần. Nội dung thiệp và cách chuẩn bị sẽ được LyliShop xác nhận qua tin nhắn trước khi hoàn thiện đơn."
+        }
+      ],
+      "availableColors": [
+        "Trắng",
+        "Kem",
+        "Hồng",
+        "Tím",
+        "Xanh",
+        "Nâu",
+        "Vàng",
+        "Khác"
+      ],
+      "allowCustom": true,
+      "allowPhotoReference": true,
+      "allowGiftWrap": true,
+      "allowGreetingCard": true
+    },
+    {
+      "slug": "moc-khoa-len-size-l-handmade",
+      "name": "Móc khóa len Size L 12cm",
+      "detailHeading": "Móc khóa len Size L Handmade",
+      "category": "Móc khóa len Size L",
+      "tags": [
+        "móc khóa len size-l",
+        "móc khóa len size L",
+        "treo balo",
+        "quà handmade"
+      ],
+      "priceVnd": 69000,
+      "shortDescription": "Móc khóa len Size L được làm thủ công từ len Milk Cotton, phù hợp khi bạn muốn phụ kiện nổi bật hơn để treo balo, túi xách hoặc làm quà tặng. Mẫu ảnh đang có các form thỏ hồng, gà vàng và vịt dưa hấu với kích thước tham khảo ngang 5cm, cao 12cm. LyliShop nhận trao đổi màu và chi tiết trước khi làm.",
+      "longDescription": "Móc khóa len Size L handmade\n\n• Size L phù hợp khi bạn muốn móc khóa nhìn rõ hơn trên balo, túi tote hoặc túi lớn.\n• Ảnh chính đang thể hiện ba mẫu tham khảo gồm thỏ hồng, gà vàng và vịt dưa hấu.\n• Kích thước trong ảnh là ngang 5cm và cao 12cm, phù hợp để khách dễ hình dung trước khi đặt.\n• Có thể trao đổi màu, form nhân vật hoặc gửi ảnh tham khảo để LyliShop kiểm tra khả năng thực hiện.\n• Shop xác nhận mẫu, màu, khoen treo và thời gian hoàn thiện qua tin nhắn trước khi bắt đầu làm.\n\nKích thước:\n• Sản phẩm size S: 5-7 cm.\n\nNhận theo yêu cầu:\n• Size S: 5-7 cm.\n• Size M: 8-10 cm.\n• Size L: 10-12 cm.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.",
+      "metaDescription": "Móc khóa len Size L handmade cao 12cm tại LyliShop, phù hợp treo balo, túi xách và nhận chọn màu theo yêu cầu.",
+      "material": "Len Milk Cotton, khoen kim loại",
+      "orderOptions": [
+        {
+          "id": "tho-hong-size-l",
+          "name": "Thỏ hồng Size L",
+          "price": 69000,
+          "isCustom": false
+        },
+        {
+          "id": "ga-vang-size-l",
+          "name": "Gà vàng Size L",
+          "price": 69000,
+          "isCustom": false
+        },
+        {
+          "id": "vit-dua-hau-size-l",
+          "name": "Vịt dưa hấu Size L",
+          "price": 69000,
+          "isCustom": false
+        },
+        {
+          "id": "dat-theo-yeu-cau",
+          "name": "Đặt theo yêu cầu",
+          "isCustom": true
+        }
+      ],
+      "information": {
+        "material": "Len Milk Cotton, khoen kim loại",
+        "size": "Size L: ngang 5 cm, cao 12 cm theo mẫu ảnh",
+        "colors": "Hồng, vàng, xanh lá, đỏ hoặc phối theo yêu cầu",
+        "production": "Handmade",
+        "care": "Tránh ngâm nước và hạn chế kéo mạnh phần thân len"
+      },
+      "benefits": [
+        "Kích thước nổi bật hơn khi treo balo hoặc túi lớn",
+        "Treo chìa khóa, balo, túi xách hoặc hộp bút",
+        "Có thể trao đổi màu sắc và chi tiết nhỏ trước khi làm",
+        "Phù hợp làm quà tặng handmade nhỏ xinh"
+      ],
+      "image": {
+        "src": "/images/products/moc-khoa-size-l/moc-khoa-size-l-12cm-cover.jpg",
+        "alt": "Móc khóa len Size L handmade cao 12 cm của LyliShop",
+        "width": 1280,
+        "height": 853
+      },
+      "images": [
+        {
+          "src": "/images/products/moc-khoa-size-l/moc-khoa-size-l-12cm-cover.jpg",
+          "alt": "Móc khóa len Size L handmade cao 12 cm của LyliShop",
+          "width": 1280,
+          "height": 853
+        },
+        {
+          "src": "/images/products/moc-khoa-size-l/moc-khoa-size-l-tho-hong.jpg",
+          "alt": "Móc khóa len Size L hình thỏ hồng handmade của LyliShop",
+          "width": 1280,
+          "height": 1280
+        },
+        {
+          "src": "/images/products/moc-khoa-size-l/moc-khoa-size-l-ga-vang.jpg",
+          "alt": "Móc khóa len Size L hình gà vàng handmade của LyliShop",
+          "width": 1280,
+          "height": 1280
+        },
+        {
+          "src": "/images/products/moc-khoa-size-l/moc-khoa-size-l-vit-dua-hau.jpg",
+          "alt": "Móc khóa len Size L hình vịt dưa hấu handmade của LyliShop",
+          "width": 1280,
+          "height": 1280
+        },
+        {
+          "src": "/images/products/moc-khoa-size-l/moc-khoa-size-l-treo-balo.jpg",
+          "alt": "Móc khóa len Size L hình gà vàng treo balo của LyliShop",
+          "width": 960,
+          "height": 1280
+        }
+      ],
+      "highlights": [
+        "Size L 12cm",
+        "Nổi bật khi treo balo",
+        "Có thể chọn màu"
+      ],
+      "featured": false,
+      "id": "moc-khoa-len-size-l-handmade",
+      "price": 69000,
+      "priceText": "69.000đ",
+      "description": "Móc khóa len Size L handmade\n\n• Size L phù hợp khi bạn muốn móc khóa nhìn rõ hơn trên balo, túi tote hoặc túi lớn.\n• Ảnh chính đang thể hiện ba mẫu tham khảo gồm thỏ hồng, gà vàng và vịt dưa hấu.\n• Kích thước trong ảnh là ngang 5cm và cao 12cm, phù hợp để khách dễ hình dung trước khi đặt.\n• Có thể trao đổi màu, form nhân vật hoặc gửi ảnh tham khảo để LyliShop kiểm tra khả năng thực hiện.\n• Shop xác nhận mẫu, màu, khoen treo và thời gian hoàn thiện qua tin nhắn trước khi bắt đầu làm.\n\nKích thước:\n• Sản phẩm size S: 5-7 cm.\n\nNhận theo yêu cầu:\n• Size S: 5-7 cm.\n• Size M: 8-10 cm.\n• Size L: 10-12 cm.\n\nGiá sản phẩm thay đổi theo kích thước và độ chi tiết của từng mẫu.",
+      "faqs": [
+        {
+          "id": "flower-care",
+          "question": "Có cách bảo quản khi sử dụng không?",
+          "answer": "Có. Hoa len nên được giữ khô, tránh bị đè lâu trong balo và hạn chế kéo mạnh phần cánh hoặc lá. Khi bám bụi nhẹ, bạn có thể phủi bằng khăn khô mềm."
+        },
+        {
+          "id": "flower-custom-bouquet",
+          "question": "Có bó theo yêu cầu không?",
+          "answer": "Có. Bạn có thể trao đổi màu hoa, số lượng bông, kiểu gói và tone tổng thể. LyliShop sẽ tư vấn lại trước khi bắt đầu làm để bó hoa phù hợp hơn với người nhận."
+        },
+        {
+          "id": "flower-gift-wrap",
+          "question": "Có gói quà không?",
+          "answer": "Có thể hỗ trợ gói quà theo nhu cầu. Bạn hãy ghi chú khi đặt hoặc nhắn trực tiếp để LyliShop xác nhận cách gói phù hợp với mẫu hoa."
+        },
+        {
+          "id": "flower-card",
+          "question": "Có kèm thiệp không?",
+          "answer": "Có thể thêm thiệp nếu bạn cần. Nội dung thiệp và cách chuẩn bị sẽ được LyliShop xác nhận qua tin nhắn trước khi hoàn thiện đơn."
+        }
+      ],
+      "availableColors": [
+        "Trắng",
+        "Kem",
+        "Hồng",
+        "Tím",
+        "Xanh",
+        "Nâu",
+        "Vàng",
+        "Khác"
+      ],
+      "allowCustom": true,
+      "allowPhotoReference": true,
+      "allowGiftWrap": true,
+      "allowGreetingCard": true
+    }
+  ],
+  "blogPosts": [
+    {
+      "slug": "phu-kien-len-handmade-la-gi",
+      "title": "Phụ kiện len handmade vì sao được thích làm quà?",
+      "excerpt": "Một góc nhìn nhẹ nhàng về cảm giác cá nhân của phụ kiện len handmade và lý do nhiều bạn thích chọn làm quà nhỏ.",
+      "description": "Cảm hứng chọn phụ kiện len handmade làm quà nhỏ: sự cá nhân, màu sắc riêng và cảm giác được chuẩn bị có tâm.",
+      "keywords": [
+        "phụ kiện len handmade",
+        "quà handmade nhỏ xinh",
+        "quà tặng cá nhân",
+        "đồ len thủ công"
+      ],
+      "datePublished": "2026-06-16",
+      "dateModified": "2026-06-16",
+      "readingTime": "4 phút đọc",
+      "image": {
+        "src": "/images/blog/moc-khoa-mini-hang-tang-lylishop.webp",
+        "alt": "Bộ móc khóa len mini nhiều màu đang chuẩn bị tại LyliShop",
+        "width": 1200,
+        "height": 900
+      },
+      "sections": [
+        {
+          "heading": "Phụ kiện len handmade tạo cảm giác riêng như thế nào?",
+          "body": [
+            "Phụ kiện len handmade là món đồ nhỏ được móc thủ công bằng sợi len, sau đó gắn khoen để treo chìa khóa, balo, túi xách hoặc hộp bút. Điểm tạo cảm xúc của sản phẩm nằm ở form mềm, màu sắc dễ thương và cảm giác được làm riêng từng chiếc.",
+            "Khác với phụ kiện sản xuất hàng loạt, mỗi mẫu handmade có thể có độ lệch nhỏ về đường móc, kích thước hoặc chi tiết. Đây cũng là lý do nhiều bạn chọn đồ len nhỏ để làm quà tặng cá nhân."
+          ]
+        },
+        {
+          "heading": "Phụ kiện len phù hợp với ai?",
+          "body": [
+            "Sản phẩm hợp với học sinh, sinh viên, người thích đồ len thủ công, người thích phụ kiện cute hoặc đang tìm quà handmade dễ thương. Các mẫu nhỏ như thỏ, dâu tây, hoa tulip, bàn chân mèo thường dễ dùng hằng ngày và dễ phối với balo, túi tote."
+          ]
+        },
+        {
+          "heading": "Nên chọn phụ kiện len theo tiêu chí nào?",
+          "body": [
+            "Bạn nên chọn theo mục đích dùng: treo balo nên ưu tiên mẫu chắc khoen, làm quà nên chọn màu hợp người nhận, còn chụp ảnh hoặc trang trí góc học tập có thể chọn mẫu có hình dáng nổi bật hơn.",
+            "Tại LyliShop, bạn có thể nhắn shop để chọn màu len, phối chi tiết nhỏ và xác nhận thời gian làm trước khi chốt đơn."
+          ]
+        },
+        {
+          "heading": "Checklist nhanh trước khi chọn phụ kiện len",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "Xác định người nhận sẽ treo ở đâu: chìa khóa, balo, túi tote, hộp bút hay góc học tập.",
+                "Chọn form theo sở thích: thú len cho cảm giác đáng yêu, hoa len cho phong cách nhẹ nhàng, hình quả cho cảm giác vui mắt.",
+                "Hỏi trước màu người nhận thích nếu đây là quà sinh nhật hoặc quà cho bạn thân.",
+                "Nếu cần nhận đúng ngày, hãy nhắn shop ngày cần nhận để kiểm tra thời gian làm và giao hàng.",
+                "Với mẫu có chi tiết nhỏ như lá, tai, nơ hoặc đệm chân, nên hỏi cách bảo quản để dùng lâu hơn."
+              ]
+            },
+            {
+              "type": "callout",
+              "tone": "tip",
+              "title": "Gợi ý từ LyliShop",
+              "body": "Nếu bạn phân vân giữa nhiều mẫu, hãy gửi LyliShop ảnh sản phẩm hoặc tên mẫu bạn thích. Shop có thể tư vấn theo mục đích dùng, màu người nhận thích và thời gian bạn cần nhận quà."
+            }
+          ]
+        },
+        {
+          "heading": "So sánh nhanh các nhóm phụ kiện len",
+          "blocks": [
+            {
+              "type": "table",
+              "caption": "Bảng này giúp bạn chọn nhóm sản phẩm theo nhu cầu, không thay thế tư vấn mẫu cụ thể qua tin nhắn.",
+              "headers": [
+                "Nhóm sản phẩm",
+                "Phù hợp với",
+                "Lưu ý khi chọn"
+              ],
+              "rows": [
+                [
+                  "Móc khóa thú len",
+                  "Người thích đồ cute, thú bông nhỏ, phụ kiện nổi bật",
+                  "Chú ý form tai, tay hoặc chi tiết nhỏ nếu dùng hằng ngày"
+                ],
+                [
+                  "Hoa len",
+                  "Người thích phong cách nhẹ nhàng, tinh tế",
+                  "Nên chọn màu hoa và màu lá hài hòa với túi hoặc balo"
+                ],
+                [
+                  "Mẫu mini size S",
+                  "Quà nhóm, quà lớp, phụ kiện treo gọn",
+                  "Phù hợp khi cần món nhỏ, dễ chia và dễ đặt số lượng"
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Phụ kiện len handmade có bền không?",
+          "answer": "Có, nếu dùng đúng cách và tránh kéo mạnh phần khoen hoặc làm ướt lâu. Mẫu nhỏ thường phù hợp treo balo, chìa khóa, túi xách hoặc hộp bút."
+        },
+        {
+          "question": "Có thể đặt phụ kiện len theo màu riêng không?",
+          "answer": "Có. Bạn có thể gửi màu mong muốn để LyliShop tư vấn phối màu và xác nhận trước khi làm."
+        },
+        {
+          "question": "Nên gửi thông tin gì khi hỏi mẫu phụ kiện len?",
+          "answer": "Bạn nên gửi mẫu đang thích, màu mong muốn, số lượng, dịp tặng và ngày cần nhận. Những thông tin này giúp LyliShop tư vấn rõ hơn trước khi chốt đơn."
+        }
+      ]
+    },
+    {
+      "slug": "qua-handmade-tang-ban-gai",
+      "title": "Gợi ý quà handmade tặng bạn gái nhỏ xinh, dễ thương",
+      "excerpt": "Các tiêu chí chọn quà handmade tặng bạn gái và gợi ý phụ kiện len mini phù hợp cho sinh nhật, kỷ niệm hoặc món quà bất ngờ.",
+      "description": "Gợi ý quà handmade tặng bạn gái: phụ kiện len mini và cách chọn món quà nhỏ dễ thương, vừa túi tiền.",
+      "keywords": [
+        "quà handmade tặng bạn gái",
+        "quà tặng handmade",
+        "quà handmade dễ thương",
+        "quà sinh nhật nhỏ xinh"
+      ],
+      "datePublished": "2026-06-16",
+      "dateModified": "2026-06-16",
+      "readingTime": "5 phút đọc",
+      "image": {
+        "src": "/images/blog/hoa-len-bo-hoa-handmade.webp",
+        "alt": "Bo hoa len handmade dung lam qua tang",
+        "width": 1200,
+        "height": 900
+      },
+      "sections": [
+        {
+          "heading": "Vì sao quà handmade dễ tạo thiện cảm?",
+          "body": [
+            "Quà handmade thường tạo cảm giác có sự chuẩn bị và quan tâm hơn một món đồ mua vội. Với nhóm phụ kiện len nhỏ, người nhận có thể dùng hằng ngày nên món quà dễ được nhớ tới.",
+            "Nếu bạn chưa biết chọn gì quá lớn, một món phụ kiện len handmade nhỏ xinh là lựa chọn an toàn, dễ thương và không gây áp lực về giá trị vật chất."
+          ]
+        },
+        {
+          "heading": "Chọn quà handmade tặng bạn gái theo phong cách",
+          "body": [
+            "Nếu bạn gái thích style ngọt ngào, mẫu dâu tây hoặc thỏ bông sẽ hợp hơn. Nếu thích nhẹ nhàng, hoa tulip là lựa chọn tinh tế. Nếu thích phụ kiện vui mắt, bàn chân mèo hoặc thú len mini sẽ dễ tạo cảm giác đáng yêu."
+          ]
+        },
+        {
+          "heading": "Bảng chọn mẫu theo phong cách người nhận",
+          "blocks": [
+            {
+              "type": "table",
+              "caption": "Gợi ý dựa trên nhóm sản phẩm hiện có tại LyliShop, không phải quy tắc bắt buộc.",
+              "headers": [
+                "Phong cách",
+                "Mẫu nên cân nhắc",
+                "Vì sao phù hợp"
+              ],
+              "rows": [
+                [
+                  "Ngọt ngào",
+                  "Dâu tây, thỏ con",
+                  "Màu sắc và form nhỏ dễ tạo cảm giác đáng yêu"
+                ],
+                [
+                  "Nhẹ nhàng",
+                  "Hoa tulip",
+                  "Dáng gọn, ít chi tiết rườm rà, hợp quà tinh tế"
+                ],
+                [
+                  "Vui mắt",
+                  "Bàn chân mèo, thú mini",
+                  "Có chi tiết nhận diện rõ, dễ dùng làm phụ kiện hằng ngày"
+                ],
+                [
+                  "Thích đồ đôi/nhóm",
+                  "Set móc khóa đồng giá",
+                  "Dễ chọn nhiều mẫu cùng tone màu hoặc cùng size"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Khi nào nên tặng phụ kiện len nhỏ?",
+          "body": [
+            "Phụ kiện len nhỏ phù hợp làm quà sinh nhật, quà cảm ơn, quà kỷ niệm nhỏ hoặc món quà bất ngờ sau giờ học. Vì kích thước nhỏ, sản phẩm cũng dễ gửi kèm thiệp hoặc hộp quà."
+          ]
+        },
+        {
+          "heading": "Checklist trước khi nhắn shop đặt quà",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "Gửi mẫu bạn thích hoặc link sản phẩm để shop biết đúng form cần tư vấn.",
+                "Nói rõ người nhận thích màu nhẹ, màu nổi hay tone dễ thương.",
+                "Cho shop biết dịp tặng để gợi ý cách đóng gói và thời gian chuẩn bị phù hợp.",
+                "Nếu muốn đặt theo nhóm hoặc đặt nhiều mẫu, hãy gửi số lượng từng mẫu.",
+                "Hỏi trước thời gian hoàn thiện nếu bạn cần quà đúng một ngày cụ thể."
+              ]
+            },
+            {
+              "type": "callout",
+              "tone": "info",
+              "title": "Không cần chọn món quá lớn",
+              "body": "Với quà handmade, cảm giác được chọn đúng sở thích thường quan trọng hơn kích thước món quà. Một móc khóa len nhỏ nhưng đúng màu, đúng phong cách vẫn có thể tạo thiện cảm."
+            }
+          ]
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Phụ kiện len nhỏ có hợp làm quà sinh nhật không?",
+          "answer": "Có. Phụ kiện len nhỏ dễ thương, dùng được hằng ngày và có thể chọn màu theo sở thích người nhận."
+        },
+        {
+          "question": "Nên chọn mẫu nào nếu chưa biết sở thích người nhận?",
+          "answer": "Bạn nên chọn mẫu có màu nhẹ, hình dáng dễ dùng như thỏ, hoa tulip hoặc dâu tây vì các mẫu này hợp nhiều phong cách."
+        },
+        {
+          "question": "Có nên hỏi người nhận thích màu gì trước không?",
+          "answer": "Nếu đây không phải món quà bất ngờ tuyệt đối, bạn nên hỏi màu yêu thích hoặc quan sát màu đồ người nhận thường dùng. Điều này giúp mẫu handmade cá nhân hơn."
+        }
+      ]
+    },
+    {
+      "slug": "y-nghia-qua-handmade",
+      "title": "Ý nghĩa quà handmade: nhỏ thôi nhưng rất có tâm",
+      "excerpt": "Quà handmade thường được yêu thích vì mang cảm giác cá nhân, có thời gian làm và dễ gắn với kỷ niệm.",
+      "description": "Ý nghĩa quà handmade và lý do phụ kiện len nhỏ xinh phù hợp làm quà cho bạn bè, người yêu, người thân.",
+      "keywords": [
+        "ý nghĩa quà handmade",
+        "quà tặng handmade",
+        "quà handmade dễ thương",
+        "phụ kiện handmade"
+      ],
+      "datePublished": "2026-06-16",
+      "dateModified": "2026-06-16",
+      "readingTime": "4 phút đọc",
+      "image": {
+        "src": "/images/blog/moc-khoa-mini-hang-tang-lylishop.webp",
+        "alt": "Nhiều mẫu móc khóa len handmade làm quà tặng nhỏ",
+        "width": 1200,
+        "height": 900
+      },
+      "sections": [
+        {
+          "heading": "Quà handmade thể hiện sự quan tâm",
+          "body": [
+            "Một món quà handmade không cần quá đắt để có ý nghĩa. Giá trị của nó nằm ở cảm giác được chọn lựa, được làm thủ công và có thể cá nhân hóa theo người nhận.",
+            "Với phụ kiện len mini, bạn có thể chọn màu yêu thích, kiểu dáng dễ thương hoặc chi tiết nhỏ gắn với sở thích của người nhận."
+          ]
+        },
+        {
+          "heading": "Quà nhỏ nhưng dùng được hằng ngày",
+          "body": [
+            "Phụ kiện len mini có thể treo balo, túi, chìa khóa hoặc trang trí góc học tập. Khi món quà xuất hiện trong đời sống hằng ngày, nó tạo cảm giác thân thuộc hơn một món đồ chỉ để cất giữ."
+          ]
+        },
+        {
+          "heading": "Cách làm quà handmade trông chỉn chu hơn",
+          "body": [
+            "Bạn có thể chọn màu hợp người nhận, nhắn một lời chúc ngắn và yêu cầu shop đóng gói gọn gàng. Những chi tiết nhỏ này giúp món quà trông có chủ ý hơn."
+          ]
+        },
+        {
+          "heading": "Cách cá nhân hóa món quà mà không làm quá",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "Chọn màu theo thói quen của người nhận thay vì chỉ chọn màu bạn thích.",
+                "Ưu tiên mẫu người nhận có thể dùng hằng ngày như treo balo, túi hoặc chìa khóa.",
+                "Gửi kèm một lời nhắn ngắn để món quà có bối cảnh, nhất là quà cảm ơn hoặc quà sinh nhật.",
+                "Nếu đặt mẫu theo yêu cầu, chỉ nên thêm vài chi tiết nhỏ để sản phẩm vẫn gọn và dễ dùng."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Khi nào quà handmade là lựa chọn phù hợp?",
+          "blocks": [
+            {
+              "type": "table",
+              "caption": "Bảng này giúp bạn kiểm tra nhanh trước khi chọn quà handmade.",
+              "headers": [
+                "Tình huống",
+                "Có phù hợp không",
+                "Lý do"
+              ],
+              "rows": [
+                [
+                  "Quà sinh nhật nhỏ",
+                  "Phù hợp",
+                  "Dễ cá nhân hóa màu và mẫu theo người nhận"
+                ],
+                [
+                  "Quà cảm ơn",
+                  "Phù hợp",
+                  "Không quá nặng về vật chất nhưng vẫn có sự chuẩn bị"
+                ],
+                [
+                  "Quà cần dùng ngay",
+                  "Tùy thời gian",
+                  "Nên hỏi trước thời gian hoàn thiện và giao hàng"
+                ],
+                [
+                  "Quà quá trang trọng",
+                  "Cần cân nhắc",
+                  "Phụ kiện len hợp cảm xúc gần gũi hơn là sự kiện trang trọng"
+                ]
+              ]
+            },
+            {
+              "type": "callout",
+              "tone": "warning",
+              "title": "Lưu ý trước khi đặt",
+              "body": "Nếu bạn cần món quà đúng ngày, hãy nhắn shop trước để xác nhận thời gian làm. Đồ handmade cần thời gian hoàn thiện nên không nên đặt quá sát nếu mẫu có nhiều chi tiết."
+            }
+          ]
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Quà handmade có cần đắt tiền không?",
+          "answer": "Không. Quà handmade thường được yêu thích vì sự tinh tế, cá nhân hóa và cảm giác được chuẩn bị cẩn thận."
+        },
+        {
+          "question": "Phụ kiện len mini có phù hợp tặng bạn thân không?",
+          "answer": "Phù hợp, đặc biệt nếu bạn chọn mẫu theo màu yêu thích hoặc tính cách của bạn thân."
+        },
+        {
+          "question": "Làm sao để quà handmade không bị quá sến?",
+          "answer": "Bạn nên chọn mẫu gọn, màu dễ dùng và lời nhắn ngắn gọn. Món quà sẽ tự nhiên hơn khi người nhận có thể dùng trong đời sống hằng ngày."
+        }
+      ]
+    },
+    {
+      "slug": "cach-bao-quan-phu-kien-len",
+      "title": "Cách giữ phụ kiện len handmade dùng lâu hơn",
+      "excerpt": "Gợi ý giữ phụ kiện len sạch, ít xù và bền form khi dùng hằng ngày.",
+      "description": "Cách giữ phụ kiện len handmade bền đẹp: vệ sinh nhẹ, phơi đúng cách, tránh kéo mạnh và giữ form khi sử dụng.",
+      "keywords": [
+        "cách bảo quản phụ kiện len",
+        "phụ kiện len handmade",
+        "đồ handmade dùng lâu",
+        "giữ đồ len bền đẹp"
+      ],
+      "datePublished": "2026-06-16",
+      "dateModified": "2026-06-16",
+      "readingTime": "4 phút đọc",
+      "image": {
+        "src": "/images/blog/quy-trinh-moc-khoa-mini-phoi.webp",
+        "alt": "Móc khóa len mini trong quá trình chuẩn bị",
+        "width": 1200,
+        "height": 900
+      },
+      "sections": [
+        {
+          "heading": "Tránh kéo mạnh phần khoen và chi tiết nhỏ",
+          "body": [
+            "Phụ kiện len được làm thủ công nên bạn nên hạn chế kéo mạnh vào tai, lá, nơ hoặc phần khoen. Khi tháo khỏi túi, hãy cầm vào khoen kim loại thay vì kéo phần thân len."
+          ]
+        },
+        {
+          "heading": "Cách vệ sinh khi bị bụi nhẹ",
+          "body": [
+            "Nếu sản phẩm chỉ bám bụi, bạn có thể dùng khăn khô mềm hoặc bàn chải lông mềm chải nhẹ. Nếu cần làm sạch sâu hơn, nên chấm nhẹ bằng khăn ẩm và để khô tự nhiên.",
+            "Không nên ngâm lâu hoặc vắt mạnh vì có thể làm sản phẩm mất form."
+          ]
+        },
+        {
+          "heading": "Bảng xử lý nhanh khi phụ kiện len bị bẩn hoặc xù",
+          "blocks": [
+            {
+              "type": "table",
+              "caption": "Chỉ áp dụng cho tình huống nhẹ. Nếu sản phẩm bị bung chi tiết hoặc hỏng khoen, nên nhắn shop để được tư vấn trước khi tự xử lý.",
+              "headers": [
+                "Tình trạng",
+                "Nên làm",
+                "Không nên làm"
+              ],
+              "rows": [
+                [
+                  "Bám bụi nhẹ",
+                  "Dùng khăn khô mềm hoặc chổi lông mềm phủi nhẹ",
+                  "Chà mạnh bằng bàn chải cứng"
+                ],
+                [
+                  "Dính vết bẩn nhỏ",
+                  "Chấm nhẹ bằng khăn ẩm, để khô tự nhiên",
+                  "Ngâm nước lâu hoặc vắt mạnh"
+                ],
+                [
+                  "Xù lông nhẹ",
+                  "Dùng kéo nhỏ cắt phần xù nổi trên bề mặt",
+                  "Kéo sợi len ra khỏi sản phẩm"
+                ],
+                [
+                  "Bị đè mất form",
+                  "Đặt ở nơi khô thoáng, chỉnh nhẹ bằng tay",
+                  "Dùng nhiệt cao hoặc phơi nắng gắt"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Cách giữ form khi dùng hằng ngày",
+          "body": [
+            "Hạn chế để phụ kiện len bị đè nặng trong balo quá lâu. Khi không dùng, bạn có thể treo ở nơi khô thoáng để sản phẩm giữ dáng đẹp hơn."
+          ]
+        },
+        {
+          "heading": "Checklist bảo quản sau khi nhận hàng",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "Kiểm tra khoen trước khi treo vào balo hoặc chùm chìa khóa.",
+                "Cầm vào khoen kim loại khi tháo ra, hạn chế kéo phần tai, lá, nơ hoặc chi tiết thêu.",
+                "Tránh để sản phẩm bị ẩm lâu trong túi kín.",
+                "Nếu không dùng trong thời gian dài, nên cất ở nơi khô thoáng và tránh bị đè nặng.",
+                "Khi cần vệ sinh, hãy xử lý nhẹ từng vùng nhỏ thay vì giặt cả sản phẩm."
+              ]
+            },
+            {
+              "type": "callout",
+              "tone": "tip",
+              "title": "Mẹo dùng hằng ngày",
+              "body": "Với các mẫu có lá, tai dài hoặc chi tiết nhỏ, bạn nên treo ở vị trí ít bị cọ vào khóa kéo hoặc vật sắc trong balo."
+            }
+          ]
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Phụ kiện len có giặt được không?",
+          "answer": "Có thể làm sạch nhẹ, nhưng không nên ngâm hoặc vắt mạnh. Cách tốt nhất là lau/chấm nhẹ và phơi nơi thoáng mát."
+        },
+        {
+          "question": "Làm gì khi phụ kiện len bị xù nhẹ?",
+          "answer": "Bạn có thể dùng kéo nhỏ cắt phần xù nổi trên bề mặt, tránh kéo sợi len ra khỏi sản phẩm."
+        },
+        {
+          "question": "Có nên phơi phụ kiện len dưới nắng gắt không?",
+          "answer": "Không nên. Nếu sản phẩm bị ẩm nhẹ, bạn nên để khô tự nhiên ở nơi thoáng mát để hạn chế ảnh hưởng đến form và màu len."
+        }
+      ]
+    },
+    {
+      "slug": "qua-sinh-nhat-handmade",
+      "title": "Quà sinh nhật handmade: chọn sao cho xinh và không bị sến?",
+      "excerpt": "Gợi ý chọn quà sinh nhật handmade vừa dễ thương, vừa thiết thực cho học sinh, sinh viên và người thích phụ kiện nhỏ.",
+      "description": "Gợi ý quà sinh nhật handmade như phụ kiện len mini và cách chọn quà theo phong cách người nhận.",
+      "keywords": [
+        "quà sinh nhật handmade",
+        "quà handmade nhỏ xinh",
+        "quà handmade tặng bạn gái",
+        "quà handmade dễ thương"
+      ],
+      "datePublished": "2026-06-16",
+      "dateModified": "2026-06-16",
+      "readingTime": "5 phút đọc",
+      "image": {
+        "src": "/images/blog/quy-trinh-moc-khoa-size-m-ga-vang.webp",
+        "alt": "Nhieu moc khoa len size M dang duoc chuan bi",
+        "width": 1200,
+        "height": 900
+      },
+      "sections": [
+        {
+          "heading": "Chọn quà sinh nhật handmade theo mức độ thân",
+          "body": [
+            "Nếu là bạn cùng lớp hoặc bạn mới quen, nên chọn món nhỏ, dễ dùng và không quá riêng tư. Nếu là bạn thân hoặc người yêu, bạn có thể chọn màu, hình dáng hoặc chi tiết gần với sở thích của người nhận hơn."
+          ]
+        },
+        {
+          "heading": "Bảng chọn quà sinh nhật theo người nhận",
+          "blocks": [
+            {
+              "type": "table",
+              "caption": "Gợi ý theo bối cảnh sinh nhật, dùng để định hướng trước khi xem sản phẩm cụ thể.",
+              "headers": [
+                "Người nhận",
+                "Nên ưu tiên",
+                "Gợi ý tại LyliShop"
+              ],
+              "rows": [
+                [
+                  "Bạn cùng lớp hoặc đồng nghiệp",
+                  "Mẫu nhỏ, dễ dùng, không quá riêng tư",
+                  "Mẫu mini size S hoặc móc khóa đồng giá"
+                ],
+                [
+                  "Bạn thân",
+                  "Màu đúng sở thích, form có cá tính rõ",
+                  "Dâu tây, bàn chân mèo, thú len mini"
+                ],
+                [
+                  "Người yêu",
+                  "Mẫu có cảm giác được chọn riêng",
+                  "Thỏ con, thỏ bông, hoa tulip"
+                ],
+                [
+                  "Nhóm bạn",
+                  "Dễ đặt số lượng, có thể đổi màu từng mẫu",
+                  "Set móc khóa len đồng giá từ 45k"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "Phụ kiện len mini là lựa chọn dễ tặng",
+          "body": [
+            "Phụ kiện len handmade mini có giá dễ chọn, kích thước nhỏ, dễ đóng gói và người nhận có thể dùng ngay. Đây là lựa chọn hợp với học sinh, sinh viên hoặc người thích đồ cute."
+          ]
+        },
+        {
+          "heading": "Nên nhắn gì khi đặt quà?",
+          "body": [
+            "Bạn nên gửi cho shop mẫu muốn chọn, màu yêu thích của người nhận, ngày cần nhận hàng và yêu cầu đóng gói nếu muốn tặng trực tiếp. Càng rõ thông tin, shop càng dễ tư vấn mẫu phù hợp."
+          ]
+        },
+        {
+          "heading": "Checklist để quà sinh nhật trông chỉn chu hơn",
+          "blocks": [
+            {
+              "type": "list",
+              "items": [
+                "Chọn mẫu trước theo người nhận, không chỉ theo mẫu đang phổ biến.",
+                "Gửi màu người nhận thích hoặc màu thường dùng trong balo, túi, phụ kiện.",
+                "Nói rõ ngày sinh nhật hoặc ngày cần nhận để shop kiểm tra thời gian chuẩn bị.",
+                "Nếu tặng nhóm, hãy thống nhất size và khoảng giá trước khi chọn mẫu.",
+                "Hỏi cách đóng gói nếu bạn muốn trao quà trực tiếp."
+              ]
+            },
+            {
+              "type": "callout",
+              "tone": "info",
+              "title": "Điểm khác với bài quà tặng bạn gái",
+              "body": "Bài này tập trung vào dịp sinh nhật và mức độ thân với người nhận. Nếu bạn cần chọn quà theo phong cách của bạn gái, hãy xem bài gợi ý quà handmade tặng bạn gái."
+            }
+          ]
+        }
+      ],
+      "faqs": [
+        {
+          "question": "Quà sinh nhật handmade nên đặt trước bao lâu?",
+          "answer": "Bạn nên nhắn trước vài ngày để shop có thời gian xác nhận mẫu, màu và hoàn thiện sản phẩm."
+        },
+        {
+          "question": "Mẫu nào hợp tặng sinh nhật nhất?",
+          "answer": "Hoa tulip, dâu tây, thỏ bông và bàn chân mèo là các mẫu dễ thương, dễ dùng và hợp làm quà sinh nhật."
+        },
+        {
+          "question": "Có nên đặt nhiều móc khóa giống nhau để tặng nhóm không?",
+          "answer": "Có thể, nếu bạn muốn quà đồng bộ. Bạn cũng có thể chọn cùng một size nhưng đổi màu hoặc đổi mẫu để mỗi người nhận có cảm giác riêng."
+        }
+      ]
+    }
+  ],
+  "sharedFaq": [
+    {
+      "id": "shipping",
+      "question": "Shop có giao hàng toàn quốc không? Thời gian bao lâu?",
+      "answer": "Có. Shop thường chuẩn bị đơn trong 1–3 ngày làm việc. Sau khi gửi hàng, thời gian nhận khoảng 2–5 ngày tùy khu vực."
+    },
+    {
+      "id": "customization",
+      "question": "Mình có thể chọn màu hoặc tùy chỉnh theo yêu cầu không?",
+      "answer": "Được. Bạn có thể chọn màu, thêm nơ, tim hoặc chi tiết nhỏ. Nhắn shop để chốt mẫu trước khi LyliShop bắt đầu làm."
+    },
+    {
+      "id": "handmade",
+      "question": "Sản phẩm có phải handmade 100% không?",
+      "answer": "Có. Mỗi sản phẩm đều được móc tay, khâu tay và hoàn thiện thủ công. Vì là handmade nên từng mẫu sẽ có nét riêng nhỏ."
+    },
+    {
+      "id": "packaging",
+      "question": "Có đóng gói quà không?",
+      "answer": "Có. Mỗi đơn được gói gọn gàng, sạch đẹp và sẵn sàng để tặng. Bạn cũng có thể nhờ shop ghi lời nhắn ngắn."
+    },
+    {
+      "id": "order",
+      "question": "Cách đặt hàng như thế nào?",
+      "answer": "Bạn chỉ cần gửi mẫu muốn đặt, màu yêu thích và số lượng. Shop sẽ xác nhận giá, thời gian làm và thông tin nhận hàng sau."
+    }
+  ],
+  "homepageAbout": {
+    "eyebrow": "Về LyliShop",
+    "title": "Móc khóa len handmade được chuẩn bị theo từng món quà",
+    "description": "LyliShop làm móc khóa len handmade, hoa len và thú bông len theo từng yêu cầu nhỏ của khách. Sản phẩm được móc thủ công từ len Milk Cotton, có thể chọn màu, phối chi tiết và chuẩn bị theo dịp tặng. Shop ưu tiên tư vấn rõ trước khi làm để món quà giữ được cảm giác riêng, phù hợp tặng bạn thân, người yêu hoặc tự thưởng.",
+    "highlights": [
+      {
+        "title": "Handmade theo đơn",
+        "description": "Mỗi mẫu được chuẩn bị theo yêu cầu, không sản xuất đại trà.",
+        "icon": "handmade"
+      },
+      {
+        "title": "Chọn màu và phối chi tiết",
+        "description": "Bạn có thể trao đổi tone màu, mẫu yêu thích hoặc phong cách người nhận.",
+        "icon": "palette"
+      },
+      {
+        "title": "Gói quà gọn gàng",
+        "description": "Sản phẩm được kiểm tra và đóng gói chỉn chu trước khi gửi.",
+        "icon": "gift"
+      },
+      {
+        "title": "Làm theo ảnh hoặc mô tả",
+        "description": "LyliShop sẽ phản hồi phần nào làm được trước khi chốt mẫu.",
+        "icon": "reference"
+      }
+    ],
+    "image": {
+      "src": "/images/homepage/lylishop-about-handmade-workshop.webp",
+      "alt": "Nhiều mẫu móc khóa len mini được chuẩn bị tại LyliShop",
+      "width": 1200,
+      "height": 900,
+      "caption": "Ảnh sản phẩm và quá trình chuẩn bị thực tế tại LyliShop."
+    },
+    "imageChecklist": [
+      "Ảnh xưởng hoặc góc làm len",
+      "Ảnh đóng gói trước khi gửi",
+      "Ảnh quy trình móc thủ công",
+      "Ảnh bàn làm việc có sản phẩm thật"
+    ],
+    "trustSteps": [
+      {
+        "title": "Trao đổi mẫu",
+        "description": "Shop hỏi rõ mẫu, màu, số lượng và dịp tặng trước khi làm."
+      },
+      {
+        "title": "Móc thủ công",
+        "description": "Sản phẩm được móc, chỉnh form và gắn khoen theo từng mẫu."
+      },
+      {
+        "title": "Kiểm tra trước khi gửi",
+        "description": "LyliShop kiểm tra lại thành phẩm và xác nhận thông tin qua tin nhắn."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "Nhắn Zalo",
+        "href": "https://zalo.me/0356839196",
+        "external": true,
+        "variant": "primary"
+      },
+      {
+        "label": "Xem sản phẩm",
+        "href": "/products",
+        "variant": "secondary"
+      },
+      {
+        "label": "Xem danh mục",
+        "href": "/#categories",
+        "variant": "secondary"
+      }
+    ]
+  },
+  "homepageContact": {
+    "eyebrow": "Liên hệ đặt hàng",
+    "title": "Liên hệ đặt móc khóa len handmade theo yêu cầu",
+    "description": "LyliShop nhận đặt móc khóa len handmade, hoa len và thú bông len làm thủ công từ len Milk Cotton. Bạn có thể chọn mẫu, chọn màu, gửi ảnh tham khảo hoặc nhắn ý tưởng để shop tư vấn trước khi làm. Sản phẩm phù hợp làm quà tặng nhỏ, quà sinh nhật hoặc phụ kiện cá nhân; LyliShop sẽ xác nhận mẫu, màu và ghi chú trước khi chốt đơn qua Zalo.",
+    "trustItems": [
+      {
+        "title": "Handmade theo đơn",
+        "description": "Shop trao đổi mẫu, số lượng và ghi chú trước khi bắt đầu làm.",
+        "icon": "handmade"
+      },
+      {
+        "title": "Chọn màu theo yêu cầu",
+        "description": "Bạn có thể chọn tone màu hoặc nhờ shop tư vấn phối màu hài hòa.",
+        "icon": "palette"
+      },
+      {
+        "title": "Có gói quà",
+        "description": "LyliShop hỗ trợ chuẩn bị món quà gọn gàng khi bạn cần tặng.",
+        "icon": "gift"
+      },
+      {
+        "title": "Có thiệp",
+        "description": "Bạn có thể ghi chú nhu cầu kèm thiệp trong form đặt hàng nhanh.",
+        "icon": "card"
+      },
+      {
+        "title": "Xác nhận trước khi làm",
+        "description": "Shop phản hồi phần có thể thực hiện để khách yên tâm trước khi chốt.",
+        "icon": "confirm"
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Bao lâu shop phản hồi?",
+        "answer": "LyliShop ưu tiên phản hồi qua Zalo. Nếu bạn gửi đủ mẫu, màu và số lượng, shop có thể tư vấn nhanh hơn."
+      },
+      {
+        "question": "Có làm theo ảnh không?",
+        "answer": "Có. Bạn có thể gửi ảnh mẫu hoặc mô tả ý tưởng, LyliShop sẽ xác nhận phần làm được trước khi nhận đơn."
+      },
+      {
+        "question": "Có chọn màu không?",
+        "answer": "Có. Bạn có thể chọn màu yêu thích, phối màu theo dịp tặng hoặc nhờ shop gợi ý màu phù hợp."
+      }
+    ],
+    "ctas": [
+      {
+        "label": "Nhắn Zalo đặt hàng",
+        "href": "https://zalo.me/0356839196",
+        "external": true,
+        "variant": "primary",
+        "ariaLabel": "Nhắn Zalo đặt móc khóa len handmade với LyliShop"
+      },
+      {
+        "label": "Xem danh mục",
+        "href": "/#categories",
+        "variant": "secondary",
+        "ariaLabel": "Xem danh mục sản phẩm handmade của LyliShop"
+      }
+    ],
+    "channels": [
+      {
+        "label": "Facebook",
+        "value": "Theo dõi LyliShop.",
+        "href": "https://www.facebook.com/profile.php?id=61579372469264",
+        "icon": "facebook",
+        "ariaLabel": "Mở Facebook LyliShop"
+      },
+      {
+        "label": "Instagram",
+        "value": "Xem hình ảnh sản phẩm.",
+        "href": "https://www.instagram.com/lylishopstr/",
+        "icon": "instagram",
+        "ariaLabel": "Mở Instagram LyliShop"
+      },
+      {
+        "label": "Zalo",
+        "value": "Tư vấn nhanh.",
+        "href": "https://zalo.me/0356839196",
+        "icon": "zalo",
+        "ariaLabel": "Nhắn Zalo LyliShop"
+      },
+      {
+        "label": "Điện thoại",
+        "value": "0356839196",
+        "href": "tel:0356839196",
+        "icon": "phone",
+        "ariaLabel": "Gọi điện cho LyliShop"
+      },
+      {
+        "label": "Email",
+        "value": "lylishopstr@gmail.com",
+        "href": "mailto:lylishopstr@gmail.com",
+        "icon": "email",
+        "ariaLabel": "Gửi email cho LyliShop"
+      },
+      {
+        "label": "Google Maps",
+        "value": "Tư vấn và chốt đơn online.",
+        "icon": "maps"
+      }
+    ],
+    "map": {
+      "title": "Google Maps",
+      "ariaLabel": "Khung thông tin Google Maps LyliShop",
+      "description": "LyliShop hiện hỗ trợ tư vấn và đặt hàng online trên toàn quốc. Khung bản đồ sẽ được cập nhật khi shop có địa chỉ công khai phù hợp."
+    }
+  },
+  "promotion": {
+    "title": "CHỈ 5 SUẤT QUÀ TẶNG",
+    "eyebrow": "Ưu đãi móc khóa len handmade",
+    "summary": "Mua 3 tặng 1 hoặc rủ bạn mua cùng nhận quà đôi 45K.",
+    "items": [
+      "Mua 3 móc khóa len handmade bất kỳ, tặng 1 Túi Mù Size S trị giá 45.000đ. Chỉ áp dụng cho 3 khách hàng đầu tiên.",
+      "Rủ bạn mua cùng tại LyliShop, mỗi người nhận 1 móc khóa Size S trị giá 45.000đ. Chỉ áp dụng cho 2 cặp khách hàng đầu tiên."
+    ],
+    "notes": [
+      "Tổng số lượng quà tặng: 5 suất.",
+      "Mỗi khách hàng chỉ được áp dụng 1 chương trình ưu đãi.",
+      "Không áp dụng đồng thời 2 chương trình.",
+      "Quà tặng không quy đổi thành tiền mặt.",
+      "Chương trình kết thúc khi hết quà tặng."
+    ],
+    "href": "/#featured",
+    "ctaLabel": "Xem ưu đãi"
+  },
+  "gallery": [
+    {
+      "src": "/images/products/moc-khoa-mini/moc-khoa-mini-dong-goi-nhieu-mau.webp",
+      "alt": "Móc khóa len mini đóng gói nhiều màu",
+      "width": 1000,
+      "height": 1000
+    },
+    {
+      "src": "/images/blog/quy-trinh-moc-khoa-mini-phoi.webp",
+      "alt": "Móc khóa len mini trong quá trình chuẩn bị",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "src": "/images/products/thu-bong-len/thu-bong-len-tho-hong-cover.webp",
+      "alt": "Thú bông len thỏ hồng handmade của LyliShop",
+      "width": 900,
+      "height": 1200
+    },
+    {
+      "src": "/images/products/moc-khoa-mini/moc-khoa-mini-nhieu-mau-cover.webp",
+      "alt": "Bộ móc khóa len mini nhiều màu của LyliShop",
+      "width": 1000,
+      "height": 1000
+    },
+    {
+      "src": "/images/products/hoa-len/hoa-len-bo-hoa-handmade-cover.webp",
+      "alt": "Bó hoa len handmade nhiều màu của LyliShop",
+      "width": 900,
+      "height": 1200
+    },
+    {
+      "src": "/images/products/moc-khoa-size-s/moc-khoa-size-s-nhieu-mau-cover.webp",
+      "alt": "Móc khóa len size S nhiều mẫu dễ thương",
+      "width": 1000,
+      "height": 1000
+    },
+    {
+      "src": "/images/products/moc-khoa-size-m/moc-khoa-size-m-kem-hong-xanh.webp",
+      "alt": "Móc khóa len size M nhiều màu trên khay tre",
+      "width": 1200,
+      "height": 1062
+    },
+    {
+      "src": "/images/homepage/lylishop-hero-handmade-keychains.webp",
+      "alt": "Nhiều mẫu móc khóa len handmade của LyliShop",
+      "width": 1200,
+      "height": 960
+    }
+  ],
+  "homepage": {
+    "categories": [
+      {
+        "title": "Mini",
+        "price": "Từ 49.000đ",
+        "description": "Combo quà nhỏ xinh",
+        "cta": "Xem combo",
+        "href": "/products#nhom-mini"
+      },
+      {
+        "title": "Size S",
+        "price": "45.000đ",
+        "description": "Nhiều mẫu nhất",
+        "cta": "Chọn mẫu",
+        "href": "/products#nhom-size-s"
+      },
+      {
+        "title": "Size M",
+        "price": "59.000đ",
+        "description": "Quà tặng nổi bật",
+        "cta": "Xem mẫu",
+        "href": "/products#nhom-size-m"
+      },
+      {
+        "title": "Size L",
+        "price": "69.000đ",
+        "description": "Kích thước lớn hơn",
+        "cta": "Khám phá",
+        "href": "/products#nhom-size-l"
+      },
+      {
+        "title": "Hoa len",
+        "price": "35.000-40.000đ",
+        "description": "Không héo, lưu giữ lâu",
+        "cta": "Xem hoa",
+        "href": "/products#nhom-flower"
+      },
+      {
+        "title": "Thú bông len",
+        "price": "Từ 150.000đ",
+        "description": "Món quà handmade độc đáo",
+        "cta": "Xem thú bông",
+        "href": "/products#nhom-plush"
+      }
+    ],
+    "categoryImages": [
+      {
+        "src": "/images/categories/moc-khoa-mini.webp",
+        "alt": "Bộ móc khóa len mini nhiều màu của LyliShop",
+        "width": 900,
+        "height": 900
+      },
+      {
+        "src": "/images/categories/moc-khoa-size-s.webp",
+        "alt": "Móc khóa len size S nhiều mẫu dễ thương",
+        "width": 900,
+        "height": 900
+      },
+      {
+        "src": "/images/categories/moc-khoa-size-m.webp",
+        "alt": "Móc khóa len size M handmade trên khay tre",
+        "width": 900,
+        "height": 900
+      },
+      {
+        "src": "/images/products/moc-khoa-size-l/moc-khoa-size-l-12cm-cover.jpg",
+        "alt": "Móc khóa len Size L handmade cao 12 cm của LyliShop",
+        "width": 1280,
+        "height": 853
+      },
+      {
+        "src": "/images/categories/hoa-len.webp",
+        "alt": "Bó hoa len handmade nhiều màu",
+        "width": 900,
+        "height": 900
+      },
+      {
+        "src": "/images/categories/thu-bong-len.webp",
+        "alt": "Thú bông len handmade màu hồng",
+        "width": 900,
+        "height": 900
+      }
+    ],
+    "images": {
+      "hero": {
+        "src": "/images/homepage/lylishop-hero-handmade-keychains.webp",
+        "alt": "Nhiều mẫu móc khóa len handmade của LyliShop",
+        "width": 1200,
+        "height": 960
+      }
+    },
+    "featuredArticleImages": [
+      {
+        "src": "/images/blog/moc-khoa-mini-hang-tang-lylishop.webp",
+        "alt": "Nhiều mẫu móc khóa len handmade làm quà tặng nhỏ",
+        "width": 1200,
+        "height": 900
+      },
+      {
+        "src": "/images/blog/hoa-len-bo-hoa-handmade.webp",
+        "alt": "Bó hoa len handmade dùng làm quà tặng",
+        "width": 1200,
+        "height": 900
+      }
+    ],
+    "reviews": [
+      {
+        "name": "Phản hồi sau khi nhận hàng",
+        "date": "Đang tổng hợp từ phản hồi thật",
+        "status": "Chưa công bố đánh giá sao",
+        "content": "LyliShop chỉ hiển thị review khi khách đã đồng ý cho phép dùng nội dung hoặc hình ảnh. Shop không tự tạo đánh giá giả để làm đẹp website."
+      },
+      {
+        "name": "Trải nghiệm tư vấn",
+        "date": "Đang chờ nội dung đã xác nhận",
+        "status": "Minh bạch nguồn phản hồi",
+        "content": "Các phản hồi về tư vấn mẫu, chọn màu, đóng gói và thời gian chuẩn bị sẽ được cập nhật bằng nội dung thật từ kênh Facebook, Instagram hoặc Zalo."
+      },
+      {
+        "name": "Hình ảnh khách gửi",
+        "date": "Cần quyền hiển thị trước khi đăng",
+        "status": "Ưu tiên quyền riêng tư",
+        "content": "Với ảnh sản phẩm khách đã nhận, LyliShop sẽ che thông tin cá nhân và chỉ đăng khi khách đồng ý. Đây là cách shop giữ phần social proof đáng tin hơn."
+      }
+    ],
+    "featuredArticles": [
+      {
+        "title": "Móc khóa len handmade – Món quà nhỏ mang ý nghĩa lớn",
+        "description": "Vì sao một món quà nhỏ, mềm tay và có thể chọn màu lại dễ gắn với kỷ niệm của người nhận.",
+        "date": "16/06/2026",
+        "href": "/blog/y-nghia-qua-handmade"
+      },
+      {
+        "title": "5 lý do móc khóa len handmade được nhiều người lựa chọn làm quà tặng",
+        "description": "Những lý do khiến móc khóa len trở thành lựa chọn dễ thương cho sinh nhật, bạn thân và quà tự thưởng.",
+        "date": "16/06/2026",
+        "href": "/blog/qua-handmade-tang-ban-gai"
+      }
+    ]
+  },
+  "navigation": [
+    {
+      "label": "Trang chủ",
+      "href": "/"
+    },
+    {
+      "label": "Danh mục",
+      "href": "/#categories"
+    },
+    {
+      "label": "Sản phẩm",
+      "href": "/products"
+    },
+    {
+      "label": "Blog",
+      "href": "/blog"
+    },
+    {
+      "label": "Giới thiệu",
+      "href": "/#about"
+    },
+    {
+      "label": "Liên hệ",
+      "href": "/#contact"
+    }
+  ],
+  "footer": {
+    "brandDescription": "LyliShop làm móc khóa len handmade, hoa len và thú bông len từ len Milk Cotton. Sản phẩm có thể chọn màu, làm theo yêu cầu và phù hợp làm quà tặng; shop luôn xác nhận mẫu trước khi bắt đầu thực hiện.",
+    "navigation": [
+      {
+        "label": "Trang chủ",
+        "href": "/"
+      },
+      {
+        "label": "Danh mục",
+        "href": "/#categories"
+      },
+      {
+        "label": "Sản phẩm",
+        "href": "/products"
+      },
+      {
+        "label": "Blog",
+        "href": "/blog"
+      },
+      {
+        "label": "Giới thiệu",
+        "href": "/#about"
+      },
+      {
+        "label": "Liên hệ",
+        "href": "/#contact"
+      },
+      {
+        "label": "Móc khóa len handmade",
+        "href": "/moc-khoa-len"
+      }
+    ],
+    "categories": [
+      {
+        "label": "Mini",
+        "href": "/products#nhom-mini"
+      },
+      {
+        "label": "Size S",
+        "href": "/products#nhom-size-s"
+      },
+      {
+        "label": "Size M",
+        "href": "/products#nhom-size-m"
+      },
+      {
+        "label": "Size L",
+        "href": "/products#nhom-size-l"
+      },
+      {
+        "label": "Hoa len",
+        "href": "/products#nhom-flower"
+      },
+      {
+        "label": "Thú bông len",
+        "href": "/products#nhom-plush"
+      }
+    ],
+    "policies": [
+      {
+        "label": "Điều khoản đặt hàng",
+        "href": "/terms"
+      },
+      {
+        "label": "Chính sách bảo mật",
+        "href": "/privacy"
+      }
+    ]
+  },
+  "legal": {
+    "privacy": {
+      "metadata": {
+        "title": "Chính sách bảo mật thông tin đặt hàng handmade",
+        "description": "Chính sách bảo mật của LyliShop về cách xử lý tin nhắn, thông tin đặt hàng và dữ liệu cá nhân khi khách liên hệ đặt sản phẩm handmade.",
+        "canonical": "/privacy",
+        "ogDescription": "Cách LyliShop xử lý tin nhắn, thông tin đặt hàng và dữ liệu cá nhân."
+      },
+      "blocks": [
+        {
+          "type": "h1",
+          "text": "Chính sách bảo mật"
+        },
+        {
+          "type": "p",
+          "text": "Cập nhật: 2026."
+        },
+        {
+          "type": "p",
+          "text": "LyliShop là website trưng bày sản phẩm handmade. Bạn đặt hàng qua tin nhắn trên Instagram, TikTok, Facebook hoặc Zalo. Shop chỉ sử dụng thông tin bạn cung cấp để xác nhận đơn, sắp xếp giao hàng và hỗ trợ sau mua."
+        },
+        {
+          "type": "h2",
+          "text": "Thông tin shop có thể thu thập"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Nội dung tin nhắn bạn gửi (mẫu, màu, số lượng).",
+            "Thông tin nhận hàng bạn cung cấp (tên, số điện thoại, địa chỉ)."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Mục đích sử dụng"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Để làm sản phẩm handmade và xác nhận tùy chỉnh.",
+            "Để sắp xếp giao hàng và gửi mã vận đơn (nếu có).",
+            "Để trả lời câu hỏi và hỗ trợ khách hàng."
+          ]
+        },
+        {
+          "type": "h2",
+          "text": "Nền tảng bên thứ ba"
+        },
+        {
+          "type": "p",
+          "text": "Nền tảng nhắn tin và đơn vị vận chuyển do bên thứ ba cung cấp. Chính sách bảo mật của các bên đó có thể áp dụng khi bạn sử dụng dịch vụ của họ."
+        },
+        {
+          "type": "h2",
+          "text": "Liên hệ"
+        },
+        {
+          "type": "p",
+          "text": "Nếu bạn có yêu cầu liên quan tới dữ liệu cá nhân, hãy nhắn shop qua đúng kênh bạn đã dùng để đặt hàng."
+        }
+      ]
+    },
+    "terms": {
+      "metadata": {
+        "title": "Điều khoản đặt móc khóa len handmade online",
+        "description": "Điều khoản đặt hàng tại LyliShop khi khách chọn mẫu, tùy chỉnh màu, xác nhận giá, giao hàng và liên hệ đặt sản phẩm handmade.",
+        "canonical": "/terms",
+        "ogDescription": "Điều khoản khi đặt móc khóa len handmade và phụ kiện len từ LyliShop."
+      },
+      "blocks": [
+        {
+          "type": "h1",
+          "text": "Điều khoản đặt hàng"
+        },
+        {
+          "type": "p",
+          "text": "Các điều khoản này giúp thống nhất kỳ vọng khi bạn đặt sản phẩm handmade qua mạng xã hội."
+        },
+        {
+          "type": "h2",
+          "text": "Tính chất handmade"
+        },
+        {
+          "type": "p",
+          "text": "Mỗi sản phẩm đều được móc tay. Kích thước hoặc mũi len có thể chênh lệch rất nhỏ giữa từng sản phẩm; đây là nét đặc trưng của đồ handmade."
+        },
+        {
+          "type": "h2",
+          "text": "Tùy chỉnh"
+        },
+        {
+          "type": "p",
+          "text": "Shop có nhận tùy chỉnh màu sắc và một số chi tiết nhỏ. Shop sẽ xác nhận mẫu và chi tiết qua tin nhắn trước khi bắt đầu làm."
+        },
+        {
+          "type": "h2",
+          "text": "Đóng gói"
+        },
+        {
+          "type": "p",
+          "text": "Shop đóng gói gọn gàng, sạch đẹp theo phong cách quà tặng. Bạn có thể nhờ shop ghi lời nhắn ngắn cho người nhận."
+        },
+        {
+          "type": "h2",
+          "text": "Giao hàng"
+        },
+        {
+          "type": "p",
+          "text": "Thời gian chuẩn bị đơn thường 1–3 ngày làm việc. Thời gian nhận hàng tùy khu vực. Shop sẽ gửi mã vận đơn và thông tin theo dõi khi có."
+        },
+        {
+          "type": "h2",
+          "text": "Đổi trả và chỉnh sửa"
+        },
+        {
+          "type": "p",
+          "text": "Vì sản phẩm được làm thủ công và có thể tùy chỉnh theo yêu cầu, LyliShop sẽ trao đổi kỹ mẫu, màu và chi tiết trước khi bắt đầu làm. Nếu sản phẩm giao đến bị lỗi do quá trình hoàn thiện hoặc sai thông tin đã xác nhận qua tin nhắn, bạn hãy liên hệ shop sớm để được hỗ trợ kiểm tra và đề xuất phương án phù hợp."
+        },
+        {
+          "type": "h2",
+          "text": "Đặt hàng"
+        },
+        {
+          "type": "p",
+          "text": "Đơn hàng được đặt qua tin nhắn Instagram, TikTok, Facebook hoặc Zalo. Đơn được xác nhận khi hai bên thống nhất mẫu, giá và thông tin nhận hàng qua tin nhắn."
+        },
+        {
+          "type": "h2",
+          "text": "Thời gian phản hồi"
+        },
+        {
+          "type": "p",
+          "text": "LyliShop ưu tiên phản hồi qua Zalo, Facebook và Instagram. Nếu cần tư vấn gấp về mẫu, màu hoặc thời gian nhận hàng, bạn có thể gửi kèm ảnh mẫu, số lượng và ngày cần nhận để shop kiểm tra nhanh hơn."
+        }
+      ]
+    }
+  },
+  "assets": [
+    {
+      "sourcePath": "/apple-touch-icon-lylishop-v3.png",
+      "bytes": 36133,
+      "sha256": "dd381d4b8925805b77b6f2a84e1b7ade2bf7bb547a3a9e0ee4e9eff333f34d1b"
+    },
+    {
+      "sourcePath": "/gallery/group-collection.png",
+      "bytes": 50981,
+      "sha256": "c2c4cb296a454c0b690d8ba9f2024bb526ebb5a3d2371df8d3ded99056921e48"
+    },
+    {
+      "sourcePath": "/gallery/packaging-flatlay.png",
+      "bytes": 35514,
+      "sha256": "293bb1d1aec33f439227abeda7700ad30e579021eebe7e970546bc541e508eb3"
+    },
+    {
+      "sourcePath": "/gallery/yarn-texture-closeup.png",
+      "bytes": 74134,
+      "sha256": "6cf2dbf4d1320baaa2f83293e053ae2d4cd12db39eeaff242eb4a34827f44159"
+    },
+    {
+      "sourcePath": "/images/blog/hoa-len-bo-hoa-handmade.webp",
+      "bytes": 127570,
+      "sha256": "1b329890e426d262937d4a0fc2cd4185a246f112c04be3b6d8963c306f7a9350",
+      "alt": "Bo hoa len handmade dung lam qua tang",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "sourcePath": "/images/blog/moc-khoa-mini-hang-tang-lylishop.webp",
+      "bytes": 185472,
+      "sha256": "46869078483288411aa3ada57be57bbd60e5df5420ada35e5c081b75c4c4b12a",
+      "alt": "Bộ móc khóa len mini nhiều màu đang chuẩn bị tại LyliShop",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "sourcePath": "/images/blog/quy-trinh-hoa-len-handmade.webp",
+      "bytes": 147280,
+      "sha256": "2895cfe2be49e3b5ad635fbe3b46183dd20e343c8095885069255e68a33b08c6"
+    },
+    {
+      "sourcePath": "/images/blog/quy-trinh-moc-khoa-mini-phoi.webp",
+      "bytes": 74860,
+      "sha256": "5533a5e6d3bb65626ae1954c9a3afe3814fe84a6738d92e5d2a3e0765567f52d",
+      "alt": "Móc khóa len mini trong quá trình chuẩn bị",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "sourcePath": "/images/blog/quy-trinh-moc-khoa-size-m-ga-vang.webp",
+      "bytes": 134662,
+      "sha256": "93e16c15183d3d3b2864fc47771d812ab72f278904470e38c7b0aa2ba7f3a8cc",
+      "alt": "Nhieu moc khoa len size M dang duoc chuan bi",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "sourcePath": "/images/categories/hoa-len.webp",
+      "bytes": 125388,
+      "sha256": "3c9716b29a34ab63b155a72bf0cf726bc44a2a017019b71cc5e36a4392a3bb60",
+      "alt": "Bó hoa len handmade nhiều màu",
+      "width": 900,
+      "height": 900
+    },
+    {
+      "sourcePath": "/images/categories/moc-khoa-mini.webp",
+      "bytes": 132220,
+      "sha256": "b52b40507bbde303339d3a2951884a4a2a2f47dd8755fa890aa887d46a4fc86e",
+      "alt": "Bộ móc khóa len mini nhiều màu của LyliShop",
+      "width": 900,
+      "height": 900
+    },
+    {
+      "sourcePath": "/images/categories/moc-khoa-size-m.webp",
+      "bytes": 95672,
+      "sha256": "83d0766d5a8171d04b305740b8c9c808f95663736498099597cb5c56b98108a6",
+      "alt": "Móc khóa len size M handmade trên khay tre",
+      "width": 900,
+      "height": 900
+    },
+    {
+      "sourcePath": "/images/categories/moc-khoa-size-s.webp",
+      "bytes": 59282,
+      "sha256": "f6ece1a1615965eea40eb27c7a494662881b1b1f5e57046801818d97a6de7709",
+      "alt": "Móc khóa len size S nhiều mẫu dễ thương",
+      "width": 900,
+      "height": 900
+    },
+    {
+      "sourcePath": "/images/categories/thu-bong-len.webp",
+      "bytes": 58212,
+      "sha256": "3a311df199ba2c526f70fd8ec872bca2fd4c92b53ba831f4cfb22ca1936d1308",
+      "alt": "Thú bông len handmade màu hồng",
+      "width": 900,
+      "height": 900
+    },
+    {
+      "sourcePath": "/images/homepage/lylishop-about-handmade-workshop.webp",
+      "bytes": 185472,
+      "sha256": "46869078483288411aa3ada57be57bbd60e5df5420ada35e5c081b75c4c4b12a",
+      "alt": "Nhiều mẫu móc khóa len mini được chuẩn bị tại LyliShop",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "sourcePath": "/images/homepage/lylishop-hero-handmade-keychains.webp",
+      "bytes": 70248,
+      "sha256": "e66ec5dc1cb5791e5641ded6689a02a5761454a15900f5c7f33e24d0b575f0c6",
+      "alt": "Nhiều mẫu móc khóa len handmade của LyliShop",
+      "width": 1200,
+      "height": 960
+    },
+    {
+      "sourcePath": "/images/og/lylishop-blog-og.webp",
+      "bytes": 173452,
+      "sha256": "cc0d26e73f0ff6b18866bef76e4546de30b849d75f91e879c3ca9ca170db39a6"
+    },
+    {
+      "sourcePath": "/images/og/lylishop-homepage-og.webp",
+      "bytes": 76490,
+      "sha256": "18931c1dd43f7029c9bdb42dc05a4fe03a3110742bf513c9d8b5abeb82df83da"
+    },
+    {
+      "sourcePath": "/images/products/hoa-len/hoa-len-bo-hoa-handmade-cover.webp",
+      "bytes": 142268,
+      "sha256": "9429e640ea32184f30daacc0b8f247e2da25306e632dabbd6fed2bee49bd0c8a",
+      "alt": "Bó hoa len handmade nhiều màu của LyliShop",
+      "width": 900,
+      "height": 1200
+    },
+    {
+      "sourcePath": "/images/products/hoa-len/hoa-len-mini-treo-tui.webp",
+      "bytes": 151904,
+      "sha256": "cc8431c9bdb958e6416b4b8ae53357a450d72df6c6acc902743421344e4fd722",
+      "alt": "Hoa len mini dùng làm phụ kiện treo túi",
+      "width": 900,
+      "height": 1200
+    },
+    {
+      "sourcePath": "/images/products/hoa-len/hoa-len-nhieu-mau-quy-trinh.webp",
+      "bytes": 173582,
+      "sha256": "cb64b6ff160bf70caa7148b05690ea46b570b584bd8cc18ccac05bc10a71eeb7",
+      "alt": "Hoa len nhiều màu trong quá trình chuẩn bị",
+      "width": 900,
+      "height": 1200
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-mini/moc-khoa-mini-dong-goi-nhieu-mau.webp",
+      "bytes": 245678,
+      "sha256": "203cff82fae360f752f69e4c5aa150efa3b80efe440d7610d39a9842bf8c8357",
+      "alt": "Móc khóa len mini đóng gói nhiều màu",
+      "width": 1000,
+      "height": 1000
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-mini/moc-khoa-mini-hang-tang-lylishop.webp",
+      "bytes": 209958,
+      "sha256": "3f8e72962194a39c8474cf5243f203152e41c0fc738a377f8ebd2000cc8ef955",
+      "alt": "Nhiều mẫu móc khóa len mini đang chuẩn bị tại LyliShop",
+      "width": 1200,
+      "height": 1200
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-mini/moc-khoa-mini-nhieu-mau-cover.webp",
+      "bytes": 152982,
+      "sha256": "1b48d74dba31adad295364bc4ffc41b1a08b9e0b2e3851b119d1806b7ac7e81a",
+      "alt": "Bộ móc khóa len mini nhiều màu của LyliShop",
+      "width": 1000,
+      "height": 1000
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-l/moc-khoa-size-l-12cm-cover.jpg",
+      "bytes": 211146,
+      "sha256": "7591c4a3e2e5eda3ca62bc68c1f8becc22450c6fb8d0cd1ec373b593afbb400d",
+      "alt": "Móc khóa len Size L handmade cao 12 cm của LyliShop",
+      "width": 1280,
+      "height": 853
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-l/moc-khoa-size-l-ga-vang.jpg",
+      "bytes": 168935,
+      "sha256": "d2b4b58c3b82260269368b108c664d4cdc3e3d69ae09feec426a9955373b5aa3",
+      "alt": "Móc khóa len Size L hình gà vàng handmade của LyliShop",
+      "width": 1280,
+      "height": 1280
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-l/moc-khoa-size-l-tho-hong.jpg",
+      "bytes": 157563,
+      "sha256": "5eff72e3dc77c9ced5a91c602f64b48a5cddd36a311a47cca11973a7442c9f0f",
+      "alt": "Móc khóa len Size L hình thỏ hồng handmade của LyliShop",
+      "width": 1280,
+      "height": 1280
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-l/moc-khoa-size-l-treo-balo.jpg",
+      "bytes": 243179,
+      "sha256": "5f426e53a3398b6c78c7438d84c19b0e3e905104d3c705251dbe691900bf481e",
+      "alt": "Móc khóa len Size L hình gà vàng treo balo của LyliShop",
+      "width": 960,
+      "height": 1280
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-l/moc-khoa-size-l-vit-dua-hau.jpg",
+      "bytes": 229305,
+      "sha256": "03fae37d0cd34560fac8b01fac3c43f30ea013d57d5edf91087d45e9a5512f7a",
+      "alt": "Móc khóa len Size L hình vịt dưa hấu handmade của LyliShop",
+      "width": 1280,
+      "height": 1280
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-m/moc-khoa-size-m-kem-hong-xanh.webp",
+      "bytes": 148998,
+      "sha256": "9a03362367515b6e6ef54992c68aca61f1ee374d175e89e3fac1386bc7f5ae14",
+      "alt": "Móc khóa len size M nhiều màu trên khay tre",
+      "width": 1200,
+      "height": 1062
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-m/moc-khoa-size-m-mau-hong-tren-khay-tre.webp",
+      "bytes": 133676,
+      "sha256": "2df5cc9289e1d001da464483d8b9c0b32a6463b0dc5d3170309ebcba6b54ef0a"
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-m/moc-khoa-size-m-meo-nau-lylishop.webp",
+      "bytes": 112312,
+      "sha256": "4c3a24dcbac125b529424e8348606f6ed3dec8a23b2250c44c841ca31b6bde7d"
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-m/moc-khoa-size-m-tho-hong-tren-khay-tre.webp",
+      "bytes": 117044,
+      "sha256": "6cc160eab0f9e7b4f4288b0ab030f9107fc6c0ca0c1e83c892984ba5aacbc300"
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-m/moc-khoa-size-m-tho-vang-tren-khay-tre.webp",
+      "bytes": 98686,
+      "sha256": "c564c18dbf686c57d4556c5e95ffa5bb4c290010eb38136b1003169eb060c283"
+    },
+    {
+      "sourcePath": "/images/products/moc-khoa-size-s/moc-khoa-size-s-nhieu-mau-cover.webp",
+      "bytes": 68196,
+      "sha256": "6f714b9b20d9ea0a768d0728aaeba8d35a3a8f9e2c9e178481e6cad3e4780d46",
+      "alt": "Móc khóa len size S nhiều mẫu dễ thương",
+      "width": 1000,
+      "height": 1000
+    },
+    {
+      "sourcePath": "/images/products/thu-bong-len/thu-bong-len-tho-hong-cover.webp",
+      "bytes": 65412,
+      "sha256": "66e87ca0441aef6bde273363ea027c2646b8f97e82ece10d7ffd7fa9fe1c6b35",
+      "alt": "Thú bông len thỏ hồng handmade của LyliShop",
+      "width": 900,
+      "height": 1200
+    },
+    {
+      "sourcePath": "/logo-lylishop-v2.svg",
+      "bytes": 217460,
+      "sha256": "80e71f813e07e9d75fb7f2eefe37d8da36ea0fbebc13b8b11f5def40fa7b4c39"
+    },
+    {
+      "sourcePath": "/logo-lylishop-v3.svg",
+      "bytes": 217460,
+      "sha256": "80e71f813e07e9d75fb7f2eefe37d8da36ea0fbebc13b8b11f5def40fa7b4c39"
+    },
+    {
+      "sourcePath": "/logo-lylishop.svg",
+      "bytes": 217460,
+      "sha256": "80e71f813e07e9d75fb7f2eefe37d8da36ea0fbebc13b8b11f5def40fa7b4c39"
+    },
+    {
+      "sourcePath": "/logo.svg",
+      "bytes": 217460,
+      "sha256": "80e71f813e07e9d75fb7f2eefe37d8da36ea0fbebc13b8b11f5def40fa7b4c39"
+    },
+    {
+      "sourcePath": "/og.png",
+      "bytes": 626089,
+      "sha256": "cb04b8219be78dfe47a61b358c66d7fa30091ac739838449341fe9ca3db33e86"
+    },
+    {
+      "sourcePath": "/product-assets/bunny-plush-charm.jpg",
+      "bytes": 75821,
+      "sha256": "86f164b53b514ab36e85d8678139b0317be2d672ed5e06728212218ba64cf943"
+    },
+    {
+      "sourcePath": "/product-assets/cat-paw-crochet-accessory.jpg",
+      "bytes": 58909,
+      "sha256": "a390a46eda4103e6251d19df7944bfc559d71131b6d4137f4e74d7f9170bc672"
+    },
+    {
+      "sourcePath": "/product-assets/crochet-bear-keychain.jpg",
+      "bytes": 79676,
+      "sha256": "b047523e7202a573060e91ceec0876f44c429389fe026ff705a9c1dea983895b"
+    },
+    {
+      "sourcePath": "/product-assets/set-10-mau-mix-1.jpg",
+      "bytes": 152625,
+      "sha256": "4bd20a8473c25beb653180f4353c29c9defba9d3464aa1469c4ba25f25f78cf3"
+    },
+    {
+      "sourcePath": "/product-assets/set-10-mau-mix-1.webp",
+      "bytes": 39724,
+      "sha256": "71dceca89f0531f2862122c80c2d100492c98c7e1b0d0d0e1d5d073451ae4b47"
+    },
+    {
+      "sourcePath": "/product-assets/set-10-mau-mix-2.jpg",
+      "bytes": 660101,
+      "sha256": "7c07a56ba02706caa198538117b276ed60a793d66995c343be9885ad4a130767"
+    },
+    {
+      "sourcePath": "/product-assets/set-10-mau-mix-2.webp",
+      "bytes": 63508,
+      "sha256": "2deac22e312145847706ac2a7f167040845514ebb872ee64bba1751b523a746e"
+    },
+    {
+      "sourcePath": "/product-assets/set-10-mau-mix-3.jpg",
+      "bytes": 897320,
+      "sha256": "d1272a49f535a1ff398c66a17ca0643deaf6fd6e9b02b92b1e7948e379863ec2"
+    },
+    {
+      "sourcePath": "/product-assets/set-10-mau-mix-3.webp",
+      "bytes": 81882,
+      "sha256": "7ac0b9d1f132b43ad8d5e916a6ba44140fada84b2acdf94db574ad791b33d1f7"
+    },
+    {
+      "sourcePath": "/product-assets/set-10-mau-mix-4.jpg",
+      "bytes": 452273,
+      "sha256": "00c2fca5a677bebb6cf0ea3a6ef96d204ecb6dd116b000b1fa44f48a3bbd76ca"
+    },
+    {
+      "sourcePath": "/product-assets/set-10-mau-mix-4.webp",
+      "bytes": 55580,
+      "sha256": "d62ecaf9a86c6f581fa35535eda1a6e4f29368f8cd6478fb1b15daa395406a81"
+    },
+    {
+      "sourcePath": "/product-assets/set-6-mau-cute-1.jpg",
+      "bytes": 700863,
+      "sha256": "4fe11eba8567658c585de91f943d4365ce83a47c2d5e2350aa04e5621a31950d"
+    },
+    {
+      "sourcePath": "/product-assets/set-6-mau-cute-1.webp",
+      "bytes": 61006,
+      "sha256": "a732239f9766c60394626b4a2863d729c0488062080ddad65ca8994bed8d4915"
+    },
+    {
+      "sourcePath": "/product-assets/set-6-mau-cute-2.jpg",
+      "bytes": 758196,
+      "sha256": "936bf854454addb07c1f37b991858c137c9b288da29e33a2934780fde82fefdc"
+    },
+    {
+      "sourcePath": "/product-assets/set-6-mau-cute-2.webp",
+      "bytes": 71998,
+      "sha256": "7642dff75408f6746ec07aebd74176588d4536f3f5b25976e7aa23d71a84bfaa"
+    },
+    {
+      "sourcePath": "/product-assets/set-6-mau-qua-tang-1.jpg",
+      "bytes": 380452,
+      "sha256": "d3cb67e747628a1bda0dfe44f904a7b2abb424dc1fb39c38bc41acb978f31293"
+    },
+    {
+      "sourcePath": "/product-assets/set-6-mau-qua-tang-1.webp",
+      "bytes": 69274,
+      "sha256": "4afde08bfe784c93abbe38f5c6b37a29f2d3fb70417cc6981a7d354f68ccfc40"
+    },
+    {
+      "sourcePath": "/product-assets/set-6-mau-qua-tang-2.jpg",
+      "bytes": 237934,
+      "sha256": "f0e3f2f27cbcb98c88407789f6b7936fff885586a0ab6a6500df68ea95926839"
+    },
+    {
+      "sourcePath": "/product-assets/set-6-mau-qua-tang-2.webp",
+      "bytes": 66414,
+      "sha256": "d87cdcfb94b85ae2ba8c7ea37bedc666e2b85a5b1dd79fed9b8f1e1e5a482016"
+    },
+    {
+      "sourcePath": "/product-assets/strawberry-yarn-charm.jpg",
+      "bytes": 88877,
+      "sha256": "ac30b81d3943597776f4610319865818a28e2a666c76305bb66e314a7536cee0"
+    },
+    {
+      "sourcePath": "/product-assets/tulip-crochet-keychain.jpg",
+      "bytes": 67141,
+      "sha256": "22f469c5f1d5d54cb249064bc7f24a5f0c7b2b332fb9a350a53d3291a2c0f7a4"
+    },
+    {
+      "sourcePath": "/twitter-card.png",
+      "bytes": 626089,
+      "sha256": "cb04b8219be78dfe47a61b358c66d7fa30091ac739838449341fe9ca3db33e86"
+    }
+  ]
+}
