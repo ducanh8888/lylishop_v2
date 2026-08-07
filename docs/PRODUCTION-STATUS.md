@@ -21,7 +21,7 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 
 | Mục | Kết quả |
 |---|---|
-| Deployed source commit | `5237bbcb9d6afb25842197466a6288d970d91f1a` |
+| Deployed source commit | `90bc591ef184c51b1bcdd57feb56b21445ca0134` |
 | Deployment gate | WSL/local validators; GitHub Actions chỉ cung cấp thông tin, không chặn deploy |
 | Domain/DNS | `lylishop.online` → `103.75.184.20` — đúng hosting |
 | SSL/public routes | HTTPS hợp lệ; Home, Shop, Cart, Checkout, My Account và trang đăng nhập admin trả HTTP 200 |
@@ -32,9 +32,9 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 | Code policy | `DISALLOW_FILE_MODS=true`, `DISALLOW_FILE_EDIT=true`; nội dung/cấu hình cửa hàng vẫn chỉnh trong WP Admin |
 | WP-CLI path trên host | `--path=apps/lylishop/current/web/wp` |
 | `public_html` | Symlink → `apps/lylishop/current/web`; bản provider cũ giữ tại `shared/rollback/provider-public_html-20260807135123` |
-| Theme integration | Một semantic footer do Botiga render; `theme.json` là nguồn token chuẩn; child CSS còn 494 dòng trong một visual system, không còn khối legacy trùng lặp |
-| `apps/lylishop/current` | → `releases/20260807190413` |
-| Release rollback | `releases/20260807185540` |
+| Theme integration | Một semantic footer do Botiga render; `theme.json` là nguồn token chuẩn; child CSS còn 494 dòng trong một visual system; compatibility layer loại Starter Sites khi importer không khả dụng để Botiga Dashboard không redirect sang page lỗi |
+| `apps/lylishop/current` | → `releases/20260807205828` |
+| Release rollback | `releases/20260807190413` |
 | Backup gần nhất | `shared/backups/20260807190537/database.sql.gz` (qua `gzip -t`) |
 | `.env` | `shared/.env` mode 600, ngoài `public_html`, owner đúng |
 | Baseline content | 8 trang publish, 4 policy draft, 5 danh mục sản phẩm, 0 sản phẩm; mọi payment gateway tắt |
@@ -56,3 +56,4 @@ Chính sách phê duyệt chung cho lần deploy sau **không** bị suy yếu. 
 - **2026-08-07:** phase ổn định kiến trúc: pin plugin drift vào Composer, clean-snapshot artifact, khôi phục production code locks, gỡ Botiga capability shim, deploy release `20260807183254`; MCP Lyli và public smoke test PASS.
 - **2026-08-07:** phase tích hợp theme: loại footer kép, giữ một footer semantic của Botiga, chuyển token sang `theme.json`, chặn Botiga ghi đè palette và thêm cache version riêng cho child stylesheet; deploy release `20260807185540`.
 - **2026-08-07:** phase dọn storefront: xóa khối CSS legacy trùng lặp (923 → 494 dòng), nâng `shop-child` lên 1.2.0 và gỡ aThemes Starter Sites khỏi runtime; deploy release `20260807190413`.
+- **2026-08-07:** sửa Botiga Dashboard tương thích với `DISALLOW_FILE_MODS`: loại tab/menu Starter Sites khi importer không có hook, giữ nguyên code locks và deploy release `20260807205828`.
