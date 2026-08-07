@@ -229,6 +229,15 @@ $enqueue_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/e
 check('Child stylesheet keeps one Botiga handle', ! str_contains($enqueue_php, "wp_enqueue_style(\n        'botiga-style'"));
 check('Child stylesheet has independent cache version', str_contains($enqueue_php, "registered['botiga-style']->ver"));
 
+/* Botiga Dashboard must not redirect into an unavailable demo importer when
+ * production deliberately disables plugin installation. */
+$child_functions_php = (string) file_get_contents("$root/web/app/themes/shop-child/functions.php");
+$botiga_admin_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/botiga-admin.php");
+check('Child theme loads Botiga admin compatibility', str_contains($child_functions_php, "inc/botiga-admin.php"));
+check('Unavailable Starter Sites tab is removed', str_contains($botiga_admin_php, "unset(\$settings['tabs']['starter-sites'])"));
+check('Starter Sites availability uses its runtime hook', str_contains($botiga_admin_php, "has_action('atss_starter_sites')"));
+check('Botiga compatibility does not weaken file-mod locks', ! str_contains($botiga_admin_php, "DISALLOW_FILE_MODS', false"));
+
 /* composer.json validate script updated? */
 check(
     'composer.json has validate:storefront script',

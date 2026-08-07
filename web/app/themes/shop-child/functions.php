@@ -30,6 +30,7 @@ require_once __DIR__ . '/inc/footer.php';
 require_once __DIR__ . '/inc/accessibility.php';
 require_once __DIR__ . '/inc/block-patterns.php';
 require_once __DIR__ . '/inc/woocommerce.php';
+require_once __DIR__ . '/inc/botiga-admin.php';
 
 /**
  * Theme setup — narrow additions only.

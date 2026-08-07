@@ -16,6 +16,7 @@ Child theme for `lylishop.online` (parent: **Botiga Free 2.4.7**). Presentation 
 | `inc/accessibility.php` | Notes Botiga's existing skip-link/search labels; no duplicates added. |
 | `inc/block-patterns.php` | 8 controlled Gutenberg patterns (Hero, Categories, Brand story, USP, Custom-order CTA, Featured products, Final CTA, Empty shop). |
 | `inc/woocommerce.php` | Narrow presentation hooks: one-image/missing-image classes, custom-order hint on single product (only when configured). |
+| `inc/botiga-admin.php` | Keeps Botiga Dashboard usable when production file modifications are locked and the optional Starter Sites importer is unavailable. |
 
 ## Decisions
 
