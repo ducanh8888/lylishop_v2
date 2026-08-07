@@ -10,7 +10,7 @@ Repository (Git) **không** thay thế database backup, và database backup **kh
 
 ## Thành phần backup
 
-* Database (toàn bộ, qua `mysqldump` — xác nhận có sẵn trên host tại `docs/HOSTING-AUDIT.md` mục 2.5).
+* Database toàn bộ qua PHP 8.3 + WP-CLI `db export`, sau đó kiểm tra gzip.
 * `shared/uploads/` (media library thật, không nằm trong release artifact).
 * Theme (`shop-child`), mu-plugin (`site-policy`) — đã có trong Git, nhưng vẫn chụp cùng bản backup toàn phần để restore nhanh không cần rebuild.
 * Cấu hình cần thiết (`.env` thật, không commit).
@@ -26,7 +26,7 @@ Repository (Git) **không** thay thế database backup, và database backup **kh
 | Backup trước mỗi deploy | Mỗi lần, bắt buộc |
 | Off-site copy | Giữ ít nhất một bản, không chỉ backup của hosting |
 
-UpdraftPlus (`docs/PLUGIN-MANIFEST.md`) đảm nhiệm backup theo lịch sau khi WordPress được cài. Trước khi WordPress tồn tại, `scripts/production-backup.sh` dùng `mysqldump` + `rsync`/`tar` trực tiếp qua SSH (biến `SSH_HOST_ALIAS`, mặc định `commerce-host`).
+UpdraftPlus (`docs/PLUGIN-MANIFEST.md`) đảm nhiệm backup theo lịch. Backup trước deploy dùng `scripts/production-backup.sh` trên host: `/opt/alt/php83/usr/bin/php /usr/bin/wp --path=apps/lylishop/current/web/wp db export`, gzip DB và tar `shared/uploads`. Script không `source` `.env`, nên salt/credential không bị shell parse hoặc in ra log.
 
 ## Quy trình restore
 
