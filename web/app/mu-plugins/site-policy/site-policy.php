@@ -50,4 +50,3 @@ add_action('admin_menu', __NAMESPACE__ . '\\Menu\\filter_admin_menu', PHP_INT_MA
 add_action('admin_init', __NAMESPACE__ . '\\Lockdown\\apply');
 add_action('wp_dashboard_setup', __NAMESPACE__ . '\\Dashboard\\register_widget');
 add_filter('login_redirect', __NAMESPACE__ . '\\Dashboard\\owner_login_redirect', 10, 3);
-add_filter('user_has_cap', __NAMESPACE__ . '\\Menu\\allow_owner_botiga_dashboard', 20, 4);

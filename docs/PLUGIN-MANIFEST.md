@@ -2,7 +2,7 @@
 
 Nguồn: TECH_STACK.md mục 5. Mỗi plugin phải có entry ở đây trước khi được thêm vào `composer.json` hoặc cài thủ công (yêu cầu bắt buộc theo TECH_STACK.md mục 18, tiêu chí #22).
 
-Trạng thái tại thời điểm audit (2026-08-03): **chưa có plugin nào được cài đặt thật** — tài khoản hosting hoàn toàn mới (`docs/HOSTING-AUDIT.md` mục 2.1). Bảng dưới đây là manifest dự kiến cho Phase 2 (Plugin audit) và Phase 3 (Commerce configuration).
+Manifest này phản ánh dependency có thể tái tạo từ `composer.lock`. Plugin phát hiện trực tiếp trên production phải được pin ở đây trước release kế tiếp hoặc được gỡ bằng một thay đổi có kiểm soát.
 
 ## Theme (theo cùng kỷ luật manifest như plugin)
 
@@ -17,6 +17,8 @@ Trạng thái tại thời điểm audit (2026-08-03): **chưa có plugin nào �
 | Plugin | Version baseline | Nguồn | License | Bắt buộc/Tùy chọn | Owner bảo trì | Dữ liệu tạo ra | Backup | Gỡ bỏ | Rủi ro tương thích |
 |---|---|---|---|---|---|---|---|---|---|
 | WooCommerce | 10.9.4 | wpackagist (WordPress.org) | GPL | Bắt buộc | Developer | Sản phẩm, đơn hàng, khách hàng (DB tables + postmeta) | UpdraftPlus DB dump | Deactivate — dữ liệu vẫn giữ trong DB | Thấp, plugin nền của toàn bộ stack |
+| AI Engine | 3.7.0 | wpackagist (`ai-engine`) | GPL | Bắt buộc khi dùng MCP Lyli | Developer | Cấu hình AI/MCP và metadata trong DB; credential không nằm trong repo | DB dump | Chỉ deactivate sau khi gỡ MCP Lyli khỏi Codex | Cao — MCP có tool đọc/ghi/xóa rộng; phải dùng allowlist và approval policy |
+| aThemes Starter Sites | 1.4.2 | wpackagist (`athemes-starter-sites`) | GPL | Tạm thời để tái tạo đúng production hiện tại | Developer | Tùy chọn/import metadata trong DB | DB dump | Mục tiêu gỡ ở phase kế tiếp sau khi xác nhận không có runtime dependency | Trung bình — không cần thiết cho storefront đã bootstrap |
 | SEOPress Free | 10.1 | wpackagist (`wp-seopress`) | GPL | Bắt buộc | Developer | Options riêng (`seopress_*`), meta trên post | Nằm trong DB dump | Deactivate, xóa options qua uninstall | Thấp |
 | FluentSMTP | 2.2.95 | wpackagist (`fluent-smtp`) | GPL | Bắt buộc, **cần compatibility test WordPress 7.0.2 trước production** | Developer | Email log (DB table riêng) | DB dump | Deactivate | Trung bình — chưa công bố test WP 7.0.2 (TECH_STACK.md mục 8.2); fallback: WP Mail SMTP 4.9.0 hoặc Post SMTP 3.9.5 |
 | WP Super Cache | 3.1.1 | wpackagist (`wp-super-cache`) | GPL | Bắt buộc **nếu web server là Apache** — cần xác nhận qua panel (`docs/HOSTING-AUDIT.md` mục 3.4); nếu LiteSpeed thật, đổi sang LiteSpeed Cache | Developer | Cache file trong `wp-content/cache/` | Không cần backup (regenerable) | Deactivate + xóa cache dir | Thấp, phải loại trừ cart/checkout/my-account khỏi page cache |

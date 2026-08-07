@@ -64,7 +64,6 @@ function render_home(): void
         ['dashicons-cart', 'Đơn hàng', admin_url('admin.php?page=wc-orders')],
         ['dashicons-menu', 'Menu', admin_url('nav-menus.php')],
         ['dashicons-admin-customizer', 'Logo & giao diện', admin_url('customize.php')],
-        ['dashicons-admin-appearance', 'Botiga Dashboard', admin_url('admin.php?page=botiga-dashboard')],
         ['dashicons-admin-generic', 'Cài đặt Lyli Shop', admin_url('admin.php?page=' . \LyliSiteSettings\SETTINGS_PAGE)],
         ['dashicons-media-document', 'Trang chính sách', $policy_ids ? get_edit_post_link((int) $policy_ids[0], 'raw') : admin_url('edit.php?post_type=page')],
         ['dashicons-admin-post', 'Bài viết', admin_url('edit.php')],

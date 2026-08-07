@@ -543,8 +543,8 @@ Bảo mật baseline gồm:
 * 2FA.
 * Strong password.
 * Least privilege.
-* File editor và cài plugin chỉ mở cho tài khoản Administrator được chỉ định.
-* Shop owner/staff vẫn áp dụng least privilege và không có quyền sửa mã/cài plugin.
+* Tắt file editor trên production.
+* Tắt cài plugin trực tiếp trên production.
 * Backup off-site.
 * Rate limiting ở hosting hoặc reverse proxy.
 * WAF của hosting nếu có.
@@ -620,7 +620,7 @@ Phạm vi:
 
 * Đăng ký role và capability.
 * Ẩn menu theo role.
-* Chỉ cho Administrator dùng file editor.
+* Tắt file editor.
 * Tắt plugin/theme installation với shop user.
 * Chặn truy cập URL admin kỹ thuật.
 * Thiết lập default option.
@@ -753,8 +753,8 @@ commerce-site/
 * Phiên bản thực tế khóa trong `composer.lock`.
 * Plugin thương mại được tải từ private Composer repository hoặc private artifact storage.
 * Không commit license key.
-* Administrator có thể cập nhật plugin trực tiếp trong `wp-admin`; thay đổi phải được đồng bộ lại vào source/Composer trước release kế tiếp.
-* Production đặt `DISALLOW_FILE_MODS=false` và `DISALLOW_FILE_EDIT=false`; shop user vẫn bị khóa bằng capability policy.
+* Không cập nhật plugin trực tiếp trong `wp-admin`.
+* Production đặt `DISALLOW_FILE_MODS=true` và `DISALLOW_FILE_EDIT=true`.
 * Plugin không có nguồn build tái tạo được thì không được đưa vào stack.
 
 ## 13.2. Update workflow

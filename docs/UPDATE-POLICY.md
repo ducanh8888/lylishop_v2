@@ -38,6 +38,6 @@ Composer trên host hiện là 2.8.10 với các CVE đã biết (`docs/HOSTING-
 
 Xem TECH_STACK.md mục 15 — sản phẩm (simple/variable/hết hàng/sale), bundle, cart (guest/login), checkout (mobile/desktop/validation SĐT), địa chỉ Việt Nam, shipping, COD, SePay (QR/webhook/duplicate), coupon, stock, refund, email, role, backup, cache, update, mobile.
 
-## Cập nhật production từ `wp-admin`
+## Không dùng `wp-admin` để cập nhật code production
 
-`DISALLOW_FILE_MODS=false` và `DISALLOW_FILE_EDIT=false` cho phép tài khoản `administrator` cài/update/xóa plugin-theme và dùng file editor trực tiếp trên production. `shop_owner`/`shop_staff` vẫn không có các capability này. Mọi thay đổi trực tiếp phải được phản ánh lại vào source hoặc `composer.lock` trước lần deploy kế tiếp; nếu không, release artifact mới có thể ghi đè thay đổi đó.
+`DISALLOW_FILE_MODS=true` và `DISALLOW_FILE_EDIT=true` chặn cài/update/xóa hoặc sửa mã plugin-theme trực tiếp trên production. Mọi thay đổi package đi qua version pin trong `composer.lock`, clean build và release artifact.

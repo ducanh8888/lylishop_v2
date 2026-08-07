@@ -88,6 +88,7 @@ check('No woocommerce/*.php template files in shop-child', empty($wc_copy_files)
 
 /* 5. Unapproved plugins check */
 $approved_exempt = [
+    'ai-engine' => true, 'athemes-starter-sites' => true,
     'woocommerce' => true, 'fluent-smtp' => true, 'simple-history' => true,
     'updraftplus' => true, 'wp-2fa' => true, 'wp-seopress' => true, 'wp-super-cache' => true,
 ];
