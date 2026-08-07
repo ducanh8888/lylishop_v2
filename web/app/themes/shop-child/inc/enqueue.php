@@ -5,6 +5,8 @@
  *   1. Google Fonts (runtime, no committed binaries).
  *   The child's own style.css is auto-loaded by Botiga's `botiga-style`
  *   handle (verified against Botiga 2.4.7 source — do not double-enqueue).
+ *   Botiga assigns its parent version to that handle, so we replace only the
+ *   registered version with the child file timestamp for reliable cache busting.
  */
 
 namespace ShopChild\Assets;
@@ -26,6 +28,24 @@ function enqueue_google_fonts(): void
         [],
         null
     );
+}
+
+/**
+ * Version Botiga's existing child stylesheet handle without enqueueing a
+ * second copy. This runs after Botiga registers the handle at priority 12.
+ */
+add_action('wp_enqueue_scripts', __NAMESPACE__ . '\\version_child_stylesheet', 13);
+function version_child_stylesheet(): void
+{
+    $styles = wp_styles();
+    if (! isset($styles->registered['botiga-style'])) {
+        return;
+    }
+
+    $modified = filemtime(get_stylesheet_directory() . '/style.css');
+    if ($modified !== false) {
+        $styles->registered['botiga-style']->ver = (string) $modified;
+    }
 }
 
 /**

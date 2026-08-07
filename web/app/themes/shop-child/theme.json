@@ -30,6 +30,16 @@
           "color": "#F8F5F2"
         },
         {
+          "name": "Nền trang",
+          "slug": "lyli-canvas",
+          "color": "#FCFBFA"
+        },
+        {
+          "name": "Nền hero",
+          "slug": "lyli-hero-soft",
+          "color": "#F0E9E3"
+        },
+        {
           "name": "Chữ chính",
           "slug": "lyli-text",
           "color": "#2D2A26"
@@ -143,8 +153,8 @@
       "lineHeight": "1.7"
     },
     "color": {
-      "text": "#2D2A26",
-      "background": "#FCFBFA"
+      "text": "var(--wp--preset--color--lyli-text)",
+      "background": "var(--wp--preset--color--lyli-canvas)"
     },
     "elements": {
       "heading": {
@@ -154,7 +164,7 @@
           "lineHeight": "1.2"
         },
         "color": {
-          "text": "#7A3B17"
+          "text": "var(--wp--preset--color--lyli-primary)"
         }
       },
       "button": {
@@ -162,8 +172,8 @@
           "radius": "999px"
         },
         "color": {
-          "background": "#7A3B17",
-          "text": "#FFFFFF"
+          "background": "var(--wp--preset--color--lyli-primary)",
+          "text": "var(--wp--preset--color--lyli-white)"
         },
         "typography": {
           "fontFamily": "var(--wp--preset--font-family--lyli-body)",
@@ -180,7 +190,7 @@
       },
       "link": {
         "color": {
-          "text": "#7A3B17"
+          "text": "var(--wp--preset--color--lyli-primary)"
         }
       }
     },

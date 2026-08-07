@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.0.0
+Version: 1.1.0
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -23,15 +23,16 @@ Unresolved final background/cream palette: NOT used — neutral white/default su
    ========================================================================== */
 
 :root {
-    --lyli-color-primary: #7A3B17;
-    --lyli-color-secondary: #8A4A23;
-    --lyli-color-text: #2D2A26;
-    --lyli-color-muted: #6B6560;
-    --lyli-color-border: #E4DED8;
-    --lyli-color-surface: #FFFFFF;
-    --lyli-color-surface-soft: #F8F5F2;
-    --lyli-font-heading: "Fraunces", "Georgia", "Times New Roman", serif;
-    --lyli-font-body: "Be Vietnam Pro", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --lyli-color-primary: var(--wp--preset--color--lyli-primary);
+    --lyli-color-secondary: var(--wp--preset--color--lyli-secondary);
+    --lyli-color-text: var(--wp--preset--color--lyli-text);
+    --lyli-color-muted: var(--wp--preset--color--lyli-text-muted);
+    --lyli-color-border: var(--wp--preset--color--lyli-border);
+    --lyli-color-surface: var(--wp--preset--color--lyli-white);
+    --lyli-color-surface-soft: var(--wp--preset--color--lyli-surface-soft);
+    --lyli-color-canvas: var(--wp--preset--color--lyli-canvas);
+    --lyli-font-heading: var(--wp--preset--font-family--lyli-heading);
+    --lyli-font-body: var(--wp--preset--font-family--lyli-body);
     --lyli-radius-sm: 4px;
     --lyli-radius-md: 8px;
     --lyli-radius-lg: 14px;
@@ -544,7 +545,7 @@ body {
    ========================================================================== */
 
 body {
-    background: #FCFBFA;
+    background: var(--lyli-color-canvas);
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
 }
@@ -853,13 +854,14 @@ a:hover { color: var(--lyli-color-secondary); }
 .woocommerce-account .woocommerce-MyAccount-navigation li a { display: block; padding: 11px 14px; border-radius: 9px; text-decoration: none; }
 .woocommerce-account .woocommerce-MyAccount-navigation li.is-active a { background: var(--lyli-color-surface-soft); }
 
-/* Deliberate footer; the empty Botiga builder footer is replaced visually. */
-.bhfb-footer { display: none; }
-.lyli-site-footer { margin-top: clamp(70px, 9vw, 120px); background: #2D2A26; color: rgba(255,255,255,.74); }
+/* Lyli content lives inside Botiga's single semantic footer. */
+.bhfb.bhfb-footer { margin-top: clamp(70px, 9vw, 120px); background: var(--lyli-color-text); color: rgba(255,255,255,.74); }
+.bhfb-footer .bhfb-rows { display: none; }
+.lyli-footer-content { width: 100%; }
 .lyli-footer-inner { width: min(calc(100% - (var(--lyli-gutter) * 2)), 1140px); margin: auto; display: grid; grid-template-columns: minmax(260px, 1.7fr) 1fr 1fr; gap: clamp(30px, 6vw, 86px); padding: clamp(54px, 8vw, 90px) 0; }
 .lyli-footer-logo { display: inline-block; margin-bottom: 18px; color: #fff; font-family: var(--lyli-font-heading); font-size: 2rem; font-weight: 700; text-decoration: none; }
 .lyli-footer-logo:hover { color: #fff; }
-.lyli-site-footer h2 { margin: 4px 0 18px; color: #fff; font-size: 1rem; font-family: var(--lyli-font-body); text-transform: uppercase; letter-spacing: .12em; }
+.bhfb-footer .lyli-footer-content h2 { margin: 4px 0 18px; color: #fff; font-size: 1rem; font-family: var(--lyli-font-body); text-transform: uppercase; letter-spacing: .12em; }
 .lyli-footer-intro { max-width: 38ch; color: rgba(255,255,255,.68); }
 .lyli-footer-menu,
 .lyli-footer-contact,

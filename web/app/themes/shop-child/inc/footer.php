@@ -1,10 +1,9 @@
 <?php
 /**
  * Lyli Shop — footer integration.
- * Renders footer intro/contact/social from Lyli Site Settings inside the
- * Botiga footer via verified Botiga 2.4.7 hooks:
- *   - botiga_before_footer_copyright   (footer content area)
- *   - botiga_footer_copyright_content_start/end (copyright bar)
+ * Renders footer intro/contact/social from Lyli Site Settings inside Botiga's
+ * own Header/Footer Builder footer. The child theme does not create a second
+ * <footer> element and does not replace Botiga's outer footer architecture.
  * Missing values are hidden cleanly (no invented contact data).
  */
 
@@ -15,13 +14,14 @@ if (! defined('ABSPATH')) {
 }
 
 /**
- * Render the Lyli footer info block (intro + contact + socials) just above
- * the Botiga copyright bar.
+ * Register against the documented inner hook emitted by Botiga 2.4.7's
+ * footer_front_output(). If the builder is disabled, Botiga's native legacy
+ * footer remains intact instead of being replaced by child-theme markup.
  */
 add_action('after_setup_theme', __NAMESPACE__ . '\\register_footer', 30);
 function register_footer(): void
 {
-    add_action('botiga_footer', __NAMESPACE__ . '\\render_footer_info', 5);
+    add_action('botiga_bhfb_footer_inner_before', __NAMESPACE__ . '\\render_footer_info', 5);
 }
 
 function render_footer_info(): void
@@ -35,7 +35,7 @@ function render_footer_info(): void
     $tiktok = $has_settings ? \LyliSiteSettings\get_tiktok_url() : '';
     $zalo = $has_settings ? \LyliSiteSettings\get_zalo_url() : '';
 
-    echo '<footer class="lyli-site-footer"><div class="lyli-footer-inner">';
+    echo '<div class="lyli-footer-content"><div class="lyli-footer-inner">';
     echo '<div class="lyli-footer-brand">';
     printf('<a class="lyli-footer-logo" href="%1$s">%2$s</a>', esc_url(home_url('/')), esc_html(get_bloginfo('name')));
 
@@ -116,23 +116,5 @@ function render_footer_info(): void
         $copyright = sprintf('© %s %s', wp_date('Y'), get_bloginfo('name'));
     }
     printf('<div class="lyli-footer-bottom"><span>%s</span><a href="%s">%s</a></div>', esc_html($copyright), esc_url(home_url('/tai-khoan/')), esc_html__('Tài khoản', 'shop-child'));
-    echo '</footer>';
-}
-
-/**
- * Inject the Lyli copyright line into the Botiga copyright bar, keeping the
- * default Botiga credits as a fallback when the setting is empty.
- */
-function render_copyright(): void
-{
-    if (! function_exists('LyliSiteSettings\\get_footer_copyright')) {
-        return;
-    }
-
-    $copyright = \LyliSiteSettings\get_footer_copyright();
-    if ($copyright === '') {
-        return;
-    }
-
-    printf('<span class="lyli-footer-copyright">%s</span>', esc_html($copyright));
+    echo '</div>';
 }

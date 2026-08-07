@@ -1,10 +1,10 @@
 .editor-styles-wrapper {
-    --lyli-color-primary: #7A3B17;
-    --lyli-color-secondary: #8A4A23;
-    --lyli-color-text: #2D2A26;
-    --lyli-color-muted: #6B6560;
-    --lyli-color-border: #E4DED8;
-    --lyli-color-surface-soft: #F8F5F2;
+    --lyli-color-primary: var(--wp--preset--color--lyli-primary);
+    --lyli-color-secondary: var(--wp--preset--color--lyli-secondary);
+    --lyli-color-text: var(--wp--preset--color--lyli-text);
+    --lyli-color-muted: var(--wp--preset--color--lyli-text-muted);
+    --lyli-color-border: var(--wp--preset--color--lyli-border);
+    --lyli-color-surface-soft: var(--wp--preset--color--lyli-surface-soft);
     font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
     color: var(--lyli-color-text);
     padding-inline: clamp(16px, 3vw, 40px);
