@@ -54,6 +54,9 @@ $required_theme_files = [
     'web/app/mu-plugins/lyli-site-settings/inc/settings-page.php',
     'web/app/mu-plugins/lyli-site-settings/inc/public-accessors.php',
     'web/app/mu-plugins/lyli-site-bootstrap/lyli-site-bootstrap.php',
+    'web/app/mu-plugins/lyli-editorial-import/lyli-editorial-import.php',
+    'web/app/mu-plugins/lyli-editorial-import/inc/command.php',
+    'web/app/mu-plugins/lyli-editorial-import/data/editorial-content.json',
     'web/app/mu-plugins/bedrock-autoloader.php',
 ];
 foreach ($required_theme_files as $rel) {
@@ -109,6 +112,7 @@ $scan_paths = [
     "$root/web/app/themes/shop-child",
     "$root/web/app/mu-plugins/lyli-site-settings",
     "$root/web/app/mu-plugins/lyli-site-bootstrap",
+    "$root/web/app/mu-plugins/lyli-editorial-import",
 ];
 $proprietary_font_exts = ['woff', 'woff2', 'ttf', 'otf'];
 $prop_font_found = [];
@@ -253,6 +257,19 @@ check('shop_owner has native visual-control capability', str_contains($roles_php
 check('Lyli Settings save uses dedicated capability', str_contains($settings_main_php, 'option_page_capability_'));
 check('Lyli Settings does not require manage_options', ! str_contains($settings_page_php, "current_user_can('manage_options')"));
 check('Owner guide exists', is_file("$root/docs/OWNER-ADMIN-GUIDE.md"));
+
+/* 13. Editorial import is content-only and owner-editable. */
+$editorial_data = json_decode((string) file_get_contents("$root/web/app/mu-plugins/lyli-editorial-import/data/editorial-content.json"), true);
+$editorial_command = (string) file_get_contents("$root/web/app/mu-plugins/lyli-editorial-import/inc/command.php");
+check('Editorial content package parses', is_array($editorial_data));
+check('Editorial package has 5 blog posts', count($editorial_data['blogPosts'] ?? []) === 5);
+check('Editorial package has 25 checksummed assets', count($editorial_data['assets'] ?? []) === 25);
+check('Editorial package excludes product records', ! isset($editorial_data['products']));
+check('Editorial package excludes promotion', ! isset($editorial_data['promotion']));
+check('Editorial import requires explicit --apply', str_contains($editorial_command, "isset(\$assocArgs['apply'])"));
+check('Editorial import creates no WooCommerce products', ! str_contains($editorial_command, 'WC_Product'));
+check('Editorial homepage requires existing Gutenberg structure', str_contains($editorial_command, 'editorial import will not recreate it'));
+check('Editorial policies use approved source sections', str_contains($editorial_command, "policySectionContent(\$data, 'Giao hàng'"));
 
 /* ---- Report ---- */
 foreach ($checks as [$label, $ok, $detail]) {

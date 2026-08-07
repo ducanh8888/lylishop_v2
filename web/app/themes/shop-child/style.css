@@ -178,6 +178,25 @@ a:hover { color: var(--lyli-color-secondary); }
     letter-spacing: 0.01em;
     padding-block: 12px;
 }
+
+@media (min-width: 1025px) {
+    .bhfb-header .bhfb-main_header_row { min-height: 76px; }
+    .bhfb-header .bhfb-below_header_row {
+        min-height: 48px;
+        border-top: 1px solid rgba(122, 59, 23, 0.08);
+    }
+    .bhfb-header .bhfb-below_header_row .bhfb-row { min-height: 48px; }
+    .bhfb-header .bhfb-below_header_row .bhfb-column-1 { justify-content: center; }
+    .bhfb-header .bhfb-below_header_row .main-navigation ul {
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: clamp(18px, 2vw, 28px);
+    }
+    .bhfb-header .bhfb-below_header_row .main-navigation a {
+        padding-block: 10px;
+        white-space: nowrap;
+    }
+}
 .bhfb-header .header-item,
 .bhfb-header .menu-toggle {
     color: var(--lyli-color-text);
@@ -189,7 +208,9 @@ a:hover { color: var(--lyli-color-secondary); }
 
 /* Global section rhythm */
 .lyli-pattern {
+    box-sizing: border-box;
     width: min(calc(100% - (var(--lyli-gutter) * 2)), var(--lyli-content-width));
+    max-width: 100%;
     margin: clamp(64px, 9vw, 118px) auto;
 }
 
@@ -278,6 +299,40 @@ a:hover { color: var(--lyli-color-secondary); }
 .lyli-hero-visual::after { width: 145px; height: 145px; bottom: 8%; left: -35px; border-color: rgba(138, 74, 35, 0.12); }
 .lyli-hero-visual .wp-block-cover__inner-container { position: relative; z-index: 2; max-width: 25ch; }
 .lyli-yarn-mark { font-family: var(--lyli-font-heading); color: var(--lyli-color-primary); font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 700; letter-spacing: 0.05em; margin: 0; }
+
+/* Editorial content remains native Gutenberg content editable in WP Admin. */
+.lyli-hero-visual img,
+.lyli-story-image img,
+.lyli-source-gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.lyli-hero-visual img { aspect-ratio: 5 / 4; }
+.lyli-story-image img { aspect-ratio: 4 / 3; border-radius: 20px; }
+.lyli-source-gallery { gap: clamp(10px, 2vw, 20px); }
+.lyli-source-gallery .wp-block-image { overflow: hidden; border-radius: 14px; }
+.lyli-source-gallery img { aspect-ratio: 1; }
+.lyli-editorial-faq .wp-block-details {
+    margin-block: 12px;
+    padding: 18px 20px;
+    border: 1px solid var(--lyli-color-border);
+    border-radius: 12px;
+    background: #fff;
+}
+.lyli-editorial-faq summary { cursor: pointer; font-weight: 600; }
+.lyli-editorial-contact { padding: clamp(32px, 5vw, 58px); border-radius: 24px; background: var(--lyli-color-surface-soft); }
+
+.blog .posts-archive.layout3 article {
+    padding: 18px;
+    border: 1px solid var(--lyli-color-border);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: var(--lyli-shadow-card);
+}
+.blog .posts-archive .post-thumbnail { overflow: hidden; border-radius: 12px; }
+.blog .posts-archive .post-thumbnail img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.blog .posts-archive .entry-title { font-size: clamp(1.25rem, 2vw, 1.6rem); }
 
 /* Categories */
 .lyli-category-grid {
@@ -476,6 +531,7 @@ a:hover { color: var(--lyli-color-secondary); }
     body { font-size: 15px; }
     .lyli-pattern { width: min(calc(100% - 28px), var(--lyli-content-width)); margin-block: 52px; }
     .lyli-hero { padding: 24px 18px; }
+    .lyli-hero > * { min-width: 0; max-width: 100%; }
     .lyli-hero h1 { font-size: 2.55rem !important; }
     .lyli-hero .wp-block-buttons { display: grid; }
     .lyli-hero .wp-block-button, .lyli-hero .wp-block-button__link { width: 100%; }
