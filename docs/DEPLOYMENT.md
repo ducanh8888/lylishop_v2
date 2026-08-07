@@ -1,5 +1,12 @@
 # DEPLOYMENT
 
+## Production state — 2026-08-07
+
+- Public release `20260807135123`, source `719a032`; WordPress 7.0.2, WooCommerce, Botiga and `shop-child` are active.
+- Bedrock maps `web/app/plugins` and `web/app/mu-plugins`; the root MU loader starts `roots/bedrock-autoloader`. Use WP-CLI `--path=<release>/web/wp` on this host.
+- Local WSL validation is the deployment gate; GitHub Actions is informational. Workflow: **LOCAL VALIDATE → BUILD → BACKUP IF PRODUCTION STATE WILL CHANGE → DEPLOY → SMOKE TEST → PUBLIC OR ROLLBACK**.
+- Gutenberg pages/patterns and WP Admin → Lyli Shop settings are owner-editable. Payments remain disabled; products and legal-policy content await owner input.
+
 Chi tiết audit hạ tầng: `docs/HOSTING-AUDIT.md`. Tài liệu này mô tả quy trình, không lặp lại số liệu audit.
 
 **Amendment 2026-08-03 — production-only:** Dự án có đúng một domain (lylishop.online), một môi trường production, một database production, một kho uploads production. Không có staging domain, staging database, staging deployment hay staging promotion workflow. Local development và automated checks (CI) là cổng kiểm tra duy nhất trước production. Không có staging **không** có nghĩa là được sửa production trực tiếp, thủ công — mọi thay đổi vẫn đi qua quy trình release-based bên dưới.
