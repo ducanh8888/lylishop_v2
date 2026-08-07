@@ -26,15 +26,6 @@ Manifest này phản ánh dependency có thể tái tạo từ `composer.lock`. 
 | Simple History | 5.29.0 | wpackagist (`simple-history`) | GPL | Bắt buộc | Developer | Audit log (DB table riêng) | DB dump | Deactivate | Thấp |
 | `site-policy` (MU plugin nội bộ) | 0.1.0 | `web/app/mu-plugins/site-policy/` trong repo này | Nội bộ | Bắt buộc | Developer | Không lưu dữ liệu ngoài role/capability trong DB WP chuẩn | DB dump | Xóa thư mục — role về mặc định WordPress | Thấp — không chứa business logic (giới hạn ở `site-policy.php` mục doc-block) |
 
-## MU plugin nội bộ Lyli
-
-| Plugin | Nguồn | Vai trò | Dữ liệu |
-|---|---|---|---|
-| `lyli-site-settings` | `web/app/mu-plugins/lyli-site-settings/` | Trang cài đặt chủ shop và public accessors | WordPress options |
-| `lyli-site-bootstrap` | `web/app/mu-plugins/lyli-site-bootstrap/` | Lệnh `wp lyli bootstrap` idempotent | Trang/menu/danh mục/options |
-| `lyli-content-import` | `web/app/mu-plugins/lyli-content-import/` | Lệnh `wp lyli content import`; nhập gói handoff có checksum | Sản phẩm, blog, media, trang/menu |
-| `bedrock-autoloader.php` | `web/app/mu-plugins/` | Khởi động Roots Bedrock Autoloader cho plugin/MU plugin do Composer quản lý | Không |
-
 ## Plugin thương mại bắt buộc theo phạm vi (⚠️ xem mâu thuẫn #1, `docs/HOSTING-AUDIT.md` mục 14)
 
 | Extension | Version baseline | Nguồn | License | Trạng thái | Ghi chú |

@@ -1,49 +1,59 @@
 # PRODUCTION STATUS — Lyli Shop
 
-Cập nhật: 2026-08-07. Đây là trạng thái production thực tế, không phải kế hoạch.
+Tài liệu trạng thái production thực tế. Cập nhật theo từng nhiệm vụ có bằng chứng; không suy đoán.
 
-## Runtime hiện tại
+## Tầng trạng thái
 
-| Mục | Trạng thái |
+Hệ thống dùng các mốc sau (thứ tự tăng dần):
+
+| Mốc | Ý nghĩa |
 |---|---|
-| Public site | `https://lylishop.online` đang public, HTTPS hợp lệ |
-| Deployed source commit | `98ef36dd8783fac43d0afedb904b68f18080214b` |
-| Active release | `apps/lylishop/releases/20260807220304` |
-| `current` | trỏ tới release `20260807220304` |
-| Public document root | `public_html` → `apps/lylishop/current/web` |
-| Rollback release | `apps/lylishop/releases/20260807214157` |
-| Pre-content backup | `apps/lylishop/shared/backups/20260807214542` |
-| WordPress | 7.0.2, locale `vi`, timezone `Asia/Ho_Chi_Minh` |
-| Storefront | WooCommerce 10.9.4; Botiga 2.4.7; `shop-child` active |
-| WP-CLI trên host | `/opt/alt/php83/usr/bin/php /usr/bin/wp --path=apps/lylishop/current/web/wp` |
-| Deployment gate | WSL/local validation; GitHub Actions chỉ cung cấp thông tin |
+| 1. Infrastructure ready | Domain, DNS, SSL, web PHP, database sẵn sàng; `.env` bảo mật ngoài `public_html` |
+| 2. Bedrock bootstrap repaired | `web/wp-config.php` + `web/index.php` được track; CI validator xác nhận bootstrap chạy được |
+| 3. Admin-editable storefront implementation | `shop-child` V1 + `lyli-site-settings` MU plugin + block patterns + bootstrap tooling hoàn tất trong repo; CI xanh |
+| 4. Production installation | WordPress cài đặt trên release thật; theme/plugin approved active; WooCommerce baseline; cấu trúc trang/danh mục |
+| 5. Public baseline | `current` → release; `public_html` → `current/web`; maintenance deactivated; HTTPS công khai hoạt động; có thể chỉnh qua WP Admin |
+| 6. Commerce launch readiness | Thanh toán, vận chuyển, email giao dịch, chính sách pháp lý, sản phẩm thật và kiểm thử đặt hàng thật được cấu hình và được founder phê duyệt riêng |
 
-## Nội dung đã publish
+> Mốc 6 yêu cầu phê duyệt riêng và **không** thuộc phạm vi nhiệm vụ hiện tại.
 
-- 9 sản phẩm thật từ handoff, đúng slug/giá/ảnh/mô tả/FAQ; sản phẩm ở chế độ catalogue-only và không thể checkout.
-- 5 bài blog thật; 63/63 ảnh nguồn tải công khai thành công.
-- Trang chủ, Giới thiệu, Liên hệ, Đặt mẫu theo yêu cầu, Blog, Chính sách bảo mật và Điều khoản đã publish.
-- 5 danh mục sản phẩm, menu chính và header hai hàng đã cấu hình.
-- Shipping và Returns vẫn là bản nháp vì chưa có nội dung nguồn được duyệt.
-- WooCommerce dùng pretty permalink `/%postname%/`; chế độ Coming Soon đã tắt để public catalogue.
-- Mọi payment gateway vẫn tắt.
+## Trạng thái hiện tại (2026-08-07)
 
-## Runtime và bảo mật
+| Mục | Kết quả |
+|---|---|
+| Deployed source commit | `90bc591ef184c51b1bcdd57feb56b21445ca0134` |
+| Deployment gate | WSL/local validators; GitHub Actions chỉ cung cấp thông tin, không chặn deploy |
+| Domain/DNS | `lylishop.online` → `103.75.184.20` — đúng hosting |
+| SSL/public routes | HTTPS hợp lệ; Home, Shop, Cart, Checkout, My Account và trang đăng nhập admin trả HTTP 200 |
+| Web PHP | `8.3.30` (LiteSpeed) |
+| WordPress/storefront | WordPress 7.0.2 đã cài; `shop-child` active trên Botiga 2.4.7; WooCommerce 10.9.4 active |
+| Plugin runtime | AI Engine 3.7.0 và WooCommerce 10.9.4 active; aThemes Starter Sites đã deactivate và gỡ khỏi Composer/artifact vì không có runtime dependency |
+| MU plugin / CLI | Bedrock autoloader active; Lyli settings hook có mặt; `wp lyli bootstrap init --dry-run` chạy thành công |
+| Code policy | `DISALLOW_FILE_MODS=true`, `DISALLOW_FILE_EDIT=true`; nội dung/cấu hình cửa hàng vẫn chỉnh trong WP Admin |
+| WP-CLI path trên host | `--path=apps/lylishop/current/web/wp` |
+| `public_html` | Symlink → `apps/lylishop/current/web`; bản provider cũ giữ tại `shared/rollback/provider-public_html-20260807135123` |
+| Theme integration | Một semantic footer do Botiga render; `theme.json` là nguồn token chuẩn; child CSS còn 494 dòng trong một visual system; compatibility layer loại Starter Sites khi importer không khả dụng để Botiga Dashboard không redirect sang page lỗi |
+| `apps/lylishop/current` | → `releases/20260807205828` |
+| Release rollback | `releases/20260807190413` |
+| Backup gần nhất | `shared/backups/20260807190537/database.sql.gz` (qua `gzip -t`) |
+| `.env` | `shared/.env` mode 600, ngoài `public_html`, owner đúng |
+| Baseline content | 8 trang publish, 4 policy draft, 5 danh mục sản phẩm, 0 sản phẩm; mọi payment gateway tắt |
+| Mốc đạt được | 1–5; chưa đạt commerce launch readiness |
 
-- Bedrock ánh xạ đúng `web/app/plugins` và `web/app/mu-plugins`; Roots Bedrock Autoloader nạp các MU plugin nội bộ.
-- Lệnh `wp lyli` có cả `bootstrap` và `content`; Lyli settings/admin hooks hoạt động.
-- Shop Owner chỉnh được Gutenberg, sản phẩm, bài viết, menu, logo/Customizer và Lyli Shop settings; không có quyền sửa/cài code plugin/theme.
-- `.env` mode 600, public request trả 403; SQL và directory listing không public.
-- `shared` mode 711 chỉ cho traverse; `shared/uploads` và các thư mục ảnh mode 755 để web server phục vụ media; `.env` vẫn không đọc được.
-- Home, Shop, Cart, My Account và admin login trả HTTP 200, không có PHP fatal. Checkout với giỏ trống chuyển về Cart theo WooCommerce.
-- Viewport emulation 375px: document width bằng viewport width, không có horizontal overflow.
+## Bản ghi cấp phép một lần (2026-08-06)
 
-## Chưa phải commerce launch hoàn chỉnh
+Founder cấp phép **một lần** cho nhiệm vụ "admin-editable storefront implementation + production installation + guarded public cutover" gồm: sửa tài liệu roadmap/repo, triển khai storefront, commit/push, build/upload/extract release mới, backup mới, validate/update secrets an toàn, sinh salts nếu thiếu, `wp core install`, tạo bảng DB, tạo admin, kích hoạt theme/plugin approved, cấu hình WooCommerce baseline, tạo trang/menu/danh mục/options, tạo + chuyển `current`, maintenance mode, thay `public_html` bằng symlink, xoá `index.htm` sau backup, public cutover, rollback tự động nếu gate bắt buộc fail.
 
-Cần chủ shop chốt shipping, returns, vận chuyển, email giao dịch, phương thức thanh toán và chạy thử đơn hàng thật trước khi bật checkout. Catalogue hiện dùng liên hệ/Zalo và không nhận thanh toán trực tuyến.
+Chính sách phê duyệt chung cho lần deploy sau **không** bị suy yếu. Bản ghi này không tái sử dụng làm ủy quyền cho nhiệm vụ tương lai.
 
-## Mốc liên quan
+## Nhật ký lịch sử
 
-- Commit `40635df`: nhập gói nội dung handoff và importer idempotent.
-- Commit `98ef36d`: sửa responsive mobile và backup qua WP-CLI, không shell-source `.env`.
-- Release `20260807220304`: release public hiện tại sau smoke/security gate.
+- **2026-08-03:** xác lập production-only (một domain, một DB, một uploads).
+- **2026-08-04:** chốt Botiga Free 2.4.7 + `shop-child`; tokens `#7A3B17`/`#8A4A23`.
+- **2026-08-05:** DNS đúng, PHP web 8.3, DB tạo xong, `.env` upload mode 600, privilege probe PASS, SSL chưa hợp lệ.
+- **2026-08-06 (trước nhiệm vụ này):** phát hiện thiếu `web/wp-config.php`/`web/index.php` → sửa Bedrock bootstrap (commit `f1f6049`), CI xanh; SSL đã hợp lệ; schema collation xác nhận `utf8mb4_unicode_ci`; release baseline `20260806144016-f1f6049` build/upload/extract xong.
+- **2026-08-06–07:** hoàn tất storefront V1, cài WordPress/WooCommerce, bootstrap nội dung nền và public cutover; release `20260807164746` được giữ làm rollback.
+- **2026-08-07:** phase ổn định kiến trúc: pin plugin drift vào Composer, clean-snapshot artifact, khôi phục production code locks, gỡ Botiga capability shim, deploy release `20260807183254`; MCP Lyli và public smoke test PASS.
+- **2026-08-07:** phase tích hợp theme: loại footer kép, giữ một footer semantic của Botiga, chuyển token sang `theme.json`, chặn Botiga ghi đè palette và thêm cache version riêng cho child stylesheet; deploy release `20260807185540`.
+- **2026-08-07:** phase dọn storefront: xóa khối CSS legacy trùng lặp (923 → 494 dòng), nâng `shop-child` lên 1.2.0 và gỡ aThemes Starter Sites khỏi runtime; deploy release `20260807190413`.
+- **2026-08-07:** sửa Botiga Dashboard tương thích với `DISALLOW_FILE_MODS`: loại tab/menu Starter Sites khi importer không có hook, giữ nguyên code locks và deploy release `20260807205828`.
