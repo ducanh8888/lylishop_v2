@@ -16,6 +16,10 @@
 RewriteEngine On
 RewriteBase /
 
+# Friendly admin entry point. WordPress core lives under /wp in Bedrock, so
+# expose the conventional /wp-admin URL without duplicating core files.
+RewriteRule ^wp-admin/?$ /wp/wp-admin/ [R=302,L,NE]
+
 # If the request is not for an existing file or directory, send it to the
 # WordPress front controller (Bedrock web/index.php -> web/wp/wp-blog-header.php).
 RewriteRule ^index\.php$ - [L]
