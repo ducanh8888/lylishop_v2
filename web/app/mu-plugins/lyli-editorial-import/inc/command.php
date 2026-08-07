@@ -313,6 +313,8 @@ final class EditorialCommand
         update_option('page_on_front', $ids['home']);
         update_option('page_for_posts', $ids['blog']);
         update_option('wp_page_for_privacy_policy', $ids['privacy']);
+        update_option('permalink_structure', '/%postname%/');
+        flush_rewrite_rules(false);
         return $ids;
     }
 
