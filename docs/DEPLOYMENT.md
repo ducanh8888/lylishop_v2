@@ -15,7 +15,7 @@ Chi tiết audit hạ tầng: `docs/HOSTING-AUDIT.md`. Tài liệu này mô tả
 
 * Composer chạy ở **máy dev hoặc CI**, không chạy build nặng lặp lại trên shared host (`docs/HOSTING-AUDIT.md` mục 12).
 * Host chỉ nhận **release artifact đã build sẵn** (có `vendor/`, `web/wp/`, asset đã compile) rồi chạy WP-CLI để migrate/config.
-* Production đặt `DISALLOW_FILE_MODS=true` — không cài/update plugin qua `wp-admin` (TECH_STACK.md mục 13.1).
+* Production cho tài khoản `administrator` cài/update plugin-theme và dùng file editor trong `wp-admin`; `shop_owner`/`shop_staff` vẫn bị khóa. Thay đổi trực tiếp phải được đồng bộ lại vào source/Composer trước release kế tiếp để tránh bị ghi đè.
 * SSH dùng biến `SSH_HOST_ALIAS`, mặc định `commerce-host` — không hard-code host/IP/port/username/private-key path trong bất kỳ script nào (xem `docs/HOSTING-AUDIT.md` mục 0 về vì sao `commerce-host` chứ không phải `lyli-prod`).
 * Production **không** clone/pull từ GitHub trừ khi có quyết định riêng cho phép sau này — release đến production qua artifact upload (rsync/scp), không qua `git pull` trên host.
 * Mọi script production (`scripts/production-*.sh`) mặc định **dry-run**; chỉ thực thi thật khi truyền cờ xác nhận rõ ràng (`--apply`, và với thao tác nguy hiểm hơn còn yêu cầu gõ xác nhận bằng tay).

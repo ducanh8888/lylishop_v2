@@ -39,7 +39,7 @@ Tên biến khớp với `.env.example` đã có trong repo — không đổi t�
 | `AUTH_KEY`, `SECURE_AUTH_KEY`, `LOGGED_IN_KEY`, `NONCE_KEY`, `AUTH_SALT`, `SECURE_AUTH_SALT`, `LOGGED_IN_SALT`, `NONCE_SALT` | WordPress unique keys/salts | Sinh ngẫu nhiên lúc cài đặt (không phải do founder cung cấp — có thể agent tự sinh bằng WP-CLI hoặc trình sinh salt, không cần founder nhập tay) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` | FluentSMTP | Founder cung cấp khi cấu hình email |
 | `SEPAY_API_KEY`, `SEPAY_WEBHOOK_SECRET` | Cổng thanh toán SePay | Founder cung cấp khi đăng ký SePay |
-| `DISALLOW_FILE_MODS`, `DISALLOW_FILE_EDIT` | `true` trên production | Cố định, không phải secret |
+| `DISALLOW_FILE_MODS`, `DISALLOW_FILE_EDIT` | `false` trên production | Cho Administrator toàn quyền wp-admin; không phải secret |
 
 ## Không thuộc phạm vi `.env` nhưng cũng là credential tương lai
 

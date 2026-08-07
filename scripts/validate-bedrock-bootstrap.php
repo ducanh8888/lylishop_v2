@@ -146,7 +146,7 @@ if ($code !== 0 || !is_array($json)) {
     note('DB_COLLATE resolves to utf8mb4_unicode_ci', false);
     note('WP_ENV resolves to production', false);
     note('WP_ENVIRONMENT_TYPE resolves', false);
-    note('production hardening constants resolve', false);
+    note('production administrator/update constants resolve', false);
 } else {
     $expectedAbs = $webDir . '/wp/';
     $expectedContentDir = $webDir . '/app';
@@ -178,9 +178,9 @@ if ($code !== 0 || !is_array($json)) {
         && $json['WP_DEBUG_LOG'] === false
         && $json['AUTOMATIC_UPDATER_DISABLED'] === true
         && $json['WP_AUTO_UPDATE_CORE'] === false
-        && $json['DISALLOW_FILE_EDIT'] === true
-        && $json['DISALLOW_FILE_MODS'] === true;
-    note('production hardening constants resolve', $hardeningOk, $rawOutput);
+        && $json['DISALLOW_FILE_EDIT'] === false
+        && $json['DISALLOW_FILE_MODS'] === false;
+    note('production administrator/update constants resolve', $hardeningOk, $rawOutput);
 }
 
 /* -------------------------------------------------------------------------
