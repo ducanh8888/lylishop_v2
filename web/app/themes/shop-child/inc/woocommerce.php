@@ -19,7 +19,7 @@ if (! defined('ABSPATH')) {
  * when it has none (kept draft per policy, but the class helps CSS stability).
  */
 add_filter('post_class', __NAMESPACE__ . '\\single_image_product_class', 10, 3);
-function single_image_product_class(array $classes, string $class, int $post_id): array
+function single_image_product_class(array $classes, mixed $class, int $post_id): array
 {
     if (! function_exists('wc_get_product')) {
         return $classes;
