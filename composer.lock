@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "45b9d8d0b8f3ec05b15bf762c8a54e8b",
+    "content-hash": "1b4f7e6b39f89895297c0c488482c091",
     "packages": [
         {
             "name": "composer/installers",
@@ -999,24 +999,6 @@
             },
             "type": "wordpress-plugin",
             "homepage": "https://wordpress.org/plugins/ai-engine/"
-        },
-        {
-            "name": "wpackagist-plugin/athemes-starter-sites",
-            "version": "1.4.2",
-            "source": {
-                "type": "svn",
-                "url": "https://plugins.svn.wordpress.org/athemes-starter-sites/",
-                "reference": "tags/1.4.2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/athemes-starter-sites.1.4.2.zip"
-            },
-            "require": {
-                "composer/installers": "^1.0 || ^2.0"
-            },
-            "type": "wordpress-plugin",
-            "homepage": "https://wordpress.org/plugins/athemes-starter-sites/"
         },
         {
             "name": "wpackagist-plugin/fluent-smtp",

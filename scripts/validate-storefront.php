@@ -88,7 +88,7 @@ check('No woocommerce/*.php template files in shop-child', empty($wc_copy_files)
 
 /* 5. Unapproved plugins check */
 $approved_exempt = [
-    'ai-engine' => true, 'athemes-starter-sites' => true,
+    'ai-engine' => true,
     'woocommerce' => true, 'fluent-smtp' => true, 'simple-history' => true,
     'updraftplus' => true, 'wp-2fa' => true, 'wp-seopress' => true, 'wp-super-cache' => true,
 ];
@@ -221,6 +221,8 @@ check('Lyli footer uses Botiga builder inner hook', str_contains($footer_php, "a
 check('Lyli footer does not render a second footer element', ! str_contains($footer_php, "echo '<footer"));
 check('Botiga footer container is not hidden', preg_match('/\\.bhfb-footer\\s*\\{[^}]*display\\s*:\\s*none/si', $theme_css) !== 1);
 check('Theme CSS tokens reference theme.json presets', str_contains($theme_css, '--lyli-color-primary: var(--wp--preset--color--lyli-primary)'));
+check('Legacy duplicate CSS block is removed', preg_match_all('/^\\.lyli-pattern\\s*\\{/m', $theme_css) === 1 && substr_count($theme_css, 'Product-ready V1 visual system') === 1);
+check('Child stylesheet stays focused', substr_count($theme_css, "\n") < 600);
 $design_tokens_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/design-tokens.php");
 check('Botiga cannot overwrite child theme.json palette', str_contains($design_tokens_php, "remove_filter('wp_theme_json_data_theme', 'botiga_filter_theme_json_data_theme')"));
 $enqueue_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/enqueue.php");
