@@ -66,35 +66,3 @@ function maybe_render_custom_order_hint(): void
         esc_html($label)
     );
 }
-
-/**
- * Imported handoff products are a public catalogue with ordering confirmed by
- * message. Keep them visible while payment/shipping launch configuration is
- * intentionally incomplete.
- */
-add_filter('woocommerce_is_purchasable', __NAMESPACE__ . '\catalogue_product_is_not_purchasable', 10, 2);
-function catalogue_product_is_not_purchasable(bool $purchasable, \WC_Product $product): bool
-{
-    if (get_post_meta($product->get_id(), '_lyli_catalog_only', true) === 'yes') {
-        return false;
-    }
-
-    return $purchasable;
-}
-
-/**
- * Product archives should link to details instead of implying online checkout.
- */
-add_filter('woocommerce_loop_add_to_cart_link', __NAMESPACE__ . '\catalogue_product_loop_link', 10, 3);
-function catalogue_product_loop_link(string $html, \WC_Product $product, array $args): string
-{
-    if (get_post_meta($product->get_id(), '_lyli_catalog_only', true) !== 'yes') {
-        return $html;
-    }
-
-    return sprintf(
-        '<a href="%1$s" class="button product_type_simple">%2$s</a>',
-        esc_url($product->get_permalink()),
-        esc_html__('Xem chi tiết', 'shop-child')
-    );
-}

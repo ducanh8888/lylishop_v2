@@ -54,9 +54,6 @@ $required_theme_files = [
     'web/app/mu-plugins/lyli-site-settings/inc/settings-page.php',
     'web/app/mu-plugins/lyli-site-settings/inc/public-accessors.php',
     'web/app/mu-plugins/lyli-site-bootstrap/lyli-site-bootstrap.php',
-    'web/app/mu-plugins/lyli-content-import/lyli-content-import.php',
-    'web/app/mu-plugins/lyli-content-import/inc/command.php',
-    'web/app/mu-plugins/lyli-content-import/data/lyli-content.json',
     'web/app/mu-plugins/bedrock-autoloader.php',
 ];
 foreach ($required_theme_files as $rel) {
@@ -112,7 +109,6 @@ $scan_paths = [
     "$root/web/app/themes/shop-child",
     "$root/web/app/mu-plugins/lyli-site-settings",
     "$root/web/app/mu-plugins/lyli-site-bootstrap",
-    "$root/web/app/mu-plugins/lyli-content-import",
 ];
 $proprietary_font_exts = ['woff', 'woff2', 'ttf', 'otf'];
 $prop_font_found = [];
@@ -257,17 +253,6 @@ check('shop_owner has native visual-control capability', str_contains($roles_php
 check('Lyli Settings save uses dedicated capability', str_contains($settings_main_php, 'option_page_capability_'));
 check('Lyli Settings does not require manage_options', ! str_contains($settings_page_php, "current_user_can('manage_options')"));
 check('Owner guide exists', is_file("$root/docs/OWNER-ADMIN-GUIDE.md"));
-
-/* 13. Source-manifested content import package */
-$content_import_php = (string) file_get_contents("$root/web/app/mu-plugins/lyli-content-import/inc/command.php");
-$content_package = json_decode((string) file_get_contents("$root/web/app/mu-plugins/lyli-content-import/data/lyli-content.json"), true);
-check('Lyli content package parses', is_array($content_package));
-check('Lyli content package has 9 products', is_array($content_package) && count($content_package['products'] ?? []) === 9);
-check('Lyli content package has 5 blog posts', is_array($content_package) && count($content_package['blogPosts'] ?? []) === 5);
-check('Lyli content package has 63 checksummed assets', is_array($content_package) && count($content_package['assets'] ?? []) === 63 && ! array_filter($content_package['assets'] ?? [], static fn ($asset) => empty($asset['sha256'])));
-check('Content import requires explicit --apply', str_contains($content_import_php, "isset(\$assocArgs['apply'])"));
-check('Imported products remain catalogue-only', str_contains($content_import_php, "'_lyli_catalog_only', 'yes'"));
-check('Content import preserves disabled-payment architecture', ! str_contains($content_import_php, 'payment_gateway'));
 
 /* ---- Report ---- */
 foreach ($checks as [$label, $ok, $detail]) {
