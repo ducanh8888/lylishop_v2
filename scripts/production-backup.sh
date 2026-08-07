@@ -1,30 +1,29 @@
 #!/usr/bin/env bash
-# Step 2-3 of docs/DEPLOYMENT.md: backs up the production database and uploads before
-# a deploy (or on a schedule). Runs ON the shared host — invoke via:
-#   ssh "${SSH_HOST_ALIAS:-commerce-host}" 'bash -s' < scripts/production-backup.sh
-# or copy it to the host once and cron it (calling the PHP 8.3 binary explicitly for any
-# WP-CLI step, per docs/HOSTING-AUDIT.md — cron defaults to PHP 8.1 on this host).
-# Never prints credentials to stdout/logs.
+# Back up the production database and uploads before a deploy or on a schedule.
+# Runs on the shared host. Never prints credentials to stdout or logs.
 set -euo pipefail
 
 APP_DIR="${APP_DIR:-$HOME/apps/lylishop}"
 BACKUP_DIR="${APP_DIR}/shared/backups/$(date +%Y%m%d%H%M%S)"
-ENV_FILE="${APP_DIR}/shared/.env"
+PHP_BIN="${PHP_BIN:-/opt/alt/php83/usr/bin/php}"
+WP_CLI_BIN="${WP_CLI_BIN:-/usr/bin/wp}"
+WP_PATH="${APP_DIR}/current/web/wp"
 
-if [ ! -f "$ENV_FILE" ]; then
-    echo "ERROR: $ENV_FILE not found — nothing to back up yet." >&2
+if [ ! -f "${APP_DIR}/shared/.env" ]; then
+    echo "ERROR: ${APP_DIR}/shared/.env not found; nothing to back up yet." >&2
     exit 1
 fi
 
-# shellcheck disable=SC1090
-set -a; source "$ENV_FILE"; set +a
+if [ ! -x "$PHP_BIN" ] || [ ! -f "$WP_CLI_BIN" ] || [ ! -d "$WP_PATH" ]; then
+    echo "ERROR: PHP 8.3, WP-CLI, or WordPress path unavailable; backup not started." >&2
+    exit 1
+fi
 
 mkdir -p "$BACKUP_DIR"
 
 echo "Dumping production database..."
-mysqldump --single-transaction --quick \
-    -h "${DB_HOST:-localhost}" -u "${DB_USER}" -p"${DB_PASSWORD}" "${DB_NAME}" \
-    | gzip > "${BACKUP_DIR}/database.sql.gz"
+"$PHP_BIN" "$WP_CLI_BIN" --path="$WP_PATH" db export "${BACKUP_DIR}/database.sql" --quiet
+gzip "${BACKUP_DIR}/database.sql"
 
 echo "Archiving production uploads..."
 if [ -d "${APP_DIR}/shared/uploads" ]; then
@@ -32,5 +31,5 @@ if [ -d "${APP_DIR}/shared/uploads" ]; then
 fi
 
 echo "Backup written to ${BACKUP_DIR}"
-echo "Remember: copy this off-site — the host is not the only copy (docs/BACKUP-RESTORE.md)."
+echo "Remember: copy this off-site; the host is not the only copy (docs/BACKUP-RESTORE.md)."
 echo "${BACKUP_DIR}" > "${APP_DIR}/shared/backups/.last-backup"
