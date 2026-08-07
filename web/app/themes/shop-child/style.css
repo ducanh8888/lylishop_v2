@@ -61,8 +61,6 @@ textarea {
 
 .lyli-announcement p {
     margin: 0;
-    white-space: normal;
-    overflow-wrap: anywhere;
 }
 
 input[type="text"],
@@ -210,9 +208,7 @@ a:hover { color: var(--lyli-color-secondary); }
 
 /* Global section rhythm */
 .lyli-pattern {
-    box-sizing: border-box;
     width: min(calc(100% - (var(--lyli-gutter) * 2)), var(--lyli-content-width));
-    max-width: 100%;
     margin: clamp(64px, 9vw, 118px) auto;
 }
 
@@ -499,9 +495,6 @@ a:hover { color: var(--lyli-color-secondary); }
     body { font-size: 15px; }
     .lyli-pattern { width: min(calc(100% - 28px), var(--lyli-content-width)); margin-block: 52px; }
     .lyli-hero { padding: 24px 18px; }
-    .lyli-hero > * { min-width: 0; max-width: 100%; }
-    .lyli-hero .lyli-eyebrow,
-    .lyli-hero-copy { overflow-wrap: anywhere; }
     .lyli-hero h1 { font-size: 2.55rem !important; }
     .lyli-hero .wp-block-buttons { display: grid; }
     .lyli-hero .wp-block-button, .lyli-hero .wp-block-button__link { width: 100%; }
