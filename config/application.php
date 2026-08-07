@@ -117,6 +117,10 @@ Config::define('WP_SITEURL', env('WP_SITEURL'));
 Config::define('CONTENT_DIR', '/app');
 Config::define('WP_CONTENT_DIR', $webroot_dir . Config::get('CONTENT_DIR'));
 Config::define('WP_CONTENT_URL', Config::get('WP_HOME') . Config::get('CONTENT_DIR'));
+Config::define('WP_PLUGIN_DIR', $webroot_dir . Config::get('CONTENT_DIR') . '/plugins');
+Config::define('WP_PLUGIN_URL', Config::get('WP_CONTENT_URL') . '/plugins');
+Config::define('WPMU_PLUGIN_DIR', $webroot_dir . Config::get('CONTENT_DIR') . '/mu-plugins');
+Config::define('WPMU_PLUGIN_URL', Config::get('WP_CONTENT_URL') . '/mu-plugins');
 
 /**
  * DB settings

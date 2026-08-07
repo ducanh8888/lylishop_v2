@@ -53,6 +53,7 @@ $required_theme_files = [
     'web/app/mu-plugins/lyli-site-settings/inc/settings-page.php',
     'web/app/mu-plugins/lyli-site-settings/inc/public-accessors.php',
     'web/app/mu-plugins/lyli-site-bootstrap/lyli-site-bootstrap.php',
+    'web/app/mu-plugins/bedrock-autoloader.php',
 ];
 foreach ($required_theme_files as $rel) {
     check("Required file exists: $rel", is_file("$root/$rel"));

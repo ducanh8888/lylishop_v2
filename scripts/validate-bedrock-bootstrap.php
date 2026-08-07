@@ -100,6 +100,10 @@ echo json_encode([
     'ABSPATH' => ABSPATH,
     'WP_CONTENT_DIR' => WP_CONTENT_DIR,
     'WP_CONTENT_URL' => WP_CONTENT_URL,
+    'WP_PLUGIN_DIR' => WP_PLUGIN_DIR,
+    'WP_PLUGIN_URL' => WP_PLUGIN_URL,
+    'WPMU_PLUGIN_DIR' => WPMU_PLUGIN_DIR,
+    'WPMU_PLUGIN_URL' => WPMU_PLUGIN_URL,
     'DB_CHARSET' => DB_CHARSET,
     'DB_COLLATE' => DB_COLLATE,
     'WP_ENV' => WP_ENV,
@@ -134,6 +138,10 @@ if ($code !== 0 || !is_array($json)) {
     note('ABSPATH resolves to web/wp/', false);
     note('WP_CONTENT_DIR resolves to web/app', false);
     note('WP_CONTENT_URL resolves to synthetic WP_HOME + /app', false);
+    note('WP_PLUGIN_DIR resolves to web/app/plugins', false);
+    note('WP_PLUGIN_URL resolves to synthetic WP_HOME + /app/plugins', false);
+    note('WPMU_PLUGIN_DIR resolves to web/app/mu-plugins', false);
+    note('WPMU_PLUGIN_URL resolves to synthetic WP_HOME + /app/mu-plugins', false);
     note('DB_CHARSET resolves to utf8mb4', false);
     note('DB_COLLATE resolves to utf8mb4_unicode_ci', false);
     note('WP_ENV resolves to production', false);
@@ -143,6 +151,10 @@ if ($code !== 0 || !is_array($json)) {
     $expectedAbs = $webDir . '/wp/';
     $expectedContentDir = $webDir . '/app';
     $expectedContentUrl = 'https://synthetic.example/app';
+    $expectedPluginDir = $expectedContentDir . '/plugins';
+    $expectedPluginUrl = $expectedContentUrl . '/plugins';
+    $expectedMuPluginDir = $expectedContentDir . '/mu-plugins';
+    $expectedMuPluginUrl = $expectedContentUrl . '/mu-plugins';
 
     note(
         'config/application.php loads with synthetic values',
@@ -152,6 +164,10 @@ if ($code !== 0 || !is_array($json)) {
     note('ABSPATH resolves to web/wp/', $json['ABSPATH'] === $expectedAbs, $json['ABSPATH']);
     note('WP_CONTENT_DIR resolves to web/app', $json['WP_CONTENT_DIR'] === $expectedContentDir, $json['WP_CONTENT_DIR']);
     note('WP_CONTENT_URL resolves to synthetic WP_HOME + /app', $json['WP_CONTENT_URL'] === $expectedContentUrl, $json['WP_CONTENT_URL']);
+    note('WP_PLUGIN_DIR resolves to web/app/plugins', $json['WP_PLUGIN_DIR'] === $expectedPluginDir, $json['WP_PLUGIN_DIR']);
+    note('WP_PLUGIN_URL resolves to synthetic WP_HOME + /app/plugins', $json['WP_PLUGIN_URL'] === $expectedPluginUrl, $json['WP_PLUGIN_URL']);
+    note('WPMU_PLUGIN_DIR resolves to web/app/mu-plugins', $json['WPMU_PLUGIN_DIR'] === $expectedMuPluginDir, $json['WPMU_PLUGIN_DIR']);
+    note('WPMU_PLUGIN_URL resolves to synthetic WP_HOME + /app/mu-plugins', $json['WPMU_PLUGIN_URL'] === $expectedMuPluginUrl, $json['WPMU_PLUGIN_URL']);
     note('DB_CHARSET resolves to utf8mb4', $json['DB_CHARSET'] === 'utf8mb4', $json['DB_CHARSET']);
     note('DB_COLLATE resolves to utf8mb4_unicode_ci', $json['DB_COLLATE'] === 'utf8mb4_unicode_ci', $json['DB_COLLATE']);
     note('WP_ENV resolves to production', $json['WP_ENV'] === 'production', $json['WP_ENV']);
