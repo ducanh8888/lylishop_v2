@@ -1,0 +1,28 @@
+.editor-styles-wrapper {
+    --lyli-color-primary: #7A3B17;
+    --lyli-color-secondary: #8A4A23;
+    --lyli-color-text: #2D2A26;
+    --lyli-color-muted: #6B6560;
+    --lyli-color-border: #E4DED8;
+    --lyli-color-surface-soft: #F8F5F2;
+    font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
+    color: var(--lyli-color-text);
+    padding-inline: clamp(16px, 3vw, 40px);
+}
+
+.editor-styles-wrapper h1,
+.editor-styles-wrapper h2,
+.editor-styles-wrapper h3,
+.editor-styles-wrapper h4 {
+    font-family: "Fraunces", Georgia, serif;
+    color: var(--lyli-color-primary);
+}
+
+.editor-styles-wrapper .wp-block[data-align="wide"] { max-width: 1140px; }
+.editor-styles-wrapper .lyli-pattern { margin-block: 48px; }
+.editor-styles-wrapper .lyli-hero,
+.editor-styles-wrapper .lyli-custom-cta,
+.editor-styles-wrapper .lyli-final-cta { border: 1px solid var(--lyli-color-border); }
+.editor-styles-wrapper .wp-element-button { background: var(--lyli-color-primary); border-radius: 999px; }
+.editor-styles-wrapper .lyli-category-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.editor-styles-wrapper .lyli-category-card { border: 1px solid var(--lyli-color-border); border-radius: 16px; padding: 20px; }

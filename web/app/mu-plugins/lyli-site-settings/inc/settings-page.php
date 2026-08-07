@@ -18,17 +18,17 @@ if (! defined('ABSPATH')) {
  */
 function register_menu(): void
 {
-    if (! current_user_can('manage_options')) {
+    if (! current_user_can('manage_lyli_site')) {
         return;
     }
 
     add_menu_page(
         __('Lyli Shop', 'lyli-site-settings'),
         __('Lyli Shop', 'lyli-site-settings'),
-        'manage_options',
+        'manage_lyli_site',
         \LyliSiteSettings\MENU_SLUG,
-        __NAMESPACE__ . '\\render_page',
-        'dashicons-superhero',
+        __NAMESPACE__ . '\\render_home',
+        'dashicons-store',
         3
     );
 
@@ -36,10 +36,61 @@ function register_menu(): void
         \LyliSiteSettings\MENU_SLUG,
         __('Cài đặt giao diện', 'lyli-site-settings'),
         __('Cài đặt giao diện', 'lyli-site-settings'),
-        'manage_options',
+        'manage_lyli_site',
         \LyliSiteSettings\SETTINGS_PAGE,
         __NAMESPACE__ . '\\render_page'
     );
+}
+
+function render_home(): void
+{
+    if (! current_user_can('manage_lyli_site')) {
+        wp_die(esc_html__('Bạn không có quyền truy cập trang này.', 'lyli-site-settings'));
+    }
+
+    $front_id = (int) get_option('page_on_front');
+    $policy_ids = get_posts([
+        'post_type' => 'page',
+        'post_status' => ['draft', 'publish'],
+        'fields' => 'ids',
+        'posts_per_page' => -1,
+        's' => 'Chính sách',
+    ]);
+    $links = [
+        ['dashicons-edit-page', 'Sửa trang chủ', $front_id ? get_edit_post_link($front_id, 'raw') : admin_url('edit.php?post_type=page')],
+        ['dashicons-products', 'Sản phẩm', admin_url('edit.php?post_type=product')],
+        ['dashicons-plus-alt2', 'Thêm sản phẩm', admin_url('post-new.php?post_type=product')],
+        ['dashicons-category', 'Danh mục', admin_url('edit-tags.php?taxonomy=product_cat&post_type=product')],
+        ['dashicons-cart', 'Đơn hàng', admin_url('admin.php?page=wc-orders')],
+        ['dashicons-menu', 'Menu', admin_url('nav-menus.php')],
+        ['dashicons-admin-customizer', 'Logo & giao diện', admin_url('customize.php')],
+        ['dashicons-admin-generic', 'Cài đặt Lyli Shop', admin_url('admin.php?page=' . \LyliSiteSettings\SETTINGS_PAGE)],
+        ['dashicons-media-document', 'Trang chính sách', $policy_ids ? get_edit_post_link((int) $policy_ids[0], 'raw') : admin_url('edit.php?post_type=page')],
+        ['dashicons-admin-post', 'Bài viết', admin_url('edit.php')],
+        ['dashicons-admin-media', 'Media', admin_url('upload.php')],
+    ];
+    ?>
+    <div class="wrap lyli-owner-home">
+        <h1><?php esc_html_e('Lyli Shop — Khu vực chủ cửa hàng', 'lyli-site-settings'); ?></h1>
+        <p class="lyli-owner-lead"><?php esc_html_e('Chọn việc bạn muốn làm. Mỗi nút mở đúng màn hình chỉnh sửa của WordPress.', 'lyli-site-settings'); ?></p>
+        <div class="lyli-owner-grid">
+            <?php foreach ($links as [$icon, $label, $url]) : ?>
+                <a class="lyli-owner-card" href="<?php echo esc_url((string) $url); ?>">
+                    <span class="dashicons <?php echo esc_attr($icon); ?>" aria-hidden="true"></span>
+                    <strong><?php echo esc_html($label); ?></strong>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <p class="description"><?php esc_html_e('Cài plugin, cài giao diện, sửa mã nguồn và quản lý người dùng cần nhà phát triển.', 'lyli-site-settings'); ?></p>
+    </div>
+    <style>
+        .lyli-owner-home{max-width:1100px}.lyli-owner-lead{font-size:16px;color:#50575e;margin-bottom:22px}
+        .lyli-owner-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:20px 0 26px}
+        .lyli-owner-card{display:flex;align-items:center;gap:12px;min-height:72px;padding:18px;background:#fff;border:1px solid #dcdcde;border-radius:10px;color:#2d2a26;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+        .lyli-owner-card:hover,.lyli-owner-card:focus{border-color:#7A3B17;color:#7A3B17;box-shadow:0 4px 14px rgba(122,59,23,.12)}
+        .lyli-owner-card .dashicons{width:28px;height:28px;font-size:28px;color:#7A3B17}
+    </style>
+    <?php
 }
 
 /**
@@ -114,7 +165,7 @@ function register_settings(): void
  */
 function render_page(): void
 {
-    if (! current_user_can('manage_options')) {
+    if (! current_user_can('manage_lyli_site')) {
         wp_die(esc_html__('Bạn không có quyền truy cập trang này.', 'lyli-site-settings'));
     }
     ?>

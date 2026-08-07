@@ -44,7 +44,11 @@ function setup(): void
 
     // Load Google Fonts into the classic editor so previews match the frontend.
     // Fonts are runtime-delivered (no committed binaries) per THEME-DECISION.md §11.
-    add_editor_style(\ShopChild\google_fonts_url());
+    add_editor_style([
+        \ShopChild\google_fonts_url(),
+        'style.css',
+        'editor-style.css',
+    ]);
 }
 
 /**

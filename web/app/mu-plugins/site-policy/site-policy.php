@@ -14,6 +14,7 @@ if (! defined('ABSPATH')) {
 
 const ROLE_OWNER = 'shop_owner';
 const ROLE_STAFF = 'shop_staff';
+const MANAGE_LYLI_SITE = 'manage_lyli_site';
 
 /**
  * Capabilities owner/staff must never hold, per PLAN.md section 7.5 and
@@ -48,3 +49,4 @@ add_action('init', __NAMESPACE__ . '\\Roles\\register_roles');
 add_action('admin_menu', __NAMESPACE__ . '\\Menu\\filter_admin_menu', PHP_INT_MAX);
 add_action('admin_init', __NAMESPACE__ . '\\Lockdown\\apply');
 add_action('wp_dashboard_setup', __NAMESPACE__ . '\\Dashboard\\register_widget');
+add_filter('login_redirect', __NAMESPACE__ . '\\Dashboard\\owner_login_redirect', 10, 3);

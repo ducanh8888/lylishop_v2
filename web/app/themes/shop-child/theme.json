@@ -136,5 +136,60 @@
         }
       ]
     }
+  },
+  "styles": {
+    "typography": {
+      "fontFamily": "var(--wp--preset--font-family--lyli-body)",
+      "lineHeight": "1.7"
+    },
+    "color": {
+      "text": "#2D2A26",
+      "background": "#FCFBFA"
+    },
+    "elements": {
+      "heading": {
+        "typography": {
+          "fontFamily": "var(--wp--preset--font-family--lyli-heading)",
+          "fontWeight": "600",
+          "lineHeight": "1.2"
+        },
+        "color": {
+          "text": "#7A3B17"
+        }
+      },
+      "button": {
+        "border": {
+          "radius": "999px"
+        },
+        "color": {
+          "background": "#7A3B17",
+          "text": "#FFFFFF"
+        },
+        "typography": {
+          "fontFamily": "var(--wp--preset--font-family--lyli-body)",
+          "fontWeight": "600"
+        },
+        "spacing": {
+          "padding": {
+            "top": "12px",
+            "right": "24px",
+            "bottom": "12px",
+            "left": "24px"
+          }
+        }
+      },
+      "link": {
+        "color": {
+          "text": "#7A3B17"
+        }
+      }
+    },
+    "spacing": {
+      "blockGap": "24px",
+      "padding": {
+        "left": "0px",
+        "right": "0px"
+      }
+    }
   }
 }

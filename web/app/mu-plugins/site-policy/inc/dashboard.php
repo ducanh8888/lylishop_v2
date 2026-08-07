@@ -32,6 +32,12 @@ function register_widget(): void
 
 function render_widget(): void
 {
+    echo '<div class="lyli-dashboard-actions">';
+    printf('<a class="button button-primary" href="%s">%s</a>', esc_url(admin_url('admin.php?page=lyli-site-settings')), esc_html__('Mở khu vực chủ cửa hàng', 'site-policy'));
+    printf('<a class="button" href="%s">%s</a>', esc_url(admin_url('post-new.php?post_type=product')), esc_html__('Thêm sản phẩm', 'site-policy'));
+    printf('<a class="button" href="%s">%s</a>', esc_url(admin_url('admin.php?page=wc-orders')), esc_html__('Xem đơn hàng', 'site-policy'));
+    echo '</div><style>.lyli-dashboard-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}</style>';
+
     if (! function_exists('wc_get_orders')) {
         echo '<p>' . esc_html__('WooCommerce chưa sẵn sàng.', 'site-policy') . '</p>';
         return;
@@ -47,4 +53,12 @@ function render_widget(): void
         esc_html__('Đang xử lý', 'site-policy'), count($processing),
         esc_html__('Tạm giữ', 'site-policy'), count($on_hold)
     );
+}
+
+function owner_login_redirect(string $redirect_to, string $requested_redirect_to, $user): string
+{
+    if ($user instanceof \WP_User && in_array(\SitePolicy\ROLE_OWNER, (array) $user->roles, true)) {
+        return admin_url('admin.php?page=lyli-site-settings');
+    }
+    return $redirect_to;
 }

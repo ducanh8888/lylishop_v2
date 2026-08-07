@@ -27,6 +27,8 @@ function add_shop_owner_role(): void
         'moderate_comments' => true,
         'manage_woocommerce' => true,
         'view_woocommerce_reports' => true,
+        'edit_theme_options' => true,
+        \SitePolicy\MANAGE_LYLI_SITE => true,
     ]);
 
     // Explicitly denied even if inherited — enforced again in inc/lockdown.php.
@@ -39,6 +41,11 @@ function add_shop_owner_role(): void
     } else {
         $role = get_role(\SitePolicy\ROLE_OWNER);
         sync_capabilities($role, $capabilities);
+    }
+
+    $administrator = get_role('administrator');
+    if ($administrator) {
+        $administrator->add_cap(\SitePolicy\MANAGE_LYLI_SITE);
     }
 }
 

@@ -41,6 +41,7 @@ $required_theme_files = [
     'web/app/themes/shop-child/style.css',
     'web/app/themes/shop-child/functions.php',
     'web/app/themes/shop-child/theme.json',
+    'web/app/themes/shop-child/editor-style.css',
     'web/.htaccess',
     'web/app/themes/shop-child/inc/design-tokens.php',
     'web/app/themes/shop-child/inc/enqueue.php',
@@ -218,6 +219,16 @@ check(
     'composer.json has validate:storefront script',
     isset($composer['scripts']['validate:storefront'])
 );
+
+/* 12. Owner editing contract */
+$roles_php = (string) file_get_contents("$root/web/app/mu-plugins/site-policy/inc/roles.php");
+$settings_main_php = (string) file_get_contents("$root/web/app/mu-plugins/lyli-site-settings/lyli-site-settings.php");
+$settings_page_php = (string) file_get_contents("$root/web/app/mu-plugins/lyli-site-settings/inc/settings-page.php");
+check('shop_owner has dedicated Lyli capability', str_contains($roles_php, 'MANAGE_LYLI_SITE'));
+check('shop_owner has native visual-control capability', str_contains($roles_php, "'edit_theme_options' => true"));
+check('Lyli Settings save uses dedicated capability', str_contains($settings_main_php, 'option_page_capability_'));
+check('Lyli Settings does not require manage_options', ! str_contains($settings_page_php, "current_user_can('manage_options')"));
+check('Owner guide exists', is_file("$root/docs/OWNER-ADMIN-GUIDE.md"));
 
 /* ---- Report ---- */
 foreach ($checks as [$label, $ok, $detail]) {

@@ -18,29 +18,47 @@ if (! defined('ABSPATH')) {
  * Render the Lyli footer info block (intro + contact + socials) just above
  * the Botiga copyright bar.
  */
-add_action('botiga_before_footer_copyright', __NAMESPACE__ . '\\render_footer_info', 5);
+add_action('after_setup_theme', __NAMESPACE__ . '\\register_footer', 30);
+function register_footer(): void
+{
+    add_action('botiga_footer', __NAMESPACE__ . '\\render_footer_info', 5);
+}
+
 function render_footer_info(): void
 {
-    if (! function_exists('LyliSiteSettings\\get_footer_intro')) {
-        return;
-    }
+    $has_settings = function_exists('LyliSiteSettings\\get_footer_intro');
+    $intro = $has_settings ? \LyliSiteSettings\get_footer_intro() : '';
+    $email = $has_settings ? \LyliSiteSettings\get_contact_email() : '';
+    $phone = $has_settings ? \LyliSiteSettings\get_contact_phone() : '';
+    $facebook = $has_settings ? \LyliSiteSettings\get_facebook_url() : '';
+    $instagram = $has_settings ? \LyliSiteSettings\get_instagram_url() : '';
+    $tiktok = $has_settings ? \LyliSiteSettings\get_tiktok_url() : '';
+    $zalo = $has_settings ? \LyliSiteSettings\get_zalo_url() : '';
 
-    $intro      = \LyliSiteSettings\get_footer_intro();
-    $email      = \LyliSiteSettings\get_contact_email();
-    $phone      = \LyliSiteSettings\get_contact_phone();
-    $facebook   = \LyliSiteSettings\get_facebook_url();
-    $instagram  = \LyliSiteSettings\get_instagram_url();
-    $tiktok     = \LyliSiteSettings\get_tiktok_url();
-    $zalo       = \LyliSiteSettings\get_zalo_url();
-
-    if ($intro === '' && $email === '' && $phone === '' && $facebook === '' && $instagram === '' && $tiktok === '' && $zalo === '') {
-        return;
-    }
-
-    echo '<div class="lyli-footer-info">';
+    echo '<footer class="lyli-site-footer"><div class="lyli-footer-inner">';
+    echo '<div class="lyli-footer-brand">';
+    printf('<a class="lyli-footer-logo" href="%1$s">%2$s</a>', esc_url(home_url('/')), esc_html(get_bloginfo('name')));
 
     if ($intro !== '') {
         printf('<p class="lyli-footer-intro">%s</p>', esc_html($intro));
+    } else {
+        echo '<p class="lyli-footer-intro">' . esc_html__('Quà len thủ công với một nhịp điệu nhẹ nhàng, ấm áp.', 'shop-child') . '</p>';
+    }
+    echo '</div>';
+
+    echo '<div class="lyli-footer-links"><h2>' . esc_html__('Khám phá', 'shop-child') . '</h2>';
+    wp_nav_menu([
+        'theme_location' => 'secondary',
+        'container' => false,
+        'menu_class' => 'lyli-footer-menu',
+        'fallback_cb' => false,
+        'depth' => 1,
+    ]);
+    echo '</div>';
+
+    $has_connect = $email !== '' || $phone !== '' || $facebook !== '' || $instagram !== '' || $tiktok !== '' || $zalo !== '';
+    if ($has_connect) {
+        echo '<div class="lyli-footer-connect"><h2>' . esc_html__('Kết nối', 'shop-child') . '</h2>';
     }
 
     if ($email !== '' || $phone !== '') {
@@ -88,14 +106,23 @@ function render_footer_info(): void
         echo '</ul>';
     }
 
+    if ($has_connect) {
+        echo '</div>';
+    }
     echo '</div>';
+
+    $copyright = $has_settings ? \LyliSiteSettings\get_footer_copyright() : '';
+    if ($copyright === '') {
+        $copyright = sprintf('© %s %s', wp_date('Y'), get_bloginfo('name'));
+    }
+    printf('<div class="lyli-footer-bottom"><span>%s</span><a href="%s">%s</a></div>', esc_html($copyright), esc_url(home_url('/tai-khoan/')), esc_html__('Tài khoản', 'shop-child'));
+    echo '</footer>';
 }
 
 /**
  * Inject the Lyli copyright line into the Botiga copyright bar, keeping the
  * default Botiga credits as a fallback when the setting is empty.
  */
-add_action('botiga_footer_copyright_content_start', __NAMESPACE__ . '\\render_copyright', 15);
 function render_copyright(): void
 {
     if (! function_exists('LyliSiteSettings\\get_footer_copyright')) {

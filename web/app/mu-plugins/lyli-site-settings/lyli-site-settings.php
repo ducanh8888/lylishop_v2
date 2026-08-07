@@ -21,7 +21,7 @@ if (! defined('ABSPATH')) {
 
 const OPTION_PREFIX     = 'lyli_';
 const MENU_SLUG         = 'lyli-site-settings';
-const SETTINGS_PAGE     = 'lyli-site-settings';
+const SETTINGS_PAGE     = 'lyli-site-settings-options';
 const SETTINGS_GROUP    = 'lyli_site_settings_group';
 const OPTION_KEYS       = [
     'footer_intro',
@@ -43,3 +43,6 @@ require_once __DIR__ . '/inc/public-accessors.php';
 
 add_action('admin_menu', __NAMESPACE__ . '\\SettingsPage\\register_menu', 20);
 add_action('admin_init', __NAMESPACE__ . '\\SettingsPage\\register_settings');
+add_filter('option_page_capability_' . SETTINGS_GROUP, static function (): string {
+    return 'manage_lyli_site';
+});
