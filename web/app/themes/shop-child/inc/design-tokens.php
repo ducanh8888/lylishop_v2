@@ -14,6 +14,17 @@ if (! defined('ABSPATH')) {
 }
 
 /**
+ * Botiga 2.4.7 replaces the complete theme.json palette at priority 10 with
+ * its Customizer palette. Remove only that filter after both themes load so
+ * the child theme.json remains the canonical editor/frontend token source.
+ */
+add_action('after_setup_theme', __NAMESPACE__ . '\\preserve_child_theme_json_palette', 0);
+function preserve_child_theme_json_palette(): void
+{
+    remove_filter('wp_theme_json_data_theme', 'botiga_filter_theme_json_data_theme');
+}
+
+/**
  * Google Fonts URL (runtime delivery; no binary font files committed).
  * Verified families exist on Google Fonts (open-licensed).
  */

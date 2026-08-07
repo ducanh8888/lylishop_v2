@@ -221,6 +221,8 @@ check('Lyli footer uses Botiga builder inner hook', str_contains($footer_php, "a
 check('Lyli footer does not render a second footer element', ! str_contains($footer_php, "echo '<footer"));
 check('Botiga footer container is not hidden', preg_match('/\\.bhfb-footer\\s*\\{[^}]*display\\s*:\\s*none/si', $theme_css) !== 1);
 check('Theme CSS tokens reference theme.json presets', str_contains($theme_css, '--lyli-color-primary: var(--wp--preset--color--lyli-primary)'));
+$design_tokens_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/design-tokens.php");
+check('Botiga cannot overwrite child theme.json palette', str_contains($design_tokens_php, "remove_filter('wp_theme_json_data_theme', 'botiga_filter_theme_json_data_theme')"));
 $enqueue_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/enqueue.php");
 check('Child stylesheet keeps one Botiga handle', ! str_contains($enqueue_php, "wp_enqueue_style(\n        'botiga-style'"));
 check('Child stylesheet has independent cache version', str_contains($enqueue_php, "registered['botiga-style']->ver"));
