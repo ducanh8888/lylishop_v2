@@ -15,8 +15,8 @@ fi
 
 echo "== WP-CLI checks (via SSH, PHP 8.3) =="
 ssh "$SSH_HOST_ALIAS" "
-  cd ~/${REMOTE_APP_DIR}/current/web 2>/dev/null || { echo 'current release not found'; exit 1; }
-  WP='/opt/alt/php83/usr/bin/php ~/${REMOTE_APP_DIR}/shared/wp-cli.phar --path=.'
+  cd ~/${REMOTE_APP_DIR}/current/web/wp 2>/dev/null || { echo 'current release not found'; exit 1; }
+  WP='/opt/alt/php83/usr/bin/php /usr/bin/wp --path=.'
   echo '--- core is-installed ---'
   \$WP core is-installed && echo OK || echo FAIL
   echo '--- active plugins ---'

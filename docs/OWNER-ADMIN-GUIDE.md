@@ -6,6 +6,8 @@ Tài khoản dùng hằng ngày có vai trò **Shop Owner (`shop_owner`)**. Tài
 
 Sau khi đăng nhập, WordPress mở **Lyli Shop — Khu vực chủ cửa hàng**. Chọn nút đúng với việc cần làm; không cần vào phần kỹ thuật.
 
+Giao diện WordPress và WooCommerce của tài khoản vận hành được đặt thành **Tiếng Việt**. Nếu tab wp-admin đã mở từ trước, hãy đăng xuất/đăng nhập lại hoặc tải lại trang. Có thể kiểm tra tại **Thành viên → Hồ sơ → Ngôn ngữ: Tiếng Việt**.
+
 - **Sửa trang chủ:** mở trang chủ trong trình sửa khối. Bấm trực tiếp vào chữ để sửa; kéo khối để đổi thứ tự; mở menu ba chấm của khối để ẩn/xóa một mục.
 - **Đổi ảnh hero hoặc ảnh trong trang:** chọn vùng ảnh, bấm **Thay thế**, rồi chọn ảnh trong Media hoặc tải ảnh mới lên. Nhập văn bản thay thế ngắn gọn cho ảnh.
 - **Sản phẩm:** hiện để trống theo quyết định của chủ shop. Chỉ vào **Sản phẩm → Thêm sản phẩm** khi shop sẵn sàng mở catalogue; không cần tạo sản phẩm để sửa nội dung trang hoặc gallery.

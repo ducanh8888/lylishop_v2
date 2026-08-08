@@ -10,8 +10,9 @@ Repository (Git) **không** thay thế database backup, và database backup **kh
 
 ## Thành phần backup
 
-* Database (toàn bộ, qua `mysqldump` — xác nhận có sẵn trên host tại `docs/HOSTING-AUDIT.md` mục 2.5).
+* Database toàn bộ qua `wp db export` với runtime Bedrock/PHP 8.3; WP-CLI gọi `mysqldump` bằng credentials đã được WordPress nạp, không `source` hoặc in `.env` trong shell.
 * `shared/uploads/` (media library thật, không nằm trong release artifact).
+* `shared/languages/` (WordPress/WooCommerce language packs dùng chung qua các release; có thể tải lại từ nguồn chính thức nhưng cần giữ trong full backup để rollback nhanh).
 * Theme (`shop-child`), mu-plugin (`site-policy`) — đã có trong Git, nhưng vẫn chụp cùng bản backup toàn phần để restore nhanh không cần rebuild.
 * Cấu hình cần thiết (`.env` thật, không commit).
 * Dữ liệu do plugin tạo ra (audit log Simple History, email log FluentSMTP, v.v — theo `docs/PLUGIN-MANIFEST.md`).
@@ -26,7 +27,7 @@ Repository (Git) **không** thay thế database backup, và database backup **kh
 | Backup trước mỗi deploy | Mỗi lần, bắt buộc |
 | Off-site copy | Giữ ít nhất một bản, không chỉ backup của hosting |
 
-UpdraftPlus (`docs/PLUGIN-MANIFEST.md`) đảm nhiệm backup theo lịch sau khi WordPress được cài. Trước khi WordPress tồn tại, `scripts/production-backup.sh` dùng `mysqldump` + `rsync`/`tar` trực tiếp qua SSH (biến `SSH_HOST_ALIAS`, mặc định `commerce-host`).
+UpdraftPlus (`docs/PLUGIN-MANIFEST.md`) đảm nhiệm backup theo lịch. Backup có kiểm soát trước thay đổi dùng `scripts/production-backup.sh`: `wp db export` qua `/opt/alt/php83/usr/bin/php /usr/bin/wp --path=<current>/web/wp`, kiểm tra gzip và archive uploads. Script không parse `.env` như shell vì giá trị runtime không bắt buộc là shell-safe.
 
 ## Quy trình restore
 

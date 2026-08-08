@@ -33,9 +33,10 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 | WP-CLI path trên host | `--path=apps/lylishop/current/web/wp` |
 | `public_html` | Symlink → `apps/lylishop/current/web`; bản provider cũ giữ tại `shared/rollback/provider-public_html-20260807135123` |
 | Theme integration | Giữ Gutenberg storefront gốc; editorial gallery/FAQ/contact/blog cards; header desktop hai hàng; Fraunces/Be Vietnam Pro có tên rõ trong editor và weight semantic `600/400/500` |
+| Admin locale | Site và tài khoản vận hành dùng `vi`; WordPress core + WooCommerce language packs nằm tại `shared/languages` và được dùng lại qua release |
 | `apps/lylishop/current` | → `releases/20260808132816` |
 | Release rollback | `releases/20260808001500`; full pre-editorial rollback `releases/20260807205828` |
-| Backup gần nhất | `shared/backups/20260808001000/{database.sql.gz,uploads.tar.gz}` (gzip/tar integrity pass) |
+| Backup gần nhất | `shared/backups/20260808152708/database.sql.gz` (`gzip -t` PASS); full backup gần nhất `shared/backups/20260808001000/{database.sql.gz,uploads.tar.gz}` |
 | `.env` | `shared/.env` mode 600, ngoài `public_html`, owner đúng |
 | Baseline content | 5 blog, 25 ảnh nguồn, 9 trang editorial/policy publish, 0 sản phẩm; promotion tắt; mọi payment gateway tắt |
 | Mốc đạt được | 1–5; chưa đạt commerce launch readiness |
@@ -59,3 +60,4 @@ Chính sách phê duyệt chung cho lần deploy sau **không** bị suy yếu. 
 - **2026-08-07:** sửa Botiga Dashboard tương thích với `DISALLOW_FILE_MODS`: loại tab/menu Starter Sites khi importer không có hook, giữ nguyên code locks và deploy release `20260807205828`.
 - **2026-08-08:** bổ sung editorial content theo cấu trúc Gutenberg hiện có: 5 blog, 25 ảnh, 4 policy public, menu nguồn; giữ 0 sản phẩm và promotion tắt; deploy release `20260808001500`. Chi tiết tại `docs/EDITORIAL-CONTENT-IMPORT-2026-08-08.md`.
 - **2026-08-08:** chuẩn hóa typography theo `11_Brand_Guideline`: Fraunces SemiBold cho heading, Be Vietnam Pro Regular/Medium cho body/CTA; preset hiện rõ trong Gutenberg; deploy release `20260808132816`. Chi tiết tại `docs/TYPOGRAPHY-IMPLEMENTATION-2026-08-08.md`.
+- **2026-08-08:** cài WordPress core/WooCommerce language pack `vi`, đặt locale tài khoản vận hành thành `vi` và chuyển language packs sang `shared/languages` để bền qua release. Chi tiết tại `docs/WOOCOMMERCE-VIETNAMESE-2026-08-08.md`.

@@ -27,7 +27,7 @@ Chi tiết audit hạ tầng: `docs/HOSTING-AUDIT.md`. Tài liệu này mô tả
 ├── public_html -> apps/lylishop/current/web     # chỉ đổi 1 lần lúc go-live đầu tiên
 └── apps/lylishop/
     ├── releases/<timestamp>/web/
-    ├── shared/{.env, uploads/, logs/, backups/}
+    ├── shared/{.env, uploads/, languages/, logs/, backups/}
     └── current -> releases/<timestamp>
 ```
 
@@ -40,7 +40,7 @@ Symlink switching được ưu tiên vì đã xác nhận hoạt động trên h
 3. **Backup uploads/config production nếu áp dụng** — cùng script: tar `shared/uploads/` và `shared/.env` (chỉ để khôi phục, không đưa vào release artifact hay Git).
 4. **Bật maintenance mode** — `wp maintenance-mode activate` qua PHP 8.3 trên release đang chạy (`current`), trước khi đụng tới file.
 5. **Upload release bất biến (immutable)** — đóng gói bằng `scripts/build-artifact.sh`, rsync/scp lên `releases/<timestamp>/` — không sửa trực tiếp một release đã tồn tại.
-6. **Giữ nguyên dữ liệu chia sẻ (shared persistent data)** — symlink `shared/.env` → `releases/<timestamp>/.env`, symlink `shared/uploads` → `releases/<timestamp>/web/app/uploads`; database không bị ghi đè bởi việc deploy code.
+6. **Giữ nguyên dữ liệu chia sẻ (shared persistent data)** — symlink `shared/.env` → `releases/<timestamp>/.env`, `shared/uploads` → `releases/<timestamp>/web/app/uploads`, và `shared/languages` → `releases/<timestamp>/web/app/languages`; database và language packs không bị ghi đè bởi việc deploy code.
 7. **Migration qua WP-CLI** — `wp core update-db`, cấu hình cần thiết, flush rewrite, clear cache — luôn qua `/opt/alt/php83/usr/bin/php /usr/bin/wp --path=<release>/web/wp` trên host này (không dùng `php` mặc định 8.1 và không dùng path `web/`).
 8. **Health check** — `scripts/production-health-check.sh`: HTTP 200 trang chủ, `wp core is-installed`, `wp plugin list --status=active`, xác nhận cart/checkout/my-account không bị page-cache.
 9. **Tắt maintenance mode** — chỉ sau khi health check qua; đổi symlink `current` sang release mới ngay trước hoặc cùng lúc tắt maintenance mode để giảm downtime.

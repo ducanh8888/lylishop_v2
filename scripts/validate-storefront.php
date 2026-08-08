@@ -263,6 +263,15 @@ $enqueue_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/e
 check('Child stylesheet keeps one Botiga handle', ! str_contains($enqueue_php, "wp_enqueue_style(\n        'botiga-style'"));
 check('Child stylesheet has independent cache version', str_contains($enqueue_php, "registered['botiga-style']->ver"));
 
+/* Production workflow must preserve runtime language packs and use the
+ * host-proven WP-CLI path without parsing .env as shell syntax. */
+$deploy_sh = (string) file_get_contents("$root/scripts/production-deploy.sh");
+$backup_sh = (string) file_get_contents("$root/scripts/production-backup.sh");
+$health_sh = (string) file_get_contents("$root/scripts/production-health-check.sh");
+check('Deploy links shared language packs', str_contains($deploy_sh, 'shared/languages') && str_contains($deploy_sh, 'web/app/languages'));
+check('Production scripts use host-proven WP-CLI path', ! str_contains($deploy_sh . $health_sh, 'shared/wp-cli.phar') && str_contains($deploy_sh, '/web/wp'));
+check('Backup loads Bedrock without sourcing .env', str_contains($backup_sh, 'db export') && ! str_contains($backup_sh, 'source "$ENV_FILE"'));
+
 /* Botiga Dashboard must not redirect into an unavailable demo importer when
  * production deliberately disables plugin installation. */
 $child_functions_php = (string) file_get_contents("$root/web/app/themes/shop-child/functions.php");

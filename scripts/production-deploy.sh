@@ -34,16 +34,16 @@ echo
 if [ "$APPLY" != "--apply" ]; then
     echo "DRY RUN — no changes made. Re-run with --apply to actually deploy."
     echo "Would run, in order:"
-    echo "  1. ssh $SSH_HOST_ALIAS bash -s < scripts/production-backup.sh   (DB + uploads backup)"
-    echo "  2. ssh $SSH_HOST_ALIAS wp maintenance-mode activate --path=~/${REMOTE_APP_DIR}/current/web"
+    echo "  1. upload + run scripts/production-backup.sh   (DB + uploads backup)"
+    echo "  2. ssh $SSH_HOST_ALIAS /opt/alt/php83/usr/bin/php /usr/bin/wp --path=~/${REMOTE_APP_DIR}/current/web/wp maintenance-mode activate"
     echo "  3. ssh $SSH_HOST_ALIAS mkdir -p ~/${RELEASE_PATH}"
     echo "  4. scp $ARTIFACT $SSH_HOST_ALIAS:~/${RELEASE_PATH}/release.tar.gz"
     echo "  5. ssh $SSH_HOST_ALIAS tar -xzf ~/${RELEASE_PATH}/release.tar.gz -C ~/${RELEASE_PATH}"
     echo "  6. ssh $SSH_HOST_ALIAS ln -sfn ~/${REMOTE_APP_DIR}/shared/.env ~/${RELEASE_PATH}/.env"
-    echo "  7. ssh $SSH_HOST_ALIAS ln -sfn ~/${REMOTE_APP_DIR}/shared/uploads ~/${RELEASE_PATH}/web/app/uploads"
-    echo "  8. ssh $SSH_HOST_ALIAS /opt/alt/php83/usr/bin/php ~/${REMOTE_APP_DIR}/shared/wp-cli.phar core update-db --path=~/${RELEASE_PATH}/web"
+    echo "  7. ssh $SSH_HOST_ALIAS link shared uploads + languages into the release"
+    echo "  8. ssh $SSH_HOST_ALIAS /opt/alt/php83/usr/bin/php /usr/bin/wp --path=~/${RELEASE_PATH}/web/wp core update-db"
     echo "  9. ssh $SSH_HOST_ALIAS ln -sfn ~/${RELEASE_PATH} ~/${REMOTE_APP_DIR}/current"
-    echo " 10. ssh $SSH_HOST_ALIAS wp maintenance-mode deactivate --path=~/${REMOTE_APP_DIR}/current/web"
+    echo " 10. ssh $SSH_HOST_ALIAS /opt/alt/php83/usr/bin/php /usr/bin/wp --path=~/${REMOTE_APP_DIR}/current/web/wp maintenance-mode deactivate"
     echo "Then run: scripts/production-health-check.sh"
     exit 0
 fi
@@ -55,10 +55,14 @@ if [ "$confirm" != "deploy production" ]; then
 fi
 
 echo "Step 1/9: backing up database and uploads..."
-ssh "$SSH_HOST_ALIAS" "APP_DIR=~/${REMOTE_APP_DIR} bash -s" < "$(dirname "$0")/production-backup.sh"
+REMOTE_BACKUP_SCRIPT="${REMOTE_APP_DIR}/shared/production-backup-${STAMP}.sh"
+scp "$(dirname "$0")/production-backup.sh" "$SSH_HOST_ALIAS:~/${REMOTE_BACKUP_SCRIPT}"
+ssh "$SSH_HOST_ALIAS" "sed -i 's/\\r$//' ~/${REMOTE_BACKUP_SCRIPT}"
+ssh "$SSH_HOST_ALIAS" "timeout 180s env APP_DIR=~/${REMOTE_APP_DIR} bash ~/${REMOTE_BACKUP_SCRIPT}"
+ssh "$SSH_HOST_ALIAS" "rm ~/${REMOTE_BACKUP_SCRIPT}"
 
 echo "Step 2/9: enabling maintenance mode on current release..."
-ssh "$SSH_HOST_ALIAS" "/opt/alt/php83/usr/bin/php ~/${REMOTE_APP_DIR}/shared/wp-cli.phar maintenance-mode activate --path=~/${REMOTE_APP_DIR}/current/web" || true
+ssh "$SSH_HOST_ALIAS" "/opt/alt/php83/usr/bin/php /usr/bin/wp --path=~/${REMOTE_APP_DIR}/current/web/wp maintenance-mode activate" || true
 
 echo "Step 3/9: creating release directory..."
 ssh "$SSH_HOST_ALIAS" "mkdir -p ~/${RELEASE_PATH}"
@@ -69,21 +73,21 @@ scp "$ARTIFACT" "$SSH_HOST_ALIAS:~/${RELEASE_PATH}/release.tar.gz"
 echo "Step 5/9: extracting artifact..."
 ssh "$SSH_HOST_ALIAS" "tar -xzf ~/${RELEASE_PATH}/release.tar.gz -C ~/${RELEASE_PATH} && rm ~/${RELEASE_PATH}/release.tar.gz"
 
-echo "Step 6-7/9: linking shared persistent data (.env, uploads)..."
+echo "Step 6-7/9: linking shared persistent data (.env, uploads, languages)..."
 ssh "$SSH_HOST_ALIAS" "ln -sfn ~/${REMOTE_APP_DIR}/shared/.env ~/${RELEASE_PATH}/.env"
 ssh "$SSH_HOST_ALIAS" "ln -sfn ~/${REMOTE_APP_DIR}/shared/uploads ~/${RELEASE_PATH}/web/app/uploads"
+ssh "$SSH_HOST_ALIAS" "mkdir -p ~/${REMOTE_APP_DIR}/shared/languages"
+ssh "$SSH_HOST_ALIAS" "ln -sfn ~/${REMOTE_APP_DIR}/shared/languages ~/${RELEASE_PATH}/web/app/languages"
 
 echo "Step 8/9: running WP-CLI database migration..."
-# --path must be the Bedrock web/ directory (where wp-config.php resolves), not
-# web/wp (the WordPress core subdirectory) — verified during installation
-# preparation (docs/INSTALLATION-PREPARATION.md).
-ssh "$SSH_HOST_ALIAS" "/opt/alt/php83/usr/bin/php ~/${REMOTE_APP_DIR}/shared/wp-cli.phar core update-db --path=~/${RELEASE_PATH}/web"
+# Runtime evidence on this host requires the WordPress core subdirectory.
+ssh "$SSH_HOST_ALIAS" "/opt/alt/php83/usr/bin/php /usr/bin/wp --path=~/${RELEASE_PATH}/web/wp core update-db"
 
 echo "Step 9/9: switching current release symlink..."
 ssh "$SSH_HOST_ALIAS" "ln -sfn ~/${RELEASE_PATH} ~/${REMOTE_APP_DIR}/current"
 
 echo "Disabling maintenance mode..."
-ssh "$SSH_HOST_ALIAS" "/opt/alt/php83/usr/bin/php ~/${REMOTE_APP_DIR}/shared/wp-cli.phar maintenance-mode deactivate --path=~/${REMOTE_APP_DIR}/current/web" || true
+ssh "$SSH_HOST_ALIAS" "/opt/alt/php83/usr/bin/php /usr/bin/wp --path=~/${REMOTE_APP_DIR}/current/web/wp maintenance-mode deactivate" || true
 
 echo "Deployed release ${STAMP} to production. Run scripts/production-health-check.sh now."
 echo "If anything looks wrong, run scripts/production-rollback.sh."
