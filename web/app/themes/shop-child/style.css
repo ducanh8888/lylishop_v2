@@ -221,7 +221,7 @@ a:hover { color: var(--lyli-color-secondary); }
 .lyli-eyebrow {
     color: var(--lyli-color-secondary);
     font-size: 0.76rem;
-    font-weight: 700;
+    font-weight: 500;
     letter-spacing: 0.16em;
     text-transform: uppercase;
 }
@@ -242,6 +242,7 @@ a:hover { color: var(--lyli-color-secondary); }
     background: var(--lyli-color-primary);
     color: #fff;
     text-decoration: none;
+    font-weight: 500;
     line-height: 1.2;
     transition: transform var(--lyli-transition), background var(--lyli-transition), box-shadow var(--lyli-transition);
 }
@@ -298,7 +299,7 @@ a:hover { color: var(--lyli-color-secondary); }
 .lyli-hero-visual::before { width: 240px; height: 240px; top: 15%; right: -65px; }
 .lyli-hero-visual::after { width: 145px; height: 145px; bottom: 8%; left: -35px; border-color: rgba(138, 74, 35, 0.12); }
 .lyli-hero-visual .wp-block-cover__inner-container { position: relative; z-index: 2; max-width: 25ch; }
-.lyli-yarn-mark { font-family: var(--lyli-font-heading); color: var(--lyli-color-primary); font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 700; letter-spacing: 0.05em; margin: 0; }
+.lyli-yarn-mark { font-family: var(--lyli-font-heading); color: var(--lyli-color-primary); font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 600; letter-spacing: 0.05em; margin: 0; }
 
 /* Editorial content remains native Gutenberg content editable in WP Admin. */
 .lyli-hero-visual img,
@@ -320,7 +321,7 @@ a:hover { color: var(--lyli-color-secondary); }
     border-radius: 12px;
     background: #fff;
 }
-.lyli-editorial-faq summary { cursor: pointer; font-weight: 600; }
+.lyli-editorial-faq summary { cursor: pointer; font-weight: 500; }
 .lyli-editorial-contact { padding: clamp(32px, 5vw, 58px); border-radius: 24px; background: var(--lyli-color-surface-soft); }
 
 .blog .posts-archive.layout3 article {
@@ -485,7 +486,7 @@ a:hover { color: var(--lyli-color-secondary); }
 .bhfb-footer .bhfb-rows { display: none; }
 .lyli-footer-content { width: 100%; }
 .lyli-footer-inner { width: min(calc(100% - (var(--lyli-gutter) * 2)), 1140px); margin: auto; display: grid; grid-template-columns: minmax(260px, 1.7fr) 1fr 1fr; gap: clamp(30px, 6vw, 86px); padding: clamp(54px, 8vw, 90px) 0; }
-.lyli-footer-logo { display: inline-block; margin-bottom: 18px; color: #fff; font-family: var(--lyli-font-heading); font-size: 2rem; font-weight: 700; text-decoration: none; }
+.lyli-footer-logo { display: inline-block; margin-bottom: 18px; color: #fff; font-family: var(--lyli-font-heading); font-size: 2rem; font-weight: 600; text-decoration: none; }
 .lyli-footer-logo:hover { color: #fff; }
 .bhfb-footer .lyli-footer-content h2 { margin: 4px 0 18px; color: #fff; font-size: 1rem; font-family: var(--lyli-font-body); text-transform: uppercase; letter-spacing: .12em; }
 .lyli-footer-intro { max-width: 38ch; color: rgba(255,255,255,.68); }

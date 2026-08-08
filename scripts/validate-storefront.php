@@ -15,7 +15,8 @@
  *     capability checks and nonces (settings_fields).
  *  8. Block patterns register the 8 controlled Lyli slugs.
  *  9. Site bootstrap has the --apply guard and no hard-coded credentials.
- * 10. theme.json parses (JSON) and declares no block templates.
+ * 10. theme.json parses, declares no block templates, and exposes the approved
+ *     brand typography to Gutenberg with the required semantic weights.
  *
  * Exit code 0 = PASS; non-zero = FAIL. Prints one line per check.
  */
@@ -197,6 +198,30 @@ check(
     'theme.json declares no block templates (not FSE)',
     ! isset($theme_json['templates']) || empty($theme_json['templates'])
 );
+$font_families = $theme_json['settings']['typography']['fontFamilies'] ?? [];
+$fonts_by_slug = [];
+foreach ($font_families as $font_family) {
+    if (isset($font_family['slug'])) {
+        $fonts_by_slug[$font_family['slug']] = $font_family;
+    }
+}
+check(
+    'Gutenberg exposes Fraunces heading font',
+    ($fonts_by_slug['lyli-heading']['name'] ?? '') === 'Fraunces — Tiêu đề'
+        && str_contains($fonts_by_slug['lyli-heading']['fontFamily'] ?? '', 'Fraunces')
+);
+check(
+    'Gutenberg exposes Be Vietnam Pro body font',
+    ($fonts_by_slug['lyli-body']['name'] ?? '') === 'Be Vietnam Pro — Nội dung & CTA'
+        && str_contains($fonts_by_slug['lyli-body']['fontFamily'] ?? '', 'Be Vietnam Pro')
+);
+check(
+    'Brand typography weights match guideline',
+    ($theme_json['settings']['typography']['fontWeight'] ?? false) === true
+        && ($theme_json['styles']['typography']['fontWeight'] ?? '') === '400'
+        && ($theme_json['styles']['elements']['heading']['typography']['fontWeight'] ?? '') === '600'
+        && ($theme_json['styles']['elements']['button']['typography']['fontWeight'] ?? '') === '500'
+);
 
 /* 11. Namespaced root helpers referenced from inc/ sub-namespaces must be
  * fully qualified so PHP cannot resolve them inside the child namespace. */
@@ -229,6 +254,11 @@ check('Legacy duplicate CSS block is removed', preg_match_all('/^\\.lyli-pattern
 check('Child stylesheet stays focused', substr_count($theme_css, "\n") < 600);
 $design_tokens_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/design-tokens.php");
 check('Botiga cannot overwrite child theme.json palette', str_contains($design_tokens_php, "remove_filter('wp_theme_json_data_theme', 'botiga_filter_theme_json_data_theme')"));
+check(
+    'Google Fonts runtime includes approved brand weights',
+    str_contains($design_tokens_php, 'Fraunces:wght@400;600;700')
+        && str_contains($design_tokens_php, 'Be+Vietnam+Pro:wght@400;500;600;700')
+);
 $enqueue_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/enqueue.php");
 check('Child stylesheet keeps one Botiga handle', ! str_contains($enqueue_php, "wp_enqueue_style(\n        'botiga-style'"));
 check('Child stylesheet has independent cache version', str_contains($enqueue_php, "registered['botiga-style']->ver"));

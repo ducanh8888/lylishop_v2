@@ -6,6 +6,7 @@
     --lyli-color-border: var(--wp--preset--color--lyli-border);
     --lyli-color-surface-soft: var(--wp--preset--color--lyli-surface-soft);
     font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
+    font-weight: 400;
     color: var(--lyli-color-text);
     padding-inline: clamp(16px, 3vw, 40px);
 }
@@ -15,6 +16,7 @@
 .editor-styles-wrapper h3,
 .editor-styles-wrapper h4 {
     font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
     color: var(--lyli-color-primary);
 }
 
@@ -23,6 +25,6 @@
 .editor-styles-wrapper .lyli-hero,
 .editor-styles-wrapper .lyli-custom-cta,
 .editor-styles-wrapper .lyli-final-cta { border: 1px solid var(--lyli-color-border); }
-.editor-styles-wrapper .wp-element-button { background: var(--lyli-color-primary); border-radius: 999px; }
+.editor-styles-wrapper .wp-element-button { background: var(--lyli-color-primary); border-radius: 999px; font-weight: 500; }
 .editor-styles-wrapper .lyli-category-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
 .editor-styles-wrapper .lyli-category-card { border: 1px solid var(--lyli-color-border); border-radius: 16px; padding: 20px; }
