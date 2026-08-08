@@ -12,6 +12,7 @@ Sau khi đăng nhập, WordPress mở **Lyli Shop — Khu vực chủ cửa hàn
 - **Danh mục:** vào **Danh mục** dưới Sản phẩm. Năm danh mục chính là Móc khóa len, Gấu bông len, Hoa len, Hộp quà và Đặt mẫu theo yêu cầu.
 - **Menu:** vào **Giao diện → Menu điều hướng**. Thêm/bớt trang, kéo để đổi thứ tự, rồi bấm lưu menu.
 - **Logo và giao diện:** vào **Giao diện → Logo & giao diện**. Dùng Customizer để đổi logo, nhận diện website và các tùy chọn Botiga được phép; bấm **Đăng** để lưu.
+- **Font trong nội dung:** trong trình sửa Trang/Bài viết, chọn block rồi mở **Typography → Font family**. Chọn **Fraunces — Tiêu đề** (`600`) cho heading; chọn **Be Vietnam Pro — Nội dung & CTA** cho đoạn văn (`400`) hoặc nút/CTA (`500`). Không cần Custom CSS hay plugin font.
 - **Footer, liên hệ, mạng xã hội, thông báo:** vào **Lyli Shop → Cài đặt giao diện**. Để trống trường nào thì phần tương ứng sẽ tự ẩn.
 - **Trang và bài viết:** dùng **Trang** để sửa toàn bộ section Gutenberg đã publish; dùng **Bài viết** để sửa 5 bài blog và featured image. Privacy, Terms, Shipping và Returns đều đang public từ nội dung nguồn đã duyệt cho lần import này.
 - **Media:** quản lý ảnh đã tải lên. Nên dùng ảnh rõ, cùng tỷ lệ và dung lượng vừa phải.
@@ -19,4 +20,4 @@ Sau khi đăng nhập, WordPress mở **Lyli Shop — Khu vực chủ cửa hàn
 
 ## Việc cần nhà phát triển
 
-Shop Owner không thể cài/cập nhật plugin hoặc giao diện, đổi mã PHP, thay cấu hình hệ thống, quản lý người dùng hay bật phương thức thanh toán mới. Gửi các việc này cho nhà phát triển; không dùng tài khoản Administrator cho công việc hằng ngày.
+Shop Owner không thể cài/cập nhật plugin hoặc giao diện, đổi mã PHP, thay cấu hình hệ thống, quản lý người dùng hay bật phương thức thanh toán mới. Đổi font mặc định toàn website hoặc thêm font family mới là thay đổi source-controlled; gửi các việc này cho nhà phát triển. Không dùng tài khoản Administrator cho công việc hằng ngày.

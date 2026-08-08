@@ -25,7 +25,7 @@ Child theme for `lylishop.online` (parent: **Botiga Free 2.4.7**). Presentation 
 - **No Botiga Pro** — prohibited (THEME-DECISION.md §7).
 - **Classic Cart/Checkout** — styled presentation only (TECH_STACK.md §4.1).
 - **Support surfaces** — restrained neutral canvas/surface colors live in `theme.json`; primary/secondary brand colors remain the founder-approved tokens.
-- **Fonts** — Fraunces + Be Vietnam Pro via Google Fonts runtime; no font binaries committed; Aristotelica Pro only via external approved logo asset.
+- **Fonts** — Gutenberg exposes `Fraunces — Tiêu đề` (default `600`) and `Be Vietnam Pro — Nội dung & CTA` (body `400`, button `500`). They load through Google Fonts runtime; no font binaries are committed. Aristotelica Pro is only allowed through an approved external logo asset. Production evidence: `docs/TYPOGRAPHY-IMPLEMENTATION-2026-08-08.md`.
 - **Products lacking real images** remain **draft** (WEBSITE-REQUIREMENTS.md policy).
 
 ## Owner editing surface

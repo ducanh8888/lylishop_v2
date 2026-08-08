@@ -1,8 +1,8 @@
 # DEPLOYMENT
 
-## Production state — 2026-08-07
+## Production state — 2026-08-08
 
-- Public release `20260807135123`, source `719a032`; WordPress 7.0.2, WooCommerce, Botiga and `shop-child` are active.
+- Public release `20260808132816`, source `8b7dc92388a186d58a34484c3c9971f8aa935c6a`; WordPress 7.0.2, WooCommerce, Botiga and `shop-child` are active.
 - Bedrock maps `web/app/plugins` and `web/app/mu-plugins`; the root MU loader starts `roots/bedrock-autoloader`. Use WP-CLI `--path=<release>/web/wp` on this host.
 - Local WSL validation is the deployment gate; GitHub Actions is informational. Workflow: **LOCAL VALIDATE → BUILD → BACKUP IF PRODUCTION STATE WILL CHANGE → DEPLOY → SMOKE TEST → PUBLIC OR ROLLBACK**.
 - Gutenberg pages/patterns and WP Admin → Lyli Shop settings are owner-editable. Payments remain disabled; products and legal-policy content await owner input.
@@ -41,7 +41,7 @@ Symlink switching được ưu tiên vì đã xác nhận hoạt động trên h
 4. **Bật maintenance mode** — `wp maintenance-mode activate` qua PHP 8.3 trên release đang chạy (`current`), trước khi đụng tới file.
 5. **Upload release bất biến (immutable)** — đóng gói bằng `scripts/build-artifact.sh`, rsync/scp lên `releases/<timestamp>/` — không sửa trực tiếp một release đã tồn tại.
 6. **Giữ nguyên dữ liệu chia sẻ (shared persistent data)** — symlink `shared/.env` → `releases/<timestamp>/.env`, symlink `shared/uploads` → `releases/<timestamp>/web/app/uploads`; database không bị ghi đè bởi việc deploy code.
-7. **Migration qua WP-CLI** — `wp core update-db`, cấu hình cần thiết, flush rewrite, clear cache — luôn qua `/opt/alt/php83/usr/bin/php /usr/bin/wp` (không dùng `php` mặc định 8.1).
+7. **Migration qua WP-CLI** — `wp core update-db`, cấu hình cần thiết, flush rewrite, clear cache — luôn qua `/opt/alt/php83/usr/bin/php /usr/bin/wp --path=<release>/web/wp` trên host này (không dùng `php` mặc định 8.1 và không dùng path `web/`).
 8. **Health check** — `scripts/production-health-check.sh`: HTTP 200 trang chủ, `wp core is-installed`, `wp plugin list --status=active`, xác nhận cart/checkout/my-account không bị page-cache.
 9. **Tắt maintenance mode** — chỉ sau khi health check qua; đổi symlink `current` sang release mới ngay trước hoặc cùng lúc tắt maintenance mode để giảm downtime.
 10. **Rollback sẵn sàng** — `scripts/production-rollback.sh`: trỏ lại `current` về release trước; nếu migration đã chạy và không tương thích ngược, khôi phục database từ backup bước 2 trước khi trỏ lại release cũ.

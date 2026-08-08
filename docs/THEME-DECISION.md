@@ -105,12 +105,13 @@ Hai bộ nền/kem/accent phụ trong workbook (`docs/THEME-DECISION-BRIEF.md` m
 * Candidate A (`11_Brand_Guideline`): kem nền chính `#FFFCF7`, kem đào nhạt `#FBEFE5`, hồng phấn `#F6E4E3`, xanh lá nhạt `#E9F1EA`, xanh lam pha xám `#C2C3D2`.
 * Candidate B (`16_Brand_System_Detail`): warm beige `#F4ECE5`, blush pink `#E8CFCF`, cream `#FFFDF9`, light gray `#F6F5F3`, text `#3D312B`, border `#DDD7D0`.
 
-### Typography — đã chốt tên font, chưa có file font
+### Typography — đã triển khai và owner-editable
 
-* Heading: **Fraunces**.
-* Body & CTA: **Be Vietnam Pro**.
+* Heading: **Fraunces SemiBold (`600`)**.
+* Body: **Be Vietnam Pro Regular (`400`)**; CTA/button: **Be Vietnam Pro Medium (`500`)**.
+* `shop-child/theme.json` đăng ký hai preset Gutenberg với tên **Fraunces — Tiêu đề** và **Be Vietnam Pro — Nội dung & CTA**; shop owner có thể chọn font/weight trên block được hỗ trợ trong WP Admin.
 * Aristotelica Pro: chỉ nơi asset logo chính thức yêu cầu — **không commit file font Aristotelica Pro vào repository** (bản quyền, chỉ dùng trong asset logo đã có sẵn ngoài repo).
-* Fraunces/Be Vietnam Pro **không commit file font nào** vào repository — tải qua Google Fonts lúc runtime (quyết định implementation 2026-08-06, ghi trong `docs/THEME-IMPLEMENTATION-PLAN.md`); fallback an toàn (serif/sans-serif hệ thống) trong stack. Aristotelica Pro vẫn chỉ dùng qua asset logo ngoài repo nếu có.
+* Fraunces/Be Vietnam Pro **không commit file font nào** vào repository — tải qua Google Fonts lúc runtime; fallback an toàn (serif/sans-serif hệ thống) trong stack. Chi tiết triển khai và bằng chứng production: `docs/TYPOGRAPHY-IMPLEMENTATION-2026-08-08.md`.
 
 ### Không thuộc phạm vi bước này
 

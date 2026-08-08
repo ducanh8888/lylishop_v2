@@ -1,6 +1,6 @@
 # THEME IMPLEMENTATION PLAN — Botiga Free + shop-child
 
-Mô tả trình tự triển khai **trong tương lai**. Không có bước nào dưới đây đã được thực thi trong tác vụ này (repository-only task — xem `docs/THEME-DECISION.md`). Trước khi bắt đầu bước 1, `docs/THEME-DECISION.md` phải ở trạng thái ACCEPTED (đã đúng) và không có blocker mới trong `docs/HOSTING-AUDIT.md`.
+Kế hoạch gốc được giữ để theo dõi quyết định; trạng thái hoàn thành được ghi ngay trên từng bước và đối chiếu với `docs/PRODUCTION-STATUS.md`.
 
 ## Trình tự 14 bước
 
@@ -16,8 +16,8 @@ Mô tả trình tự triển khai **trong tương lai**. Không có bước nào
    `wp_enqueue_style` cho style cha (Botiga) làm dependency của style con — đã có khung enqueue tối thiểu trong `functions.php` (handle `botiga-parent`); tôn trọng cấu trúc asset thật của Botiga (không giả định tên file `style.css` là toàn bộ CSS cha — cần kiểm tra Botiga có tách CSS theo module hay không, chỉ xác nhận được sau khi cài đặt thật, chưa làm ở bước này).
 5. **Đưa design token vào — NỀN TẢNG ĐÃ GHI, CHƯA WIRE VÀO OUTPUT.**
    Màu nâu chính/phụ đã chốt 2026-08-04 (vòng 2): `#7A3B17` primary, `#8A4A23` secondary/soft. **Hoàn tất 2026-08-07:** token nằm tại `web/app/themes/shop-child/theme.json`, được WordPress resolve thành preset cho frontend/Gutenberg; CSS child chỉ dùng alias semantic. Filter palette của Botiga 2.4.7 đã được gỡ có kiểm soát để không ghi đè token child.
-6. **Đăng ký typography.**
-   Fraunces (heading), Be Vietnam Pro (body/CTA), Aristotelica Pro (chỉ nơi logo yêu cầu) — self-hosted hoặc qua phương án đã duyệt, không phụ thuộc Google Fonts runtime nếu chính sách privacy/hiệu năng yêu cầu khác (cần xác nhận riêng, chưa có quyết định).
+6. **Đăng ký typography — HOÀN TẤT 2026-08-08.**
+   Fraunces SemiBold `600` cho heading; Be Vietnam Pro Regular `400` cho body và Medium `500` cho CTA/button. Hai family được đăng ký trong `theme.json` để shop owner chọn trong Gutenberg; tải qua Google Fonts runtime, không commit binary. Bằng chứng: `docs/TYPOGRAPHY-IMPLEMENTATION-2026-08-08.md`.
 7. **Header và mobile navigation.**
    Theo `docs/WEBSITE-REQUIREMENTS.md` (Logo, Shop, Bộ sưu tập, Giới thiệu, tìm kiếm, tài khoản, giỏ hàng — sticky).
 8. **Homepage pattern.**
