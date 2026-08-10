@@ -154,6 +154,14 @@ Sau khi owner bổ sung pickup address, direct Token/ShopId/store probes và Pre
 
 Print-token API PASS và token không persist, nhưng official GHN Test print URL trả HTTP 200 `text/html` (16.862 bytes) chứa script/style và external GHN/CDN assets, không phải PDF. Connector từ chối bằng `lyli_ghn_print_type` đúng security policy; không được nới gate để proxy raw third-party HTML dưới origin Lyli. Print cần task source riêng để thiết kế allowlisted redirect hoặc static sanitization phù hợp Toolkit contract. Connector trở về disabled/Test; live rate/webhook/COD production vẫn tắt. Saved API Token không xuất hiện trong admin/frontend/REST/options khác/order meta; public smoke PASS.
 
+### Print redirect correction — 2026-08-11
+
+Root cause was the connector's stale assumption that GHN's documented print URL must return `application/pdf`. Source commit `e4a7ac9aeed9a3c0aefa000b8a7ceeff7cb0cb42` removes the server-side print-document fetch and upgrades `lyli-ghn-connector` to 0.1.1. WordPress now calls `v2/a5/gen-token` server-side, builds one of the exact A5/80x80/52x70 HTTPS URLs for the selected environment, validates exact scheme/host/path/query, and redirects the authorized wp-admin tab to GHN. The temporary print token is URL-encoded, never persisted, and GHN HTML is never proxied or rendered under `lylishop.online`. The form uses `_blank` with `noopener noreferrer`; server-side `manage_woocommerce`, order and nonce checks remain mandatory.
+
+Release `20260811011830` deployed the fix from the immutable artifact `release-20260811143000.tar.gz` (SHA-256 `438378301173bde79d419d27e94a163377dc1c0d46e72f3922fe80d7fcc32f5e`). Pre-deploy backup: `shared/backups/20260811011721`; rollback: `20260810210244`. No cache purge was needed because the old flow did not cache the print document.
+
+Focused GHN Test verification used disposable Woo order `151` and shipment `L89VMM`: gen-token PASS; generated URL host/path exactly `dev-online-gateway.ghn.vn` + `/a5/public-api/printA5`; external print page HTTP 200 (`text/html`, which is accepted as GHN-owned content); capability/nonce PASS; Cancel + post-cancel Sync ended at `cancel`. Shipment was cancelled, order/product deleted, connector restored disabled/Test, and no test order remains. Token leak check PASS. Production gateway, webhook and live checkout rates were not enabled.
+
 ## 11. Primary evidence
 
 - WordPress.org/SVN: `https://wordpress.org/plugins/ship-depot/`, `https://plugins.svn.wordpress.org/ship-depot/trunk/`, `https://wordpress.org/plugins/shipping-viet-nam-woocommerce/`, `https://plugins.svn.wordpress.org/vnshipping-for-woocommerce/`.

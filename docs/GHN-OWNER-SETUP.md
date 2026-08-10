@@ -1,6 +1,6 @@
 # GHN owner setup
 
-Trạng thái production cập nhật 2026-08-11: WordPress plugin `lyli-ghn-connector` 0.1.0 active trong release `20260810210244`; connector đang **tắt ở môi trường Test**. Token, ShopId, pickup address, Preview, Create, idempotency, Detail, Sync và Cancel đã PASS trên GHN staging; test shipment đã hủy và test data đã xóa. Print còn bị chặn an toàn vì GHN trả active HTML thay vì PDF. Chưa bật production cho tới khi developer triển khai và xác minh print flow an toàn. Không gửi Token qua chat.
+Trạng thái production cập nhật 2026-08-11: WordPress plugin `lyli-ghn-connector` 0.1.1 active trong release `20260811011830`; connector đang **tắt ở môi trường Test**. Token, ShopId, pickup address, Preview, Create, idempotency, Detail, Sync, Print và Cancel đã PASS trên GHN staging; mọi test shipment đã hủy và test data đã xóa. Print mở trực tiếp trang in do GHN sở hữu, không proxy HTML qua Lyli Shop. Không gửi Token qua chat.
 
 ## Khi shop đã có tài khoản GHN test
 
@@ -15,7 +15,8 @@ Trạng thái production cập nhật 2026-08-11: WordPress plugin `lyli-ghn-con
    - COD chỉ cho đơn WooCommerce COD hay tắt;
    - khai giá hay tắt.
 6. Nhập khối lượng và kích thước kiện đóng gói thực tế. Không dùng số giả. Với hàng nặng, từng sản phẩm cũng phải có đủ weight/dimensions.
-7. Chỉ bật connector sau khi mọi field bắt buộc đã đúng, rồi lưu.
+7. Chọn khổ nhãn **A5**, **80 × 80 mm** hoặc **52 × 70 mm**.
+8. Chỉ bật connector sau khi mọi field bắt buộc đã đúng, rồi lưu.
 
 ## Test có kiểm soát
 
@@ -33,6 +34,7 @@ Chỉ chuyển sang **Production** sau khi test gateway pass và owner xác nh�
 - GHN delivered không tự đổi Woo order thành completed.
 - COD không tự bật cho BACS/prepaid.
 - Connector không nhận webhook; dùng Sync trong order admin.
+- Print mở một tab mới trên đúng gateway GHN; nội dung trang in không chạy dưới domain Lyli Shop.
 - `shop_staff` chưa có quyền GHN. Chỉ `shop_owner`/administrator có `manage_woocommerce` được thao tác.
 - Nếu mất Token, nhập Token mới; hệ thống không hiển thị lại Token cũ.
 

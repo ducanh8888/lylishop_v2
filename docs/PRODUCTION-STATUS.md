@@ -17,27 +17,27 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 
 > Mốc 6 yêu cầu phê duyệt riêng và **không** thuộc phạm vi nhiệm vụ hiện tại.
 
-## Trạng thái hiện tại (2026-08-10)
+## Trạng thái hiện tại (2026-08-11)
 
 | Mục | Kết quả |
 |---|---|
-| Deployed source commit | `1d7bb7b93a241eaf4448e8f1e70f5ccc2d0853c6` (GHN connector; prior cascade implementation `ae0e28d4431110ac13981e2f0325a47ff1289c51`) |
+| Deployed source commit | `e4a7ac9aeed9a3c0aefa000b8a7ceeff7cb0cb42` (GHN safe print redirect; original connector `1d7bb7b93a241eaf4448e8f1e70f5ccc2d0853c6`) |
 | Deployment gate | WSL/local validators; GitHub Actions chỉ cung cấp thông tin, không chặn deploy |
 | Domain/DNS | `lylishop.online` → `103.75.184.20` — đúng hosting |
 | SSL/public routes | HTTPS hợp lệ; Home, Shop, Cart, My Account và trang đăng nhập admin trả HTTP 200; Checkout có session sản phẩm trả 200, còn giỏ trống chuyển về Cart đúng hành vi WooCommerce |
 | Web PHP | `8.3.30` (LiteSpeed) |
 | WordPress/storefront | WordPress 7.0.2 đã cài; `shop-child` active trên Botiga 2.4.7; WooCommerce 10.9.4 active |
-| Plugin runtime | AI Engine 3.7.0, WooCommerce 10.9.4, Vietnam Store Toolkit 1.1.2 và `lyli-ghn-connector` 0.1.0 active; connector GHN tắt/chưa cấu hình; aThemes Starter Sites đã gỡ khỏi Composer/artifact |
+| Plugin runtime | AI Engine 3.7.0, WooCommerce 10.9.4, Vietnam Store Toolkit 1.1.2 và `lyli-ghn-connector` 0.1.1 active; saved GHN Test credential có mặt nhưng connector disabled/Test sau E2E PASS; aThemes Starter Sites đã gỡ khỏi Composer/artifact |
 | MU plugin / CLI | Bedrock autoloader active; Lyli settings hook có mặt; `wp lyli bootstrap` và `wp lyli editorial` khả dụng |
 | Code policy | `DISALLOW_FILE_MODS=true`, `DISALLOW_FILE_EDIT=true`; nội dung/cấu hình cửa hàng vẫn chỉnh trong WP Admin |
 | WP-CLI path trên host | `--path=apps/lylishop/current/web/wp` |
 | `public_html` | Symlink → `apps/lylishop/current/web`; bản provider cũ giữ tại `shared/rollback/provider-public_html-20260807135123` |
 | Theme integration | `shop-child` 1.3.1; sáu brand token chính thức từ `theme.json`; Fraunces/Be Vietnam Pro giữ weight `600/400/500`; Botiga runtime palette/CSS generated được reconcile một lần; mobile header là logo + cart + hamburger, search/account trong offcanvas; Gutenberg content không bị overwrite |
 | Admin locale | Site và tài khoản vận hành dùng `vi`; WordPress core + WooCommerce language packs nằm tại `shared/languages` và được dùng lại qua release |
-| `apps/lylishop/current` | → `releases/20260810210244` |
-| Artifact | `release-20260810210129.tar.gz`; SHA-256 `e1cdfc5bc9fa56605799f2c48fa0d9f202a9ce590128d848112d71f6ab08db05` |
-| Release rollback | `releases/20260810190111`; full pre-editorial rollback `releases/20260807205828` |
-| Backup gần nhất | `shared/backups/20260810210321/{database.sql.gz,uploads.tar.gz}` (`gzip -t`/`tar -tzf` PASS); full backup trước đó `shared/backups/20260810185536/{database.sql.gz,uploads.tar.gz}` |
+| `apps/lylishop/current` | → `releases/20260811011830` |
+| Artifact | `release-20260811143000.tar.gz`; SHA-256 `438378301173bde79d419d27e94a163377dc1c0d46e72f3922fe80d7fcc32f5e` |
+| Release rollback | `releases/20260810210244`; full pre-editorial rollback `releases/20260807205828` |
+| Backup gần nhất | `shared/backups/20260811011721/{database.sql.gz,uploads.tar.gz}` (`gzip -t`/`tar -tzf` PASS); full backup trước đó `shared/backups/20260810210321/{database.sql.gz,uploads.tar.gz}` |
 | `.env` | `shared/.env` mode 600, ngoài `public_html`, owner đúng |
 | Baseline content | 5 blog, 25 ảnh nguồn, 9 trang editorial/policy publish và 2 sản phẩm thật đã có trước rollout này; không tạo test product/order; promotion tắt |
 | Mốc đạt được | 1–5; chưa đạt commerce launch readiness |
@@ -65,12 +65,19 @@ Chi tiết: `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md` và `docs/BRAND-MOBILE-REM
 | Mục | Trạng thái |
 |---|---|
 | Architecture verdict | **BUILD LYLI GHN CONNECTOR**; ShipDepot 1.2.19 bị từ chối do CVE-2025-31866/CWE-862 chưa có patched release; hai plugin GHN lịch sử chỉ dùng làm reference |
-| Runtime | Plugin nội bộ 0.1.0 active trong release `20260810210244`; owner đã lưu Token/ShopId và bật connector. Validation task đã chuyển lựa chọn từ Production sang **Test** qua normal settings handler trước request đầu tiên; live rate/webhook vẫn không tồn tại và shipment GHN vẫn bằng 0 |
+| Runtime | Plugin nội bộ 0.1.1 active trong release `20260811011830`; saved Test Token/ShopId được giữ nhưng connector đang **disabled/Test** sau E2E. Live rate/webhook vẫn không tồn tại; không có shipment Test còn hoạt động |
 | Address/fee | Manual Create dùng tên Province/Ward hai cấp + `is_new_to_address=true`; live fee deferred vì Toolkit code và GHN WardID v2 chưa có mapping runtime contract ổn định; checkout tiếp tục dùng Toolkit shipping rules |
 | Security | Settings và shipment mutations dùng `manage_woocommerce`, nonce/order validation; Token option không autoload và không render lại; không webhook/public AJAX/REST; không retry create; không tự đổi Woo order status |
 | Owner access | Menu **WooCommerce → Kết nối GHN** đăng ký đúng capability; form mask Token, secret audit và server-side denial cho Settings/Create/Sync/Cancel/Print đều PASS. Production chưa có account `shop_owner`, nên owner đang cấu hình bằng account khác và vẫn cần provision đúng role |
 | Smoke | WordPress/WooCommerce/Toolkit/theme vẫn active; Home/Shop/Cart/Checkout/Account/login HTTP 200; checkout còn Province/Ward của Toolkit; `.env` 403, SQL/backup 404, directory listing denied; không lộ PHP warning/fatal |
 | Validation boundary | Retry sau pickup setup 2026-08-11: Token/ShopId/store address/Preview PASS; controlled order `147` tạo đúng một GHN Test shipment `L89VMY`. Create, local+external idempotency, detail-by-client-code, Sync và Cancel+post-cancel Sync PASS; Woo status không đổi, shipment đã cancel. Print-token PASS nhưng GHN print URL trả active `text/html` thay vì PDF, nên connector giữ security deny `lyli_ghn_print_type`; cần patch riêng an toàn. Order `147`/draft product `146` đã xóa; connector disabled/Test; Token leak audit và public smoke PASS |
+
+### GHN Print correction (2026-08-11)
+
+- **Current runtime supersedes the older Print blocker above:** source `e4a7ac9aeed9a3c0aefa000b8a7ceeff7cb0cb42`, plugin 0.1.1, release `20260811011830`, artifact SHA-256 `438378301173bde79d419d27e94a163377dc1c0d46e72f3922fe80d7fcc32f5e`.
+- Connector no longer requires or proxies PDF. It obtains gen-token server-side, validates exact GHN Test/Production HTTPS host plus documented A5/80x80/52x70 path, then redirects a nonce/capability-protected wp-admin new tab with `noopener noreferrer`. Print token is not persisted; no cache purge was required.
+- Controlled Test order `151` created shipment `L89VMM`; print URL matched Test host/path and returned HTTP 200. Shipment was cancelled and post-cancel Sync returned `cancel`; order/product were deleted. Connector is disabled/Test, Token leak check PASS, no residual test order, and production/COD shipment/webhook/live-rate behavior was not enabled.
+- Backup `shared/backups/20260811011721` passed gzip integrity; rollback release remains `20260810210244`. Home/Shop/Cart/Checkout/Account/login smoke passed; `.env` 403 and SQL probe 404.
 
 Chi tiết và checklist owner: `docs/GHN-INTEGRATION-PREFLIGHT.md`, `docs/GHN-OWNER-SETUP.md`.
 
