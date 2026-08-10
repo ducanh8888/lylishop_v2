@@ -1,10 +1,21 @@
 # BRAND + MOBILE REMEDIATION PLAN
 
-Trạng thái: **PLANNED / PREFLIGHT COMPLETE — CHƯA IMPLEMENT / CHƯA DEPLOY**
+Trạng thái: **IMPLEMENTED / DEPLOYED 2026-08-10 — RENDERED VISUAL SIGN-OFF PENDING**
 
 Quyết định binding: founder, 2026-08-10
 
-Kế hoạch này thay thế quyết định palette provisional trước đây và ghép color migration với một responsive pass mobile-first. Không file PHP/CSS/JSON/theme mod hay production option nào được sửa trong pre-flight.
+Kế hoạch này thay thế quyết định palette provisional trước đây và ghép color migration với một responsive pass mobile-first. Các phần before-state vẫn được giữ làm bằng chứng; rollout thực tế được ghi ở mục 0.
+
+## 0. Implementation result — release 20260810145039
+
+- `shop-child` 1.3.0 được deploy từ commit `1db61fbcccc92cc9f199ff8423d393a1fe5a1726`.
+- `theme.json` là canonical source và Gutenberg hiện sáu swatch tiếng Việt: `lyli-primary`, `lyli-warm-white`, `lyli-cream`, `lyli-blush`, `lyli-sage`, `lyli-lavender`. Text/muted/border giữ nhãn functional neutral; default palette tắt.
+- `#8A4A23`/`lyli-secondary` đã rời theme.json, frontend CSS, editor CSS và patterns. CTA brown khổ lớn đổi sang blush + brown accent; footer dark đổi sang cream; hero dùng warm-white/cream/blush và lavender visual; story/USP dùng sage/cream có kiểm soát.
+- Base mobile: category và product grid 2 cột; H1 `clamp()` khoảng 31px tại 375; hero visual 240–280px; section rhythm base khoảng 36px; controls >=44px. Từ 700px dùng 3 cột; từ 783px hero controlled two-column; từ 1025px category/product 5/4 cột và desktop composition.
+- Botiga theme-mod migration version 1 đã chạy một lần: mobile row chỉ cart bên cạnh logo/hamburger; search + account ở offcanvas. Owner vẫn chỉnh tiếp trong Customizer mà không bị request sau overwrite.
+- Blanket `html, body { overflow-x:hidden; }` đã gỡ; ảnh/media/form/table, Woo ordering, product grids, coupon, account và checkout widths được sửa tại nguồn.
+- Gutenberg content production không bị overwrite; pattern source chỉ bỏ fixed 56/44, 68/32, 42/58 và fixed 520px để các block mới responsive hơn.
+- Public CSS 1.3.0, source validator, frontend routes và Classic Checkout regression PASS. Browser plugin không có browser instance (`[]`), nên chưa có screenshot/rendered visual sign-off thật tại 375/768/1440. Cần owner/developer review thủ công; đây không phải bằng chứng layout fail và không tạo lý do rollback khi functional/security gate đang sạch.
 
 ## 1. Before-state evidence
 
@@ -196,7 +207,7 @@ PASS khi:
 
 Cosmetic nhỏ không buộc rollback. Functional checkout, overflow thật, inaccessible controls, PHP fatal hoặc palette canonical sai là gate fail.
 
-## 11. Exact next implementation sequence
+## 11. Implementation sequence — completed rollout
 
 Thực hiện chung với `VIETNAM-STORE-TOOLKIT-PREFLIGHT.md`:
 
@@ -211,4 +222,4 @@ Thực hiện chung với `VIETNAM-STORE-TOOLKIT-PREFLIGHT.md`:
 9. Permission/checkout regression + visual 375/768/1440.
 10. Smoke rồi KEEP hoặc ROLLBACK.
 
-Exact authorization string cho task kế tiếp: **IMPLEMENT VIETNAM TOOLKIT + BRAND/MOBILE REMEDIATION**.
+Authorization **IMPLEMENT VIETNAM TOOLKIT + BRAND/MOBILE REMEDIATION** đã được dùng cho rollout này. Việc còn lại không phải sửa source tự động: visual review thủ công 375/768/1440 và provision/chuyển tài khoản vận hành sang role `shop_owner`.

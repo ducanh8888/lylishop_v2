@@ -17,40 +17,45 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 
 > Mốc 6 yêu cầu phê duyệt riêng và **không** thuộc phạm vi nhiệm vụ hiện tại.
 
-## Trạng thái hiện tại (2026-08-08)
+## Trạng thái hiện tại (2026-08-10)
 
 | Mục | Kết quả |
 |---|---|
-| Deployed source commit | `8b7dc92388a186d58a34484c3c9971f8aa935c6a` |
+| Deployed source commit | `1db61fbcccc92cc9f199ff8423d393a1fe5a1726` |
 | Deployment gate | WSL/local validators; GitHub Actions chỉ cung cấp thông tin, không chặn deploy |
 | Domain/DNS | `lylishop.online` → `103.75.184.20` — đúng hosting |
-| SSL/public routes | HTTPS hợp lệ; Home, Shop, Cart, Checkout, My Account và trang đăng nhập admin trả HTTP 200 |
+| SSL/public routes | HTTPS hợp lệ; Home, Shop, Cart, My Account và trang đăng nhập admin trả HTTP 200; Checkout có session sản phẩm trả 200, còn giỏ trống chuyển về Cart đúng hành vi WooCommerce |
 | Web PHP | `8.3.30` (LiteSpeed) |
 | WordPress/storefront | WordPress 7.0.2 đã cài; `shop-child` active trên Botiga 2.4.7; WooCommerce 10.9.4 active |
-| Plugin runtime | AI Engine 3.7.0 và WooCommerce 10.9.4 active; aThemes Starter Sites đã deactivate và gỡ khỏi Composer/artifact vì không có runtime dependency |
+| Plugin runtime | AI Engine 3.7.0, WooCommerce 10.9.4 và Vietnam Store Toolkit 1.1.2 active; aThemes Starter Sites đã gỡ khỏi Composer/artifact |
 | MU plugin / CLI | Bedrock autoloader active; Lyli settings hook có mặt; `wp lyli bootstrap` và `wp lyli editorial` khả dụng |
 | Code policy | `DISALLOW_FILE_MODS=true`, `DISALLOW_FILE_EDIT=true`; nội dung/cấu hình cửa hàng vẫn chỉnh trong WP Admin |
 | WP-CLI path trên host | `--path=apps/lylishop/current/web/wp` |
 | `public_html` | Symlink → `apps/lylishop/current/web`; bản provider cũ giữ tại `shared/rollback/provider-public_html-20260807135123` |
-| Theme integration | Giữ Gutenberg storefront gốc; editorial gallery/FAQ/contact/blog cards; header desktop hai hàng; Fraunces/Be Vietnam Pro có tên rõ trong editor và weight semantic `600/400/500` |
+| Theme integration | `shop-child` 1.3.0; sáu brand token chính thức từ `theme.json`; Fraunces/Be Vietnam Pro giữ weight `600/400/500`; mobile header là logo + cart + hamburger, search/account trong offcanvas; Gutenberg content không bị overwrite |
 | Admin locale | Site và tài khoản vận hành dùng `vi`; WordPress core + WooCommerce language packs nằm tại `shared/languages` và được dùng lại qua release |
-| `apps/lylishop/current` | → `releases/20260808132816` |
-| Release rollback | `releases/20260808001500`; full pre-editorial rollback `releases/20260807205828` |
-| Backup gần nhất | `shared/backups/20260808152708/database.sql.gz` (`gzip -t` PASS); full backup gần nhất `shared/backups/20260808001000/{database.sql.gz,uploads.tar.gz}` |
+| `apps/lylishop/current` | → `releases/20260810145039` |
+| Artifact | `release-20260810145039.tar.gz`; SHA-256 `384ccfba1143638aa7b90b9d21b43aca632584d7814b0f30a2c61406b3af8db7` |
+| Release rollback | `releases/20260808132816`; full pre-editorial rollback `releases/20260807205828` |
+| Backup gần nhất | `shared/backups/20260810145157/database.sql.gz` (`gzip -t` PASS); shared uploads giữ nguyên; full backup trước đó `shared/backups/20260808001000/{database.sql.gz,uploads.tar.gz}` |
 | `.env` | `shared/.env` mode 600, ngoài `public_html`, owner đúng |
-| Baseline content | 5 blog, 25 ảnh nguồn, 9 trang editorial/policy publish, 0 sản phẩm; promotion tắt; mọi payment gateway tắt |
+| Baseline content | 5 blog, 25 ảnh nguồn, 9 trang editorial/policy publish và 2 sản phẩm thật đã có trước rollout này; không tạo test product/order; promotion tắt |
 | Mốc đạt được | 1–5; chưa đạt commerce launch readiness |
 
-## Pre-flight kế tiếp — PLANNED, chưa deployed (2026-08-10)
+## Toolkit + brand/mobile rollout (2026-08-10)
 
 | Workstream | Trạng thái |
 |---|---|
-| Repo khi bắt đầu pre-flight | `main`/`origin/main` cùng `2ffff80a2577a49ae24e963d9516492394192ee2`; working tree sạch |
-| Vietnam Store Toolkit 1.1.2 | **PREFLIGHT COMPLETE / PLANNED**; exact WPackagist resolution và source audit PASS; chưa thêm Composer, chưa install/activate production |
-| Payment V1 | Toolkit VietQR sẽ mở rộng BACS cho chuyển khoản thủ công; BACS/VietQR hiện vẫn tắt/chưa cấu hình; SePay **DEFERRED / OPTIONAL** |
-| Founder palette | Sáu màu `#7A3B17`, `#FFFCF7`, `#FBEFE5`, `#F6E4E3`, `#E9F1EA`, `#C2C3D2` là binding; runtime hiện vẫn là palette cũ, migration **PLANNED** |
-| Mobile remediation | Mobile-first pass 375/768/1440 **PLANNED**; chưa đổi CSS/theme mods/runtime |
-| Quyền owner | Runtime hiện có `manage_woocommerce`, không có `manage_options` hay quyền cài/xóa plugin/theme; đủ cho UI toolkit/BACS sau deploy |
+| Repo khi bắt đầu implementation | `main`/`origin/main` cùng `86a43a332cadbda703b393b6584224f9318add3a`; working tree sạch |
+| Vietnam Store Toolkit 1.1.2 | **DEPLOYED / ACTIVE** từ exact Composer lock tại `web/app/plugins/yoohw-vietnam-store-tools` |
+| Payment V1 | Mọi gateway (`bacs`, `cheque`, `cod`) tắt; VietQR tắt; không có bank account; owner chưa nhập merchant data. VietQR vẫn là chuyển khoản xác nhận thủ công; SePay **DEFERRED / OPTIONAL** |
+| Activation defaults | Address, phone, shipment display, order management và electronic-invoice workflow effective mặc định `yes` nhưng chưa ghi option; VAT request tắt; không tạo shipping method/rate mới |
+| Founder palette | Sáu màu `#7A3B17`, `#FFFCF7`, `#FBEFE5`, `#F6E4E3`, `#E9F1EA`, `#C2C3D2` đã triển khai; `#8A4A23` đã retire khỏi palette/CSS owner-facing |
+| Mobile remediation | CSS mobile-first đã triển khai: 375px category/product 2 cột, H1 khoảng 31px và hero visual 240–280px; 768px 3 cột/controlled stack; 1025px+ giữ desktop 5/4 cột; blanket `overflow-x:hidden` đã gỡ |
+| Viewport evidence | Source/runtime CSS và public asset 1.3.0 PASS; browser inventory trống nên chưa có screenshot/rendered visual sign-off 375/768/1440. Không rollback vì không có functional/security regression; cần visual review thủ công sau handoff |
+| Quyền owner | Policy đã PASS bằng user `shop_owner` tạm rồi xóa: main page/BACS/shipping mở, `manage_options` và quyền kỹ thuật bị từ chối, DevVN tools ẩn + AJAX deny. Runtime thật hiện chỉ có một `administrator`; cần provision/chuyển đúng tài khoản vận hành sang `shop_owner` trước owner handoff |
+| Checkout regression | Session với variation thật: Classic Checkout 200, Province/Ward/Phone hiện đúng; Cart/My Account/order admin không fatal; không tạo order |
+| Security smoke | `.env`/`.git` 403, SQL/backup URL 404, uploads directory 403; SSL verify 0; public pages không lộ PHP warning/fatal |
 | Workflow | LOCAL/WSL VALIDATE → BUILD → BACKUP IF PRODUCTION WILL CHANGE → DEPLOY → SMOKE → KEEP OR ROLLBACK; GitHub Actions informational only |
 
 Chi tiết: `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md` và `docs/BRAND-MOBILE-REMEDIATION-PLAN.md`.
@@ -76,3 +81,4 @@ Chính sách phê duyệt chung cho lần deploy sau **không** bị suy yếu. 
 - **2026-08-08:** chuẩn hóa typography theo `11_Brand_Guideline`: Fraunces SemiBold cho heading, Be Vietnam Pro Regular/Medium cho body/CTA; preset hiện rõ trong Gutenberg; deploy release `20260808132816`. Chi tiết tại `docs/TYPOGRAPHY-IMPLEMENTATION-2026-08-08.md`.
 - **2026-08-08:** cài WordPress core/WooCommerce language pack `vi`, đặt locale tài khoản vận hành thành `vi` và chuyển language packs sang `shared/languages` để bền qua release. Chi tiết tại `docs/WOOCOMMERCE-VIETNAMESE-2026-08-08.md`.
 - **2026-08-10:** pre-flight docs-only xác nhận Vietnam Store Toolkit exact 1.1.2 resolve qua WPackagist, audit source/default/capability/privacy; founder chốt sáu màu và mobile-first remediation plan. Không đổi production/runtime.
+- **2026-08-10:** triển khai commit `1db61fbcccc92cc9f199ff8423d393a1fe5a1726`, release `20260810145039`: activate Vietnam Store Toolkit 1.1.2, sáu-color `theme.json`, mobile-first CSS/header, DevVN migration guard. Backup `20260810145157`; public functional/security smoke PASS; rendered visual sign-off và tài khoản `shop_owner` thật còn chờ handoff.

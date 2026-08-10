@@ -2,6 +2,8 @@
 
 Tài khoản dùng hằng ngày có vai trò **Shop Owner (`shop_owner`)**. Tài khoản Administrator chỉ dành cho nhà phát triển hoặc tình huống khẩn cấp.
 
+> Handoff 2026-08-10: policy `shop_owner` đã được kiểm chứng nhưng production hiện chỉ có một user `administrator`; chưa có account vận hành mang role `shop_owner`. Developer phải provision hoặc chuyển đúng tài khoản sau khi xác nhận danh tính/credential với owner. Không dùng tài khoản Administrator hiện tại như một cách bỏ qua boundary này.
+
 ## Bắt đầu
 
 Sau khi đăng nhập, WordPress mở **Lyli Shop — Khu vực chủ cửa hàng**. Chọn nút đúng với việc cần làm; không cần vào phần kỹ thuật.
@@ -10,7 +12,7 @@ Giao diện WordPress và WooCommerce của tài khoản vận hành được đ
 
 - **Sửa trang chủ:** mở trang chủ trong trình sửa khối. Bấm trực tiếp vào chữ để sửa; kéo khối để đổi thứ tự; mở menu ba chấm của khối để ẩn/xóa một mục.
 - **Đổi ảnh hero hoặc ảnh trong trang:** chọn vùng ảnh, bấm **Thay thế**, rồi chọn ảnh trong Media hoặc tải ảnh mới lên. Nhập văn bản thay thế ngắn gọn cho ảnh.
-- **Sản phẩm:** hiện để trống theo quyết định của chủ shop. Chỉ vào **Sản phẩm → Thêm sản phẩm** khi shop sẵn sàng mở catalogue; không cần tạo sản phẩm để sửa nội dung trang hoặc gallery.
+- **Sản phẩm:** production hiện có 2 sản phẩm thật đã được nhập trước rollout toolkit; rollout 2026-08-10 không tạo sản phẩm test. Chỉ vào **Sản phẩm → Thêm sản phẩm** khi shop sẵn sàng mở rộng catalogue; không cần tạo sản phẩm để sửa nội dung trang hoặc gallery.
 - **Danh mục:** vào **Danh mục** dưới Sản phẩm. Năm danh mục chính là Móc khóa len, Gấu bông len, Hoa len, Hộp quà và Đặt mẫu theo yêu cầu.
 - **Menu:** vào **Giao diện → Menu điều hướng**. Thêm/bớt trang, kéo để đổi thứ tự, rồi bấm lưu menu.
 - **Logo và giao diện:** vào **Giao diện → Logo & giao diện**. Dùng Customizer để đổi logo, nhận diện website và các tùy chọn Botiga được phép; bấm **Đăng** để lưu.
@@ -20,14 +22,16 @@ Giao diện WordPress và WooCommerce của tài khoản vận hành được đ
 - **Media:** quản lý ảnh đã tải lên. Nên dùng ảnh rõ, cùng tỷ lệ và dung lượng vừa phải.
 - **Đơn hàng:** mở **Đơn hàng** hoặc màn hình WooCommerce tương ứng để xử lý vận hành.
 
-## Vietnam store và chuyển khoản — PLANNED, chưa có trên production
+## Vietnam store và chuyển khoản — đã active, chờ owner cấu hình
 
-Sau lần triển khai được duyệt kế tiếp, Shop Owner sẽ có các lối vào sau mà không cần quyền Administrator:
+Sau khi account vận hành được gán role `shop_owner`, Shop Owner có các lối vào sau mà không cần quyền Administrator:
 
 - **Vietnam store:** `/wp/wp-admin/admin.php?page=yoohw-vietnam-store` — bật/tắt tính năng địa chỉ, điện thoại và công cụ vận hành.
 - **Chuyển khoản/VietQR:** **WooCommerce → Cài đặt → Thanh toán → Chuyển khoản ngân hàng** — cấu hình BACS và VietQR.
 - **Vận chuyển:** **WooCommerce → Cài đặt → Giao hàng** — tự thêm phương thức vào đúng Shipping Zone và nhập giá/rule.
 - **Tracking/email:** các section tương ứng trong WooCommerce Settings và từng đơn hàng.
+
+Trạng thái handoff: BACS **tắt**, VietQR **tắt**, danh sách tài khoản ngân hàng **trống**. Trước khi bật VietQR, owner phải duyệt/bổ sung privacy disclosure cho request ảnh tới `img.vietqr.io`; URL ảnh có thể chứa BIN, số tài khoản, tên chủ tài khoản, số tiền và nội dung chuyển khoản.
 
 Developer chỉ cài/activate code. Shop Owner tự nhập số tài khoản, chủ tài khoản, VietQR merchant information, giá/rule vận chuyển, COD policy, VAT/invoice/tracking credentials và payment text. Không gửi các giá trị này để commit vào repository.
 

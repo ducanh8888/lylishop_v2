@@ -89,18 +89,18 @@ Không mở lại quyết định chỉ vì sở thích thị giác hoặc vì m
 
 ## 11. Design tokens (nền tảng — đã wire vào output từ 2026-08-06)
 
-`shop-child/theme.json` là nguồn token chuẩn; frontend/editor CSS tham chiếu các biến preset WordPress thay vì lặp lại palette trong PHP. Child theme gỡ đúng filter `botiga_filter_theme_json_data_theme` vì Botiga 2.4.7 dùng filter này để ghi đè toàn bộ palette child bằng palette Customizer. **Cập nhật binding 2026-08-10:** sáu màu dưới đây là quyết định chính thức; runtime hiện vẫn dùng palette cũ cho tới task implementation kế tiếp.
+`shop-child/theme.json` là nguồn token chuẩn; frontend/editor CSS tham chiếu các biến preset WordPress thay vì lặp lại palette trong PHP. Child theme gỡ đúng filter `botiga_filter_theme_json_data_theme` vì Botiga 2.4.7 dùng filter này để ghi đè toàn bộ palette child bằng palette Customizer. **Triển khai 2026-08-10:** sáu màu dưới đây đã active trên `shop-child` 1.3.0, commit `1db61fbcccc92cc9f199ff8423d393a1fe5a1726`, release `20260810145039`.
 
-### Màu — binding 2026-08-10, planned migration
+### Màu — binding 2026-08-10, đã triển khai
 
-| Token semantic planned | Hex | Vai trò |
+| Token Gutenberg/runtime | Hex | Vai trò |
 |---|---|---|
-| `brand-primary` | `#7A3B17` | Heading, CTA, accent/border nhỏ; mục tiêu 5–15%, không làm nền lớn |
-| `surface-main` | `#FFFCF7` | Nền chính/warm whitespace; mục tiêu 35–55% |
-| `surface-cream` | `#FBEFE5` | Nền/card phụ; mục tiêu 20–40% |
-| `accent-blush` | `#F6E4E3` | Accent hồng phấn thưa; mục tiêu 5–15% |
-| `accent-sage` | `#E9F1EA` | Accent xanh sage thưa; mục tiêu 5–15% |
-| `accent-lavender` | `#C2C3D2` | Accent tím xám tiết chế; mục tiêu 5–15% |
+| `lyli-primary` | `#7A3B17` | Heading, CTA, accent/border nhỏ; mục tiêu 5–15%, không làm nền lớn |
+| `lyli-warm-white` | `#FFFCF7` | Nền chính/warm whitespace; mục tiêu 35–55% |
+| `lyli-cream` | `#FBEFE5` | Nền/card phụ; mục tiêu 20–40% |
+| `lyli-blush` | `#F6E4E3` | Accent hồng phấn thưa; mục tiêu 5–15% |
+| `lyli-sage` | `#E9F1EA` | Accent xanh sage thưa; mục tiêu 5–15% |
+| `lyli-lavender` | `#C2C3D2` | Accent tím xám tiết chế; mục tiêu 5–15% |
 
 ### Lịch sử candidate — đã superseded
 
@@ -109,7 +109,7 @@ Hai candidate dưới đây là lịch sử quyết định trước 2026-08-10,
 * Candidate A (`11_Brand_Guideline`): **đã được founder chốt** cùng `#7A3B17` thành sáu màu binding ở trên.
 * Candidate B (`16_Brand_System_Detail`): warm beige `#F4ECE5`, blush pink `#E8CFCF`, cream `#FFFDF9`, light gray `#F6F5F3`, text `#3D312B`, border `#DDD7D0`.
 
-`#8A4A23` được giữ trong lịch sử Git/tài liệu cũ để giải thích before-state, nhưng phải được retire khỏi palette công khai và CSS khi implement. Text/muted/border/error/success có thể tồn tại ngoài sáu màu với nhãn **FUNCTIONAL / ACCESSIBILITY NEUTRALS**, không phải brand colors.
+`#8A4A23` chỉ được giữ trong lịch sử Git/tài liệu before-state; đã retire khỏi palette công khai, frontend/editor CSS và pattern source. Text/muted/border/error/success tồn tại ngoài sáu màu với nhãn **FUNCTIONAL / ACCESSIBILITY NEUTRALS**, không phải brand colors.
 
 ### Typography — đã triển khai và owner-editable
 
@@ -123,5 +123,5 @@ Hai candidate dưới đây là lịch sử quyết định trước 2026-08-10,
 
 * *(Lịch sử, hết hiệu lực 2026-08-06)* Không có CSS component nào được viết (button, card, header thật) — **đã thay đổi:** component V1 đầy đủ trong `shop-child`.
 * Không có file font nhị phân nào được thêm vào repository — **vẫn đúng:** font Fraunces/Be Vietnam Pro tải qua Google Fonts (runtime), không commit binary; Aristotelica Pro vẫn chỉ dùng qua asset logo ngoài repo nếu có.
-* Không có màu nền/kem cuối cùng nào được chọn — **hết hiệu lực 2026-08-10:** founder đã chốt sáu màu; việc wire vào runtime đang ở trạng thái PLANNED.
+* Không có màu nền/kem cuối cùng nào được chọn — **hết hiệu lực 2026-08-10:** founder đã chốt sáu màu và runtime đã triển khai tại release `20260810145039`.
 * Không có thiết kế placeholder ảnh nào được tạo — **vẫn đúng:** chưa tạo placeholder ảnh; sản phẩm thiếu ảnh thật giữ draft theo chính sách đã chốt.

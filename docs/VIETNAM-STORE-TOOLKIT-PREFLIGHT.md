@@ -1,12 +1,25 @@
 # VIETNAM STORE TOOLKIT 1.1.2 — PREFLIGHT
 
-Trạng thái: **PLANNED / PREFLIGHT COMPLETE — CHƯA DEPLOY**
+Trạng thái: **PREFLIGHT COMPLETE / IMPLEMENTED / DEPLOYED 2026-08-10**
 
 Ngày kiểm tra: 2026-08-10
 
 Repo bắt đầu: `2ffff80a2577a49ae24e963d9516492394192ee2`
 
-Tài liệu này là kết quả nghiên cứu và source audit cho lần triển khai kế tiếp. Không có plugin, option, payment gateway, capability, database hay release production nào được thay đổi trong pre-flight này.
+Tài liệu này giữ nguyên bằng chứng nghiên cứu/source audit của pre-flight. Rollout sau đó đã được founder ủy quyền và triển khai; kết quả runtime ở mục 0 dưới đây.
+
+## 0. Implementation result — 2026-08-10
+
+- Starting implementation commit: `86a43a332cadbda703b393b6584224f9318add3a`.
+- Source implementation commit: `1db61fbcccc92cc9f199ff8423d393a1fe5a1726`.
+- Immutable release: `20260810145039`; backup: `shared/backups/20260810145157/database.sql.gz` (`gzip -t` PASS); rollback target: `20260808132816`.
+- Composer/runtime: exact `wpackagist-plugin/yoohw-vietnam-store-tools:1.1.2`, installed at `web/app/plugins/yoohw-vietnam-store-tools`, active cùng WooCommerce 10.9.4 và `shop-child`.
+- Activation: address, phone, shipment display, order management và electronic-invoice workflow effective mặc định `yes` nhưng chưa lưu option; VAT request tắt. Plugin không tạo shipping-zone method/rate mới; zone Vietnam chỉ giữ `free_shipping` đã có.
+- Payment handoff: BACS tắt, VietQR tắt, `woocommerce_bacs_accounts` rỗng; developer không nhập bank/shipping/VAT/tracking merchant values.
+- Classic Checkout regression: session dùng variation sản phẩm thật trả 200 và có Province/Ward/Phone; Cart, My Account và order-admin load không fatal; không tạo order.
+- Site-policy: `shop_owner` test tạm mở được Vietnam Store/BACS/shipping với `manage_woocommerce`, không có `manage_options` hay quyền plugin/theme/core/user; hai DevVN tools bị ẩn, AJAX migration bị deny; administrator giữ access. User test đã xóa và tổng user trở lại 1.
+- Handoff blocker: production hiện chỉ có một user role `administrator`, chưa có account role `shop_owner`. Không tự ý đổi role hoặc tạo credential; phải provision/chuyển tài khoản vận hành đúng role trước khi owner dùng cấu hình hằng ngày.
+- Privacy gate vẫn giữ nguyên: VietQR chưa bật, không request `img.vietqr.io`; phải cập nhật/duyệt disclosure trước khi owner enable.
 
 ## 1. Nguồn phát hành và Composer
 
@@ -145,9 +158,9 @@ Deactivate ngừng hook nhưng không xóa options/meta/attachments. Plugin khô
 
 ## 7. BACS/VietQR — quyết định kiến trúc V1
 
-**CURRENT:** tất cả payment gateway production đang tắt; BACS chưa có merchant settings.
+**CURRENT 2026-08-10:** toolkit 1.1.2 active; mọi payment gateway production vẫn tắt; BACS/VietQR tắt, chưa có account/merchant settings.
 
-**PLANNED:** Vietnam Store Toolkit là giải pháp chuyển khoản V1 trước mắt, nhưng lần triển khai kế tiếp chỉ cài + activate plugin. Owner cấu hình và bật sau.
+**OWNER HANDOFF:** Vietnam Store Toolkit là giải pháp chuyển khoản V1 trước mắt. Owner cấu hình và chủ động bật BACS/VietQR sau khi account `shop_owner` và privacy disclosure sẵn sàng.
 
 - VietQR mở rộng gateway WooCommerce core `bacs`; **không tạo gateway mới**.
 - Plugin chỉ tạo/hiển thị thông tin chuyển khoản và ảnh QR.
@@ -203,9 +216,9 @@ Developer ở lần triển khai kế tiếp chỉ:
 
 Shop owner sau đó tự nhập qua wp-admin: số tài khoản, chủ tài khoản, merchant VietQR, giá/rule vận chuyển, chính sách COD, thông tin VAT, invoice provider credentials, tracking credentials và payment text. Không ghi các giá trị này trong code hay docs.
 
-## 11. Exact implementation gate
+## 11. Exact implementation gate — rollout outcome
 
-Lần được ủy quyền tiếp theo phải chạy đúng trình tự:
+Rollout được ủy quyền đã chạy theo trình tự này. Các bước functional/security đã hoàn tất; visual screenshot ở bước 13 còn chờ review thủ công vì runtime browser không có browser instance.
 
 1. Thêm `wpackagist-plugin/yoohw-vietnam-store-tools:1.1.2` vào Composer.
 2. Cập nhật `composer.lock`; xác nhận chỉ thêm package dự kiến.

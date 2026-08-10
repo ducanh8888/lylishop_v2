@@ -9,7 +9,7 @@ Manifest này phản ánh dependency có thể tái tạo từ `composer.lock`. 
 | Theme | Version baseline | Nguồn | License | Trạng thái | Ghi chú |
 |---|---|---|---|---|---|
 | Botiga Free | 2.4.7 | wpackagist (`wpackagist-theme/botiga`) — xác nhận trực tiếp qua `composer show --all` trên `commerce-host` (2026-08-04) | GPL | Đã chốt theme cha V1, đã có trong `composer.json` (`docs/THEME-DECISION.md`) | Bản Pro không được phép mua/dùng (`docs/THEME-DECISION.md`) |
-| `shop-child` | 1.2.0 | `web/app/themes/shop-child/` trong repo này | Nội bộ | Child theme presentation; token chuẩn tại `theme.json`; một footer semantic tích hợp Botiga; storefront V1, Classic Cart/Checkout, Gutenberg patterns, responsive/accessibility — `docs/PRODUCTION-STATUS.md` | `Template: botiga`; gỡ riêng filter palette Botiga 2.4.7; một visual CSS system; child stylesheet dùng cache version độc lập |
+| `shop-child` | 1.3.0 | `web/app/themes/shop-child/` trong repo này | Nội bộ | Child theme presentation; sáu brand token chuẩn tại `theme.json`; một footer semantic tích hợp Botiga; mobile-first Classic Cart/Checkout, Gutenberg patterns, responsive/accessibility — `docs/PRODUCTION-STATUS.md` | `Template: botiga`; gỡ riêng filter palette Botiga 2.4.7; mobile header migration một lần; child stylesheet dùng cache version độc lập |
 | Storefront | 4.6.2 | wpackagist (`wpackagist-theme/storefront`, đã có trong `composer.json`) | GPL | Fallback cấp 2, không phải lựa chọn chính | Giữ trong `composer.json` làm baseline tương thích khẩn cấp — xem `docs/THEME-DECISION.md` điều kiện kích hoạt |
 
 ## Plugin bắt buộc (Tier A)
@@ -17,6 +17,7 @@ Manifest này phản ánh dependency có thể tái tạo từ `composer.lock`. 
 | Plugin | Version baseline | Nguồn | License | Bắt buộc/Tùy chọn | Owner bảo trì | Dữ liệu tạo ra | Backup | Gỡ bỏ | Rủi ro tương thích |
 |---|---|---|---|---|---|---|---|---|---|
 | WooCommerce | 10.9.4 | wpackagist (WordPress.org) | GPL | Bắt buộc | Developer | Sản phẩm, đơn hàng, khách hàng (DB tables + postmeta) | UpdraftPlus DB dump | Deactivate — dữ liệu vẫn giữ trong DB | Thấp, plugin nền của toàn bộ stack |
+| Vietnam Store Toolkit for WooCommerce | 1.1.2 | WPackagist `wpackagist-plugin/yoohw-vietnam-store-tools`; WordPress.org stable 1.1.2 | GPLv2+ | **Đã deploy/active**; V1 địa chỉ VN và transfer-payment handoff | Developer pin/deploy; Shop Owner cấu hình business settings | Woo options/order/customer meta; BACS/VietQR, shipping/tracking/invoice data khi owner bật | DB dump + immutable release | Deactivate không xóa dữ liệu; rollback release + DB khi cần | Trung bình — exact pin; defaults address/phone bật; VietQR gửi image request ngoài khi được owner bật |
 | AI Engine | 3.7.0 | wpackagist (`ai-engine`) | GPL | Bắt buộc khi dùng MCP Lyli | Developer | Cấu hình AI/MCP và metadata trong DB; credential không nằm trong repo | DB dump | Chỉ deactivate sau khi gỡ MCP Lyli khỏi Codex | Cao — MCP có tool đọc/ghi/xóa rộng; phải dùng allowlist và approval policy |
 | SEOPress Free | 10.1 | wpackagist (`wp-seopress`) | GPL | Bắt buộc | Developer | Options riêng (`seopress_*`), meta trên post | Nằm trong DB dump | Deactivate, xóa options qua uninstall | Thấp |
 | FluentSMTP | 2.2.95 | wpackagist (`fluent-smtp`) | GPL | Bắt buộc, **cần compatibility test WordPress 7.0.2 trước production** | Developer | Email log (DB table riêng) | DB dump | Deactivate | Trung bình — chưa công bố test WP 7.0.2 (TECH_STACK.md mục 8.2); fallback: WP Mail SMTP 4.9.0 hoặc Post SMTP 3.9.5 |
@@ -36,7 +37,6 @@ Manifest này phản ánh dependency có thể tái tạo từ `composer.lock`. 
 
 | Extension | Version baseline | Nguồn | License | Trạng thái | Ghi chú |
 |---|---|---|---|---|---|
-| Vietnam Store Toolkit for WooCommerce | 1.1.2 | WPackagist `wpackagist-plugin/yoohw-vietnam-store-tools`; WordPress.org SVN/ZIP stable 1.1.2; GPLv2+ | GPLv2+ | **PLANNED / PREFLIGHT COMPLETE; chưa có trong Composer/runtime** | Disposable WSL resolve/install PASS vào `web/app/plugins/yoohw-vietnam-store-tools`; source/capability/default/privacy audit tại `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md` |
 | SePay Gateway | 1.1.23 | Riêng của SePay (sepay.vn) — không trên WPackagist | Thương mại | **DEFERRED / OPTIONAL** | Chỉ xem xét nếu sau này cần automatic bank reconciliation/webhook; không triển khai song song với VietQR của Vietnam Store Toolkit. Giữ nghiên cứu lịch sử, không thuộc V1 transfer UI trước mắt |
 | WooCommerce Product Bundles | 8.5.10 | WooCommerce.com Marketplace (private repo/license) | Thương mại | Bắt buộc theo phạm vi (⚠️ PLAN.md xếp Tier B — cần xác nhận) | Cần license key riêng, không commit |
 | WooCommerce Smart Coupons | 9.80.0 | WooCommerce.com Marketplace (StoreApps) | Thương mại | Bắt buộc theo phạm vi (⚠️ PLAN.md xếp Tier B — cần xác nhận) | Cần license key riêng, không commit |
