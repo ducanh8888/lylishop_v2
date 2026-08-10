@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.3.0
+Version: 1.3.1
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -32,6 +32,7 @@ Text, muted, border and WooCommerce state colors are functional/accessibility ne
     --lyli-color-text: var(--wp--preset--color--lyli-text);
     --lyli-color-muted: var(--wp--preset--color--lyli-text-muted);
     --lyli-color-border: var(--wp--preset--color--lyli-border);
+    --lyli-color-action-hover: var(--wp--custom--lyli--color--action-hover);
     --lyli-color-surface: var(--lyli-color-warm-white);
     --lyli-color-surface-soft: var(--lyli-color-cream);
     --lyli-color-canvas: var(--lyli-color-warm-white);
@@ -287,8 +288,8 @@ form {
 .woocommerce a.button:hover,
 .woocommerce button.button:hover,
 .woocommerce input.button:hover {
-    background: var(--lyli-color-primary);
-    border-color: var(--lyli-color-primary);
+    background: var(--lyli-color-action-hover);
+    border-color: var(--lyli-color-action-hover);
     color: var(--lyli-color-warm-white);
     transform: translateY(-1px);
     box-shadow: 0 8px 18px rgba(122, 59, 23, 0.16);
@@ -296,6 +297,13 @@ form {
 .is-style-outline > .wp-block-button__link {
     background: transparent;
     color: var(--lyli-color-primary);
+    border-color: var(--lyli-color-primary);
+}
+.wp-block-button.is-style-outline > .wp-block-button__link:hover,
+.wp-block-button.is-style-outline:hover > .wp-block-button__link {
+    background: var(--lyli-color-cream);
+    color: var(--lyli-color-primary);
+    border-color: var(--lyli-color-primary);
 }
 
 /* Hero */

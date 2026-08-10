@@ -24,6 +24,7 @@ if (! defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/inc/design-tokens.php';
+require_once __DIR__ . '/inc/theme-runtime.php';
 require_once __DIR__ . '/inc/enqueue.php';
 require_once __DIR__ . '/inc/announcement.php';
 require_once __DIR__ . '/inc/footer.php';

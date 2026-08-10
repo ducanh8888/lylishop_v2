@@ -45,6 +45,7 @@ $required_theme_files = [
     'web/app/themes/shop-child/editor-style.css',
     'web/.htaccess',
     'web/app/themes/shop-child/inc/design-tokens.php',
+    'web/app/themes/shop-child/inc/theme-runtime.php',
     'web/app/themes/shop-child/inc/enqueue.php',
     'web/app/themes/shop-child/inc/announcement.php',
     'web/app/themes/shop-child/inc/footer.php',
@@ -255,6 +256,10 @@ check(
     'Functional colors are explicitly separate from brand colors',
     isset($palette_by_slug['lyli-text'], $palette_by_slug['lyli-text-muted'], $palette_by_slug['lyli-border'])
 );
+check(
+    'Functional button hover shade is canonical in theme.json',
+    ($theme_json['settings']['custom']['lyli']['color']['actionHover'] ?? '') === '#5B2B12'
+);
 
 /* 11. Namespaced root helpers referenced from inc/ sub-namespaces must be
  * fully qualified so PHP cannot resolve them inside the child namespace. */
@@ -294,6 +299,14 @@ check('Patterns avoid retired desktop-only 56/44 column ratios', ! str_contains(
 check('Patterns avoid fixed 520px hero height', ! str_contains($patterns_php, '"minHeight":520'));
 $design_tokens_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/design-tokens.php");
 check('Botiga cannot overwrite child theme.json palette', str_contains($design_tokens_php, "remove_filter('wp_theme_json_data_theme', 'botiga_filter_theme_json_data_theme')"));
+check('Botiga runtime palette reads canonical theme.json values', str_contains($design_tokens_php, "add_filter('botiga_color_palettes'") && str_contains($design_tokens_php, "wp_json_file_decode("));
+$theme_runtime_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/theme-runtime.php");
+check('Botiga runtime reconciliation is one-time and versioned', str_contains($theme_runtime_php, "lyli_theme_runtime_version") && str_contains($theme_runtime_php, "get_option(VERSION_OPTION"));
+check('Botiga CSS uses its supported public regeneration method', str_contains($theme_runtime_php, "Botiga_Custom_CSS::get_instance()->update_custom_css_file()"));
+$button_section = '';
+preg_match('/\/\* Buttons \*\/(.*?)\/\* Hero \*\//s', $theme_css, $button_section_match);
+$button_section = $button_section_match[1] ?? '';
+check('Button fixes add no important override', $button_section !== '' && ! str_contains($button_section, '!important'));
 check(
     'Google Fonts runtime includes approved brand weights',
     str_contains($design_tokens_php, 'Fraunces:wght@400;600;700')

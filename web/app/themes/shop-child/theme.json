@@ -57,6 +57,13 @@
         }
       ]
     },
+    "custom": {
+      "lyli": {
+        "color": {
+          "actionHover": "#5B2B12"
+        }
+      }
+    },
     "typography": {
       "fontWeight": true,
       "fontFamilies": [
