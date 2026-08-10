@@ -2,7 +2,7 @@
 
 Nguồn: `06_Website`, `16_Brand_System_Detail` (mục Website Blueprint, trạng thái **Bản nháp**), đối chiếu với `PLAN.md`/`TECH_STACK.md` đã chốt. Đọc cùng `docs/PRODUCT-BRIEF.md`. Workbook gốc không commit; xem `docs/HOSTING-AUDIT.md` và `.gitignore`.
 
-Đây là yêu cầu nội dung/chức năng trang, **không phải** quyết định theme/layout thị giác đầy đủ — xem `docs/THEME-DECISION.md` (theme nền, màu nâu chính/phụ, navigation, chính sách ảnh thiếu: tất cả đã chốt 2026-08-04) và `docs/THEME-DECISION-BRIEF.md` (chỉ còn màu nền/kem và thiết kế placeholder ảnh cụ thể đang mở).
+Đây là yêu cầu nội dung/chức năng trang. Theme Botiga, navigation và chính sách ảnh đã chốt trước; palette sáu màu binding được founder cập nhật 2026-08-10 và sẽ được implement cùng responsive remediation theo `docs/BRAND-MOBILE-REMEDIATION-PLAN.md`. Thiết kế placeholder ảnh cụ thể vẫn là việc riêng chưa chốt.
 
 ## Phạm vi trang MVP (theo `06_Website`, đã bỏ cột deadline/người thực hiện — thông tin vận hành nội bộ)
 
@@ -80,5 +80,5 @@ Nhắc lại từ PLAN.md/TECH_STACK.md để tránh nhầm với phần đang c
 * Theme nền: Botiga Free + `shop-child`, classic/hybrid — đã chốt 2026-08-04 (`docs/THEME-DECISION.md`).
 * Không dùng page builder bên thứ ba, không dùng Full Site Editing làm kiến trúc chính V1.
 * Một website, một database, một môi trường production duy nhất — không có staging (xem `docs/DEPLOYMENT.md`).
-* Màu nâu chính/phụ (`#7A3B17` / `#8A4A23`), navigation 5-danh-mục, chính sách publish ảnh thiếu — **đã chốt 2026-08-04** (`docs/THEME-DECISION.md`).
-* Màu nền/kem cuối cùng và thiết kế placeholder ảnh cụ thể: **vẫn chưa được phép quyết định trong tài liệu này** — xem `docs/THEME-DECISION-BRIEF.md` mục 5 và `docs/THEME-DECISION.md` mục 11.
+* Palette binding: `#7A3B17`, `#FFFCF7`, `#FBEFE5`, `#F6E4E3`, `#E9F1EA`, `#C2C3D2`. `#8A4A23` không còn là official secondary; runtime migration đang **PLANNED**, chưa deployed.
+* Navigation 5-danh-mục và chính sách publish ảnh thiếu vẫn đã chốt. Thiết kế placeholder ảnh cụ thể vẫn chưa được chốt.

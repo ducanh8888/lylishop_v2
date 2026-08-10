@@ -23,7 +23,7 @@ Ngày chốt: 2026-08-04. Người chốt: Founder. Đây là quyết định r�
 ## 4. Lý do chọn Botiga Free
 
 * Theme WooCommerce miễn phí, đang được duy trì tích cực (cập nhật 22/07/2026 — rất gần thời điểm quyết định, không phải theme bị bỏ rơi).
-* Kiến trúc classic/hybrid — khớp yêu cầu "không FSE làm kiến trúc chính", giảm rủi ro tương thích với Classic Cart/Checkout và các plugin thương mại Việt Nam (SePay, Vietnam Store Toolkit) vốn chưa công bố rõ hỗ trợ Blocks/FSE (xem `docs/HOSTING-AUDIT.md` mục 14, mâu thuẫn #2 gốc).
+* Kiến trúc classic/hybrid — khớp yêu cầu "không FSE làm kiến trúc chính", giảm số biến khi tích hợp Classic Cart/Checkout và Vietnam Store Toolkit. SePay hiện **DEFERRED / OPTIONAL**.
 * Không phụ thuộc page builder — khớp nguyên tắc "không tự xây/không phụ thuộc page builder" của PLAN.md mục 6.1 và TECH_STACK.md mục 3.2.
 * Có bản miễn phí đầy đủ để xây dựng V1 mà không cần license trả phí — khớp nguyên tắc reuse-first, minimal-custom.
 * Hỗ trợ child theme theo chuẩn WordPress (`Template:` header), không cần cơ chế riêng.
@@ -42,7 +42,7 @@ Ngày chốt: 2026-08-04. Người chốt: Founder. Đây là quyết định r�
 
 ## 6. Fallback hierarchy
 
-**Fallback 1 — Blocksy Free.** Chỉ dùng khi Botiga có vấn đề tương thích thật sự (không phải sở thích thị giác) với: WooCommerce; Classic Cart; Classic Checkout; SePay; plugin địa chỉ/vận chuyển Việt Nam; Product Bundles; Smart Coupons; trường cá nhân hóa sản phẩm; product gallery trên mobile.
+**Fallback 1 — Blocksy Free.** Chỉ dùng khi Botiga có vấn đề tương thích thật sự (không phải sở thích thị giác) với: WooCommerce; Classic Cart; Classic Checkout; Vietnam Store Toolkit; plugin commerce đang active; trường cá nhân hóa sản phẩm; product gallery trên mobile.
 
 **Fallback 2 — Storefront.** Chỉ dùng nếu cả Botiga và Blocksy đều gặp vấn đề tương thích thương mại không chấp nhận được — baseline tương thích khẩn cấp.
 
@@ -67,7 +67,7 @@ Nhắc lại — không đổi bởi quyết định theme này:
 
 **Đã chốt (không tự ý mở lại):**
 
-* **Màu nâu chính:** `#7A3B17` là token chính chính thức (primary) — heading, CTA chính, brand accent quan trọng, trạng thái navigation được chọn. `#8A4A23` là token phụ (secondary/soft) — hover state, accent phụ, xử lý trang trí mềm hơn. Hai màu **không còn là hai token chính cạnh tranh nhau** — xem mục 11 (Design tokens) bên dưới và `docs/THEME-DECISION-BRIEF.md` mục 15.1.
+* **Palette binding được founder cập nhật 2026-08-10:** `#7A3B17`, `#FFFCF7`, `#FBEFE5`, `#F6E4E3`, `#E9F1EA`, `#C2C3D2`. Quyết định này thay thế cặp nâu cũ; `#8A4A23` không còn là brand-secondary. Kế hoạch migration: `docs/BRAND-MOBILE-REMEDIATION-PLAN.md`.
 * **Cấu trúc navigation chính:** 5 danh mục sản phẩm — Móc khóa len, Gấu bông len, Hoa len, Hộp quà, Đặt mẫu theo yêu cầu — **đã chốt** làm navigation cấp cao duy nhất cho V1. Size S/M/L **không** được dùng làm danh mục cấp cao; chỉ dùng làm attribute/variation/filter/subdivision bên trong danh mục — xem `docs/WEBSITE-REQUIREMENTS.md`.
 * **Chính sách publish sản phẩm thiếu ảnh:** đã chốt làm quy tắc vận hành chính thức (không còn "provisional") — xem `docs/WEBSITE-REQUIREMENTS.md`.
 
@@ -89,21 +89,27 @@ Không mở lại quyết định chỉ vì sở thích thị giác hoặc vì m
 
 ## 11. Design tokens (nền tảng — đã wire vào output từ 2026-08-06)
 
-Ghi lại token đã được founder chốt (2026-08-04, vòng 2) làm nền tảng cho bước "5. Đưa design token vào" của `docs/THEME-IMPLEMENTATION-PLAN.md`. **Cập nhật trạng thái 2026-08-07:** `shop-child/theme.json` là nguồn token chuẩn; frontend/editor CSS tham chiếu các biến preset WordPress thay vì lặp lại palette trong PHP. Child theme gỡ đúng filter `botiga_filter_theme_json_data_theme` vì Botiga 2.4.7 dùng filter này để ghi đè toàn bộ palette child bằng palette Customizer. Các component V1 vẫn dùng token semantic.
+`shop-child/theme.json` là nguồn token chuẩn; frontend/editor CSS tham chiếu các biến preset WordPress thay vì lặp lại palette trong PHP. Child theme gỡ đúng filter `botiga_filter_theme_json_data_theme` vì Botiga 2.4.7 dùng filter này để ghi đè toàn bộ palette child bằng palette Customizer. **Cập nhật binding 2026-08-10:** sáu màu dưới đây là quyết định chính thức; runtime hiện vẫn dùng palette cũ cho tới task implementation kế tiếp.
 
-### Màu — đã chốt
+### Màu — binding 2026-08-10, planned migration
 
-| Token | Hex | Vai trò |
+| Token semantic planned | Hex | Vai trò |
 |---|---|---|
-| `color-brand-primary` | `#7A3B17` | Heading, CTA chính, brand accent quan trọng, trạng thái navigation được chọn |
-| `color-brand-secondary` | `#8A4A23` | Hover state, accent phụ, xử lý trang trí mềm hơn |
+| `brand-primary` | `#7A3B17` | Heading, CTA, accent/border nhỏ; mục tiêu 5–15%, không làm nền lớn |
+| `surface-main` | `#FFFCF7` | Nền chính/warm whitespace; mục tiêu 35–55% |
+| `surface-cream` | `#FBEFE5` | Nền/card phụ; mục tiêu 20–40% |
+| `accent-blush` | `#F6E4E3` | Accent hồng phấn thưa; mục tiêu 5–15% |
+| `accent-sage` | `#E9F1EA` | Accent xanh sage thưa; mục tiêu 5–15% |
+| `accent-lavender` | `#C2C3D2` | Accent tím xám tiết chế; mục tiêu 5–15% |
 
-### Màu nền/kem — vẫn là candidate, chưa chốt
+### Lịch sử candidate — đã superseded
 
-Hai bộ nền/kem/accent phụ trong workbook (`docs/THEME-DECISION-BRIEF.md` mục 5) **chưa được founder chọn một bộ duy nhất** trong quyết định lần này — chỉ có cặp nâu chính/phụ ở trên được chốt. Ghi lại cả hai làm candidate, không dùng candidate nào làm mặc định khi implement:
+Hai candidate dưới đây là lịch sử quyết định trước 2026-08-10, không còn là lựa chọn mở:
 
-* Candidate A (`11_Brand_Guideline`): kem nền chính `#FFFCF7`, kem đào nhạt `#FBEFE5`, hồng phấn `#F6E4E3`, xanh lá nhạt `#E9F1EA`, xanh lam pha xám `#C2C3D2`.
+* Candidate A (`11_Brand_Guideline`): **đã được founder chốt** cùng `#7A3B17` thành sáu màu binding ở trên.
 * Candidate B (`16_Brand_System_Detail`): warm beige `#F4ECE5`, blush pink `#E8CFCF`, cream `#FFFDF9`, light gray `#F6F5F3`, text `#3D312B`, border `#DDD7D0`.
+
+`#8A4A23` được giữ trong lịch sử Git/tài liệu cũ để giải thích before-state, nhưng phải được retire khỏi palette công khai và CSS khi implement. Text/muted/border/error/success có thể tồn tại ngoài sáu màu với nhãn **FUNCTIONAL / ACCESSIBILITY NEUTRALS**, không phải brand colors.
 
 ### Typography — đã triển khai và owner-editable
 
@@ -117,5 +123,5 @@ Hai bộ nền/kem/accent phụ trong workbook (`docs/THEME-DECISION-BRIEF.md` m
 
 * *(Lịch sử, hết hiệu lực 2026-08-06)* Không có CSS component nào được viết (button, card, header thật) — **đã thay đổi:** component V1 đầy đủ trong `shop-child`.
 * Không có file font nhị phân nào được thêm vào repository — **vẫn đúng:** font Fraunces/Be Vietnam Pro tải qua Google Fonts (runtime), không commit binary; Aristotelica Pro vẫn chỉ dùng qua asset logo ngoài repo nếu có.
-* Không có màu nền/kem cuối cùng nào được chọn — **vẫn đúng:** dùng nền trắng/mặc định Botiga; 2 candidate kem chưa chốt vẫn ghi ở mục "Màu nền/kem".
+* Không có màu nền/kem cuối cùng nào được chọn — **hết hiệu lực 2026-08-10:** founder đã chốt sáu màu; việc wire vào runtime đang ở trạng thái PLANNED.
 * Không có thiết kế placeholder ảnh nào được tạo — **vẫn đúng:** chưa tạo placeholder ảnh; sản phẩm thiếu ảnh thật giữ draft theo chính sách đã chốt.

@@ -12,6 +12,8 @@
 
 > **Amendment 2026-08-03 — hạ tầng production-only:** Dự án dùng đúng một domain (lylishop.online), một môi trường production, một database production, một kho uploads production. Không có staging domain/database/deploy/promotion workflow. Local development và automated checks là cổng kiểm tra duy nhất trước production; mọi deploy production vẫn phải qua quy trình release-based có backup trước khi deploy và rollback (xem `docs/DEPLOYMENT.md`). Các mục nhắc tới "staging" bên dưới đã được cập nhật theo quyết định này; nội dung gốc không bị xóa khỏi lịch sử Git.
 
+> **Amendment 2026-08-10 — workflow hiện hành:** **LOCAL/WSL VALIDATE → BUILD → BACKUP IF PRODUCTION WILL CHANGE → DEPLOY → SMOKE → KEEP OR ROLLBACK.** WSL/local validation là deployment gate; GitHub Actions chỉ cung cấp thông tin, không cần chờ và không tạo commit để kích hoạt CI.
+
 ---
 
 # 1. Định nghĩa lại sản phẩm
@@ -239,7 +241,7 @@ Không yêu cầu hosting chạy Composer trực tiếp.
 
 Quy trình có thể:
 
-1. Build website trong CI hoặc máy developer.
+1. Build website trên máy developer sau khi local/WSL validation PASS; CI có thể chạy độc lập để cung cấp thông tin.
 2. Chạy Composer trong quá trình build.
 3. Tạo release artifact hoàn chỉnh.
 4. Upload artifact lên hosting.
@@ -542,6 +544,8 @@ Dùng WooCommerce core cho:
 * Direct Bank Transfer.
 
 WooCommerce đã có Direct Bank Transfer trong core; đơn sử dụng phương thức này được giữ ở trạng thái chờ để shop kiểm tra thanh toán thủ công.
+
+**Quyết định V1 cập nhật 2026-08-10:** Vietnam Store Toolkit 1.1.2 được chọn làm UI chuyển khoản trước mắt bằng cách mở rộng gateway `bacs` với VietQR. Đây không phải gateway mới, không đối soát ngân hàng, không xác nhận tiền tự động và không tự đánh dấu đơn paid. BACS/VietQR chỉ được owner cấu hình/bật sau khi developer deploy plugin và privacy disclosure đã sẵn sàng. SePay giữ trạng thái **DEFERRED / OPTIONAL**, chỉ xem lại nếu sau này cần automatic reconciliation; không chạy hai QR implementation song song. Xem `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md`.
 
 Dùng plugin có sẵn cho:
 
@@ -1212,7 +1216,7 @@ Chủ shop không nhìn thấy control plane kỹ thuật.
 * Security.
 * Cache.
 * Monitoring.
-* Local/CI validation trước production (không có staging riêng).
+* Local/WSL validation trước production; GitHub Actions informational only (không có staging riêng).
 * Update workflow.
 * Rollback workflow.
 
@@ -1257,7 +1261,7 @@ Website được coi là đạt khi:
 10. Tồn kho được cập nhật đúng.
 11. Email đơn hàng được gửi đúng.
 12. Backup có thể restore.
-13. Update có kiểm tra local/CI và rollback (không có staging riêng).
+13. Update có kiểm tra local/WSL và rollback (không có staging riêng; CI chỉ thông tin).
 14. Không sửa WordPress core.
 15. Không sửa WooCommerce core.
 16. Không sửa trực tiếp plugin bên thứ ba.

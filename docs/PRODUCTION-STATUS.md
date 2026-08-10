@@ -9,8 +9,8 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 | Mốc | Ý nghĩa |
 |---|---|
 | 1. Infrastructure ready | Domain, DNS, SSL, web PHP, database sẵn sàng; `.env` bảo mật ngoài `public_html` |
-| 2. Bedrock bootstrap repaired | `web/wp-config.php` + `web/index.php` được track; CI validator xác nhận bootstrap chạy được |
-| 3. Admin-editable storefront implementation | `shop-child` V1 + `lyli-site-settings` MU plugin + block patterns + bootstrap tooling hoàn tất trong repo; CI xanh |
+| 2. Bedrock bootstrap repaired | `web/wp-config.php` + `web/index.php` được track; bootstrap validator xác nhận chạy được |
+| 3. Admin-editable storefront implementation | `shop-child` V1 + `lyli-site-settings` MU plugin + block patterns + bootstrap tooling hoàn tất trong repo; local/WSL gate PASS tại thời điểm deploy |
 | 4. Production installation | WordPress cài đặt trên release thật; theme/plugin approved active; WooCommerce baseline; cấu trúc trang/danh mục |
 | 5. Public baseline | `current` → release; `public_html` → `current/web`; maintenance deactivated; HTTPS công khai hoạt động; có thể chỉnh qua WP Admin |
 | 6. Commerce launch readiness | Thanh toán, vận chuyển, email giao dịch, chính sách pháp lý, sản phẩm thật và kiểm thử đặt hàng thật được cấu hình và được founder phê duyệt riêng |
@@ -41,6 +41,20 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 | Baseline content | 5 blog, 25 ảnh nguồn, 9 trang editorial/policy publish, 0 sản phẩm; promotion tắt; mọi payment gateway tắt |
 | Mốc đạt được | 1–5; chưa đạt commerce launch readiness |
 
+## Pre-flight kế tiếp — PLANNED, chưa deployed (2026-08-10)
+
+| Workstream | Trạng thái |
+|---|---|
+| Repo khi bắt đầu pre-flight | `main`/`origin/main` cùng `2ffff80a2577a49ae24e963d9516492394192ee2`; working tree sạch |
+| Vietnam Store Toolkit 1.1.2 | **PREFLIGHT COMPLETE / PLANNED**; exact WPackagist resolution và source audit PASS; chưa thêm Composer, chưa install/activate production |
+| Payment V1 | Toolkit VietQR sẽ mở rộng BACS cho chuyển khoản thủ công; BACS/VietQR hiện vẫn tắt/chưa cấu hình; SePay **DEFERRED / OPTIONAL** |
+| Founder palette | Sáu màu `#7A3B17`, `#FFFCF7`, `#FBEFE5`, `#F6E4E3`, `#E9F1EA`, `#C2C3D2` là binding; runtime hiện vẫn là palette cũ, migration **PLANNED** |
+| Mobile remediation | Mobile-first pass 375/768/1440 **PLANNED**; chưa đổi CSS/theme mods/runtime |
+| Quyền owner | Runtime hiện có `manage_woocommerce`, không có `manage_options` hay quyền cài/xóa plugin/theme; đủ cho UI toolkit/BACS sau deploy |
+| Workflow | LOCAL/WSL VALIDATE → BUILD → BACKUP IF PRODUCTION WILL CHANGE → DEPLOY → SMOKE → KEEP OR ROLLBACK; GitHub Actions informational only |
+
+Chi tiết: `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md` và `docs/BRAND-MOBILE-REMEDIATION-PLAN.md`.
+
 ## Bản ghi cấp phép một lần (2026-08-06)
 
 Founder cấp phép **một lần** cho nhiệm vụ "admin-editable storefront implementation + production installation + guarded public cutover" gồm: sửa tài liệu roadmap/repo, triển khai storefront, commit/push, build/upload/extract release mới, backup mới, validate/update secrets an toàn, sinh salts nếu thiếu, `wp core install`, tạo bảng DB, tạo admin, kích hoạt theme/plugin approved, cấu hình WooCommerce baseline, tạo trang/menu/danh mục/options, tạo + chuyển `current`, maintenance mode, thay `public_html` bằng symlink, xoá `index.htm` sau backup, public cutover, rollback tự động nếu gate bắt buộc fail.
@@ -50,7 +64,7 @@ Chính sách phê duyệt chung cho lần deploy sau **không** bị suy yếu. 
 ## Nhật ký lịch sử
 
 - **2026-08-03:** xác lập production-only (một domain, một DB, một uploads).
-- **2026-08-04:** chốt Botiga Free 2.4.7 + `shop-child`; tokens `#7A3B17`/`#8A4A23`.
+- **2026-08-04:** chốt Botiga Free 2.4.7 + `shop-child`; palette provisional khi đó là `#7A3B17`/`#8A4A23` (đã superseded 2026-08-10).
 - **2026-08-05:** DNS đúng, PHP web 8.3, DB tạo xong, `.env` upload mode 600, privilege probe PASS, SSL chưa hợp lệ.
 - **2026-08-06 (trước nhiệm vụ này):** phát hiện thiếu `web/wp-config.php`/`web/index.php` → sửa Bedrock bootstrap (commit `f1f6049`), CI xanh; SSL đã hợp lệ; schema collation xác nhận `utf8mb4_unicode_ci`; release baseline `20260806144016-f1f6049` build/upload/extract xong.
 - **2026-08-06–07:** hoàn tất storefront V1, cài WordPress/WooCommerce, bootstrap nội dung nền và public cutover; release `20260807164746` được giữ làm rollback.
@@ -61,3 +75,4 @@ Chính sách phê duyệt chung cho lần deploy sau **không** bị suy yếu. 
 - **2026-08-08:** bổ sung editorial content theo cấu trúc Gutenberg hiện có: 5 blog, 25 ảnh, 4 policy public, menu nguồn; giữ 0 sản phẩm và promotion tắt; deploy release `20260808001500`. Chi tiết tại `docs/EDITORIAL-CONTENT-IMPORT-2026-08-08.md`.
 - **2026-08-08:** chuẩn hóa typography theo `11_Brand_Guideline`: Fraunces SemiBold cho heading, Be Vietnam Pro Regular/Medium cho body/CTA; preset hiện rõ trong Gutenberg; deploy release `20260808132816`. Chi tiết tại `docs/TYPOGRAPHY-IMPLEMENTATION-2026-08-08.md`.
 - **2026-08-08:** cài WordPress core/WooCommerce language pack `vi`, đặt locale tài khoản vận hành thành `vi` và chuyển language packs sang `shared/languages` để bền qua release. Chi tiết tại `docs/WOOCOMMERCE-VIETNAMESE-2026-08-08.md`.
+- **2026-08-10:** pre-flight docs-only xác nhận Vietnam Store Toolkit exact 1.1.2 resolve qua WPackagist, audit source/default/capability/privacy; founder chốt sáu màu và mobile-first remediation plan. Không đổi production/runtime.

@@ -12,6 +12,8 @@
 
 > **Amendment 2026-08-04 — quyết định theme V1:** Theme cha chốt là **Botiga Free** (không phải Storefront). Kiến trúc classic/hybrid, `shop-child` làm child theme, Classic Cart/Checkout giữ nguyên, không dùng Full Site Editing làm kiến trúc chính cho V1. Botiga Pro **không được phép mua/dùng**. Fallback: Blocksy Free rồi tới Storefront, chỉ khi có FAIL không thể khắc phục bằng cấu hình/hook nhỏ/CSS/patch tương thích — xem `docs/THEME-DECISION.md`, `docs/THEME-IMPLEMENTATION-PLAN.md`, `docs/THEME-COMPATIBILITY-GATE.md`. §3.1 bên dưới đã cập nhật theo quyết định này; nội dung Storefront cũ được giữ lại có đánh dấu để biết lý do thay đổi.
 
+> **Amendment 2026-08-10 — deployment gate và commerce/UI plan:** Workflow hiện hành là **LOCAL/WSL VALIDATE → BUILD → BACKUP IF PRODUCTION WILL CHANGE → DEPLOY → SMOKE → KEEP OR ROLLBACK**. GitHub Actions informational only. Vietnam Store Toolkit 1.1.2 đã pre-flight xong nhưng chưa deployed; VietQR/BACS là transfer UI thủ công V1, SePay **DEFERRED / OPTIONAL**. Sáu màu founder-approved và mobile-first remediation đang **PLANNED**; xem hai pre-flight plan trong `docs/`.
+
 ---
 
 # 1. Kết luận kiến trúc
@@ -59,7 +61,7 @@ Không có:
 
 # 2. Stack phiên bản được chốt
 
-Các phiên bản dưới đây là **baseline tại ngày 03/08/2026**, không phải đóng băng vĩnh viễn. Phiên bản mới chỉ được cập nhật qua pull request, validation cục bộ/CI và regression test (không có staging riêng — xem Amendment 2026-08-03).
+Các phiên bản dưới đây là baseline, không phải đóng băng vĩnh viễn. Phiên bản mới chỉ được cập nhật sau local/WSL validation và regression test; GitHub Actions không phải deployment gate (không có staging riêng).
 
 ## 2.1. Core và runtime
 
@@ -75,7 +77,7 @@ Các phiên bản dưới đây là **baseline tại ngày 03/08/2026**, không 
 | Composer       |                  2.x | Build dependency    |
 | WP-CLI         | Bản stable hiện hành | Cài đặt và vận hành |
 | DDEV           | Bản stable hiện hành | Môi trường local    |
-| GitHub Actions |      Managed service | CI/CD               |
+| GitHub Actions |      Managed service | Kiểm tra thông tin; không phải deployment gate |
 
 WordPress 7.0.2 là bản stable hiện hành ngày 03/08/2026; WordPress 7.1 vẫn chưa phải bản production. WooCommerce 10.9.4 là nhánh stable tương thích với WordPress 7.0.2.
 
@@ -121,7 +123,7 @@ Storefront 4.6.2 là theme chính thức, được WooCommerce mô tả là them
 
 Theme con chỉ chứa (cập nhật theo `docs/THEME-DECISION.md`):
 
-* Brand design token (màu, chưa chốt — xem mâu thuẫn #1 ở `docs/THEME-DECISION-BRIEF.md`).
+* Brand design token: sáu màu binding đã chốt 2026-08-10; migration runtime đang PLANNED (`docs/BRAND-MOBILE-REMEDIATION-PLAN.md`).
 * Typography.
 * Spacing.
 * Style header và footer.
@@ -218,7 +220,7 @@ Các plugin thanh toán và địa chỉ Việt Nam chưa đồng đều về tu
 
 Classic checkout giúp:
 
-* SePay dễ tích hợp hơn.
+* Vietnam Store Toolkit 1.1.2 có luồng địa chỉ/BACS rõ để regression-test.
 * Plugin địa chỉ Việt Nam ít lỗi hơn.
 * Dễ tùy chỉnh validation.
 * Dễ debug.
@@ -235,7 +237,7 @@ HPOS chỉ được bật khi:
 
 1. Toàn bộ plugin commerce khai báo hoặc chứng minh tương thích.
 2. Chạy migration trên bản sao dữ liệu kiểm thử cục bộ trước, sau đó lặp lại trên production với backup đầy đủ và rollback sẵn sàng (không có staging riêng).
-3. Test đầy đủ checkout, refund, coupon, affiliate và SePay.
+3. Test đầy đủ checkout, refund, coupon, affiliate và payment stack đang active; SePay chỉ thêm vào khi được đưa ra khỏi trạng thái deferred.
 4. Chạy song song dữ liệu trong giai đoạn kiểm thử.
 5. Có backup và rollback.
 
@@ -250,8 +252,8 @@ HPOS chỉ được bật khi:
 | Plugin                  | Phiên bản baseline | Chức năng                       | Trạng thái            |
 | ----------------------- | -----------------: | ------------------------------- | --------------------- |
 | WooCommerce             |             10.9.4 | Commerce core                   | Bắt buộc              |
-| Vietnam Store Toolkit   |              1.1.2 | Địa chỉ và shipping Việt Nam    | Bắt buộc, phải audit  |
-| SePay Gateway           |             1.1.23 | VietQR và xác nhận chuyển khoản | Bắt buộc              |
+| Vietnam Store Toolkit   |              1.1.2 | Địa chỉ, vận hành và VietQR trên BACS | PLANNED / PREFLIGHT COMPLETE; chưa deployed |
+| SePay Gateway           |             1.1.23 | Đối soát tự động nếu cần sau này | DEFERRED / OPTIONAL |
 | SEOPress Free           |               10.1 | SEO                             | Bắt buộc              |
 | FluentSMTP              |             2.2.95 | Gửi và log email                | Bắt buộc, phải test   |
 | WP Super Cache          |              3.1.1 | Page cache                      | Bắt buộc theo hosting |
@@ -310,26 +312,13 @@ Plugin được chọn vì hỗ trợ:
 * CSV.
 * Theo dõi đơn thủ công.
 
-Plugin được cập nhật ngày 30/07/2026 và công bố hỗ trợ WordPress 7.0.2, nhưng mức độ sử dụng thực tế còn rất thấp.
+Stable 1.1.2 phát hành ngày 30/07/2026; archive ghi WordPress `>=6.3`, tested line 7.0, PHP `>=7.4`, WooCommerce `>=8.9` và tested line 10.9. WordPress.org hiện quảng bá tested through 7.0.3. Lyli 7.0.2/10.9.4 nằm trong các nhánh đó, nhưng mức độ sử dụng thực tế còn rất thấp nên runtime regression vẫn bắt buộc.
 
-## 6.2. Điều kiện bắt buộc trước production
+## 6.2. Điều kiện bắt buộc trước production — PREFLIGHT COMPLETE 2026-08-10
 
-Do plugin còn mới, phải thực hiện:
+Source/Composer pre-flight đã PASS cho capability, nonce, escaping, sanitization, AJAX, query/storage, assets, bundled administrative data, BACS/VietQR, invoice upload/email, tracking, HPOS/legacy và uninstall behavior. Báo cáo/risk matrix: `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md`.
 
-1. Review source code.
-2. Kiểm tra capability và nonce.
-3. Kiểm tra escaping và sanitization.
-4. Kiểm tra AJAX endpoint.
-5. Kiểm tra query database.
-6. Kiểm tra frontend asset loading.
-7. Kiểm tra Classic Checkout.
-8. Kiểm tra SePay.
-9. Kiểm tra Product Bundles.
-10. Kiểm tra Smart Coupons.
-11. Kiểm tra export/import địa chỉ.
-12. Kiểm tra cập nhật dữ liệu hành chính.
-
-Nếu không vượt qua audit, chuyển sang fallback.
+Các gate còn **PLANNED / NOT RUN** vì task này không đổi runtime: artifact/Bedrock load, activation defaults, `shop_owner` access, Classic Checkout/address regression, order/email behavior và performance trên production host. Product Bundles/Smart Coupons chỉ kiểm tra khi chúng thực sự được đưa vào runtime; SePay deferred. Nếu gate functional/security fail, rollback và đánh giá fallback.
 
 ## 6.3. Fallback
 
@@ -366,9 +355,13 @@ Dùng WooCommerce Direct Bank Transfer core làm phương án dự phòng.
 
 Đơn thanh toán bằng chuyển khoản sẽ được giữ ở trạng thái chờ cho đến khi nhân viên xác nhận.
 
-## 7.3. VietQR và xác nhận tự động
+## 7.3. VietQR V1 và đối soát tự động về sau
 
-### Plugin: SePay Gateway 1.1.23
+### CURRENT V1: Vietnam Store Toolkit 1.1.2 trên BACS
+
+Toolkit mở rộng WooCommerce Direct Bank Transfer, không tạo gateway mới. Nó hiển thị transfer information/VietQR nhưng không xác nhận giao dịch, không tự đánh dấu paid. Owner nhập merchant data và bật sau deploy; developer không nhập thay.
+
+### DEFERRED / OPTIONAL: SePay Gateway 1.1.23
 
 Dùng để:
 
@@ -383,11 +376,10 @@ SePay công bố hỗ trợ kết nối hơn 30 ngân hàng, xác nhận giao d�
 
 ## 7.4. Quy tắc triển khai
 
-* Bật COD.
-* Bật SePay.
-* Giữ BACS nhưng đặt sau SePay.
-* Không bật QR tích hợp sẵn của Vietnam Store Toolkit.
-* Không có hai QR gateway cùng lúc.
+* Không bật COD, BACS, VietQR hoặc SePay trong implementation kế tiếp; owner cấu hình merchant policy riêng sau.
+* Giữ BACS/VietQR disabled/unconfigured cho tới khi owner tự nhập merchant data và privacy disclosure sẵn sàng.
+* Chỉ xem lại SePay nếu automatic bank reconciliation thực sự trở thành yêu cầu.
+* Không có hai QR implementation cùng lúc.
 * Webhook SePay phải có secret.
 * Endpoint webhook phải log kết quả nhưng không log secret.
 * Xử lý webhook phải idempotent.
@@ -468,7 +460,7 @@ Các URL không được page cache:
 * My Account.
 * Order received.
 * WooCommerce API.
-* SePay webhook.
+* Payment-provider webhook nếu sau này có gateway đối soát tự động; hiện SePay deferred.
 * Trang có session hoặc nonce cá nhân.
 
 ## 8.4. Backup
@@ -761,8 +753,8 @@ commerce-site/
 
 1. Renovate hoặc Dependabot tạo pull request.
 2. Composer resolve dependency.
-3. CI build website mới.
-4. Production-preflight: validation cục bộ/CI, dry-run của script deploy (không có staging riêng).
+3. Local/WSL validation rồi build website mới; CI có thể báo thông tin song song.
+4. Production-preflight focused, không có staging riêng.
 5. Chạy regression tests.
 6. Developer review changelog.
 7. Backup production.
@@ -776,9 +768,9 @@ Security release nghiêm trọng được ưu tiên triển khai trong vòng 24 
 
 ---
 
-# 14. CI/CD
+# 14. Validation và CI
 
-## Pipeline bắt buộc
+## Local/WSL deployment gate
 
 ### Build
 
@@ -800,7 +792,7 @@ Security release nghiêm trọng được ưu tiên triển khai trong vòng 24 
 * Test logged-in checkout.
 * Test COD.
 * Test BACS.
-* Test SePay.
+* Test BACS/VietQR safe default; SePay chỉ test khi được đưa ra khỏi trạng thái deferred.
 * Test coupon.
 * Test bundle.
 * Test refund.
@@ -812,7 +804,7 @@ WP-CLI hỗ trợ cài core, plugin, theme, user, role, option, database, cron v
 
 ### Deploy
 
-* Tự động chạy production-preflight (build + validate + dry-run) trên CI cho mọi commit vào `main` (không có staging riêng).
+* GitHub Actions có thể chạy build/validate thông tin cho commit `main`, nhưng không chặn deploy và không cần chờ.
 * Production cần manual approval.
 * Database không bị ghi đè khi deploy code.
 * Upload không được đóng gói vào release.
@@ -833,7 +825,7 @@ WP-CLI hỗ trợ cài core, plugin, theme, user, role, option, database, cron v
 | Địa chỉ  | 34 tỉnh/thành, xã/phường, local pickup             |
 | Shipping | Theo vùng, trọng lượng, giá trị đơn, free shipping |
 | COD      | Đặt đơn, email, trạng thái                         |
-| SePay    | QR, đúng số tiền, webhook, duplicate webhook       |
+| BACS/VietQR | Mặc định tắt, QR/amount/content sau owner config, trạng thái thủ công |
 | Coupon   | Percentage, fixed, BOGO, auto-apply                |
 | Stock    | Trừ kho, hủy đơn, refund, restock                  |
 | Refund   | Full, partial, manual payment                      |
@@ -897,8 +889,8 @@ Không dùng trong baseline:
 
 ## Phase 2: Plugin audit
 
-1. Audit Vietnam Store Toolkit.
-2. Test SePay.
+1. Vietnam Store Toolkit audit — PREFLIGHT COMPLETE; implementation/deploy vẫn pending.
+2. SePay — DEFERRED / OPTIONAL.
 3. Test Product Bundles.
 4. Test Smart Coupons.
 5. Test FluentSMTP.
@@ -912,7 +904,7 @@ Không dùng trong baseline:
 3. Cấu hình Việt Nam.
 4. Cấu hình COD.
 5. Cấu hình BACS.
-6. Cấu hình SePay.
+6. Owner cấu hình BACS/VietQR sau deploy và privacy disclosure; SePay deferred.
 7. Cấu hình shipping.
 8. Cấu hình coupon.
 9. Cấu hình bundle.
@@ -950,8 +942,8 @@ Không dùng trong baseline:
 5. Security.
 6. Log.
 7. Monitoring.
-8. CI/CD.
-9. Production-preflight (validation cục bộ/CI trước deploy — không có staging riêng).
+8. GitHub Actions informational only.
+9. Production-preflight bằng local/WSL validation trước deploy — không có staging riêng.
 10. Rollback.
 
 ## Phase 7: QA và go-live
@@ -979,8 +971,8 @@ Stack được coi là hoàn thành khi:
 6. Staff không truy cập cấu hình kỹ thuật.
 7. Checkout mobile hoạt động.
 8. COD hoạt động.
-9. SePay hoạt động.
-10. BACS fallback hoạt động.
+9. BACS/VietQR thủ công hoạt động sau owner configuration.
+10. Đối soát tự động là optional future scope, không phải V1 gate.
 11. Shipping rule Việt Nam hoạt động.
 12. Bundle trừ kho chính xác.
 13. Coupon nâng cao hoạt động.
@@ -1008,8 +1000,8 @@ CORE
 └── Botiga Free + shop-child (Storefront = fallback cấp 2, xem docs/THEME-DECISION.md)
 
 VIETNAM COMMERCE
-├── Vietnam Store Toolkit 1.1.2 [AUDIT REQUIRED]
-├── SePay Gateway 1.1.23
+├── Vietnam Store Toolkit 1.1.2 [PREFLIGHT COMPLETE / PLANNED]
+├── SePay Gateway 1.1.23 [DEFERRED / OPTIONAL]
 ├── WooCommerce COD
 ├── WooCommerce BACS
 ├── Product Bundles 8.5.10

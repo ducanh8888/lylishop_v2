@@ -20,6 +20,19 @@ Giao diện WordPress và WooCommerce của tài khoản vận hành được đ
 - **Media:** quản lý ảnh đã tải lên. Nên dùng ảnh rõ, cùng tỷ lệ và dung lượng vừa phải.
 - **Đơn hàng:** mở **Đơn hàng** hoặc màn hình WooCommerce tương ứng để xử lý vận hành.
 
+## Vietnam store và chuyển khoản — PLANNED, chưa có trên production
+
+Sau lần triển khai được duyệt kế tiếp, Shop Owner sẽ có các lối vào sau mà không cần quyền Administrator:
+
+- **Vietnam store:** `/wp/wp-admin/admin.php?page=yoohw-vietnam-store` — bật/tắt tính năng địa chỉ, điện thoại và công cụ vận hành.
+- **Chuyển khoản/VietQR:** **WooCommerce → Cài đặt → Thanh toán → Chuyển khoản ngân hàng** — cấu hình BACS và VietQR.
+- **Vận chuyển:** **WooCommerce → Cài đặt → Giao hàng** — tự thêm phương thức vào đúng Shipping Zone và nhập giá/rule.
+- **Tracking/email:** các section tương ứng trong WooCommerce Settings và từng đơn hàng.
+
+Developer chỉ cài/activate code. Shop Owner tự nhập số tài khoản, chủ tài khoản, VietQR merchant information, giá/rule vận chuyển, COD policy, VAT/invoice/tracking credentials và payment text. Không gửi các giá trị này để commit vào repository.
+
+VietQR của plugin chỉ hiển thị thông tin/QR trên WooCommerce Direct Bank Transfer (`bacs`); không tự xác nhận tiền về và không tự đánh dấu đơn đã thanh toán. BACS/VietQR phải giữ tắt/chưa cấu hình cho tới khi owner hoàn tất dữ liệu merchant và privacy disclosure. SePay là **DEFERRED / OPTIONAL**, chỉ xem lại nếu sau này cần đối soát tự động.
+
 ## Việc cần nhà phát triển
 
-Shop Owner không thể cài/cập nhật plugin hoặc giao diện, đổi mã PHP, thay cấu hình hệ thống, quản lý người dùng hay bật phương thức thanh toán mới. Đổi font mặc định toàn website hoặc thêm font family mới là thay đổi source-controlled; gửi các việc này cho nhà phát triển. Không dùng tài khoản Administrator cho công việc hằng ngày.
+Shop Owner không thể cài/cập nhật plugin hoặc giao diện, đổi mã PHP, thay cấu hình hệ thống hay quản lý người dùng. Sau khi Vietnam Store Toolkit được developer triển khai, owner được cấu hình/bật BACS/VietQR và shipping trong các màn hình WooCommerce đã whitelist; việc thêm gateway/plugin mới vẫn thuộc developer. Đổi font mặc định toàn website hoặc thêm font family mới là thay đổi source-controlled; gửi các việc này cho nhà phát triển. Không dùng tài khoản Administrator cho công việc hằng ngày.

@@ -32,12 +32,12 @@ Manifest này phản ánh dependency có thể tái tạo từ `composer.lock`. 
 |---|---|---|---|
 | `lyli-editorial-import` | `web/app/mu-plugins/lyli-editorial-import/` | Import idempotent pages/blog/media/menu/settings; không tạo sản phẩm | WordPress posts, attachments, options và menu; manifest tracking trong option `lyli_editorial_import_manifest` |
 
-## Plugin thương mại bắt buộc theo phạm vi (⚠️ xem mâu thuẫn #1, `docs/HOSTING-AUDIT.md` mục 14)
+## Plugin commerce planned/deferred theo phạm vi
 
 | Extension | Version baseline | Nguồn | License | Trạng thái | Ghi chú |
 |---|---|---|---|---|---|
-| Vietnam Store Toolkit for WooCommerce | 1.1.2 | Chưa xác định (không có trên wpackagist — cần audit nguồn trước) | Chưa xác định | **Bắt buộc, PHẢI audit trước** | 12 bước audit bắt buộc tại TECH_STACK.md mục 6.2 (capability, nonce, escaping, AJAX, query DB, asset loading, Classic Checkout, SePay, Bundles, Smart Coupons, export/import, cập nhật dữ liệu hành chính). Fallback: Vietnam Checkout for WooCommerce 2.1.6 + Pro shipping (mục 6.3) |
-| SePay Gateway | 1.1.23 | Riêng của SePay (sepay.vn) — không trên wpackagist | Thương mại | Bắt buộc | Webhook secret bắt buộc, idempotent, không log secret (TECH_STACK.md mục 7.4) |
+| Vietnam Store Toolkit for WooCommerce | 1.1.2 | WPackagist `wpackagist-plugin/yoohw-vietnam-store-tools`; WordPress.org SVN/ZIP stable 1.1.2; GPLv2+ | GPLv2+ | **PLANNED / PREFLIGHT COMPLETE; chưa có trong Composer/runtime** | Disposable WSL resolve/install PASS vào `web/app/plugins/yoohw-vietnam-store-tools`; source/capability/default/privacy audit tại `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md` |
+| SePay Gateway | 1.1.23 | Riêng của SePay (sepay.vn) — không trên WPackagist | Thương mại | **DEFERRED / OPTIONAL** | Chỉ xem xét nếu sau này cần automatic bank reconciliation/webhook; không triển khai song song với VietQR của Vietnam Store Toolkit. Giữ nghiên cứu lịch sử, không thuộc V1 transfer UI trước mắt |
 | WooCommerce Product Bundles | 8.5.10 | WooCommerce.com Marketplace (private repo/license) | Thương mại | Bắt buộc theo phạm vi (⚠️ PLAN.md xếp Tier B — cần xác nhận) | Cần license key riêng, không commit |
 | WooCommerce Smart Coupons | 9.80.0 | WooCommerce.com Marketplace (StoreApps) | Thương mại | Bắt buộc theo phạm vi (⚠️ PLAN.md xếp Tier B — cần xác nhận) | Cần license key riêng, không commit |
 
@@ -55,4 +55,4 @@ Xem danh sách đầy đủ ở TECH_STACK.md mục 16 — Elementor/Divi/Bricks
 
 * Mọi plugin mới — kể cả free trên WordPress.org — phải có một dòng ở đây trước khi vào `composer.json`.
 * Không có hai plugin cùng giải quyết một chức năng (PLAN.md mục 9.2).
-* Version bump đi qua production-preflight (validation cục bộ/CI) + regression test trước khi cập nhật baseline ở đây (xem `docs/UPDATE-POLICY.md`).
+* Version bump đi qua local/WSL validation + regression test trước khi cập nhật baseline ở đây (xem `docs/UPDATE-POLICY.md`). GitHub Actions chỉ cung cấp thông tin.

@@ -14,12 +14,12 @@ Kế hoạch gốc được giữ để theo dõi quyết định; trạng thái
    `Theme Name`, `Template: botiga`, text domain, version placeholder, mô tả — đã thực hiện một phần trong tác vụ trước (xem `docs/THEME-DECISION.md`). Còn thiếu: `Requires at least`, `Requires PHP`, `Tags` nếu cần — chưa làm, không bắt buộc để tiếp tục các bước sau.
 4. **Enqueue asset cha/con đúng cách.**
    `wp_enqueue_style` cho style cha (Botiga) làm dependency của style con — đã có khung enqueue tối thiểu trong `functions.php` (handle `botiga-parent`); tôn trọng cấu trúc asset thật của Botiga (không giả định tên file `style.css` là toàn bộ CSS cha — cần kiểm tra Botiga có tách CSS theo module hay không, chỉ xác nhận được sau khi cài đặt thật, chưa làm ở bước này).
-5. **Đưa design token vào — NỀN TẢNG ĐÃ GHI, CHƯA WIRE VÀO OUTPUT.**
-   Màu nâu chính/phụ đã chốt 2026-08-04 (vòng 2): `#7A3B17` primary, `#8A4A23` secondary/soft. **Hoàn tất 2026-08-07:** token nằm tại `web/app/themes/shop-child/theme.json`, được WordPress resolve thành preset cho frontend/Gutenberg; CSS child chỉ dùng alias semantic. Filter palette của Botiga 2.4.7 đã được gỡ có kiểm soát để không ghi đè token child.
+5. **Đưa design token vào — PALETTE CŨ ĐÃ WIRE; MIGRATION SÁU MÀU PLANNED.**
+   `theme.json` đã là canonical source từ 2026-08-07. Founder đã supersede palette cũ ngày 2026-08-10 bằng sáu màu binding; phải retire `#8A4A23`, remap toàn component/editor và giữ functional neutrals tách biệt. Kế hoạch thực thi: `docs/BRAND-MOBILE-REMEDIATION-PLAN.md`.
 6. **Đăng ký typography — HOÀN TẤT 2026-08-08.**
    Fraunces SemiBold `600` cho heading; Be Vietnam Pro Regular `400` cho body và Medium `500` cho CTA/button. Hai family được đăng ký trong `theme.json` để shop owner chọn trong Gutenberg; tải qua Google Fonts runtime, không commit binary. Bằng chứng: `docs/TYPOGRAPHY-IMPLEMENTATION-2026-08-08.md`.
-7. **Header và mobile navigation.**
-   Theo `docs/WEBSITE-REQUIREMENTS.md` (Logo, Shop, Bộ sưu tập, Giới thiệu, tìm kiếm, tài khoản, giỏ hàng — sticky).
+7. **Header và mobile navigation — RESPONSIVE REMEDIATION PLANNED.**
+   375px ưu tiên logo + cart + hamburger; search/account chuyển vào drawer. 768px recomposition riêng; 1024px+ giữ desktop composition đang hoạt động. Không lặp search/icons ở row và offcanvas — xem `docs/BRAND-MOBILE-REMEDIATION-PLAN.md`.
 8. **Homepage pattern.**
    Hero, danh mục, sản phẩm bán chạy, USP/lý do chọn Lyli, CTA — theo `docs/WEBSITE-REQUIREMENTS.md`.
 9. **Product card và archive.**
@@ -30,8 +30,8 @@ Kế hoạch gốc được giữ để theo dõi quyết định; trạng thái
     Chỉ CSS trình bày; không đổi hành vi/validation của Classic Cart/Checkout.
 12. **Test tương thích plugin.**
     Chạy toàn bộ `docs/THEME-COMPATIBILITY-GATE.md`.
-13. **Kiểm tra accessibility và responsive.**
-    Bàn phím, độ tương phản, breakpoint mobile/tablet/desktop — cũng nằm trong compatibility gate.
+13. **Kiểm tra accessibility và responsive — MOBILE-FIRST PASS PLANNED.**
+    Recompose hero/grid/footer, fluid type/spacing, sửa nguồn overflow rồi bỏ blanket `overflow-x:hidden`; visual gate 375/768/1440 trên Home, Shop, Product, Cart, Checkout, Account.
 14. **Chuẩn bị production release.**
     Build artifact theo `docs/DEPLOYMENT.md`, không tự chạy deploy thật ở bước này.
 
@@ -50,5 +50,5 @@ Kế hoạch gốc được giữ để theo dõi quyết định; trạng thái
 * Copy layout, code, asset hoặc nội dung demo từ Blossom Shop/Ona/Blossom Floral/Blossom Beauty — chỉ tham khảo ý tưởng thị giác (`docs/THEME-DECISION.md` mục 5).
 * Sửa WordPress core, WooCommerce core, hoặc source code Botiga/Blocksy/Storefront.
 * Đưa business logic (thanh toán, order, coupon, bundle) vào `shop-child`.
-* Chốt màu, navigation cuối, hoặc thiết kế placeholder ảnh thay founder.
+* Tự thay đổi sáu màu binding, navigation cuối hoặc thiết kế placeholder ảnh thay founder.
 * Cài đặt WordPress thật, tạo database, hoặc deploy production như một phần của việc chuẩn bị theme.
