@@ -1,6 +1,6 @@
 # GHN integration preflight
 
-Trạng thái: **BUILD LYLI GHN CONNECTOR — implemented locally, disabled by default; no GHN shipment created**. Ngày kiểm tra: 2026-08-10. Starting commit: `97a93fa76bec3cec4406c45e1b6d1b2aafa72f81`.
+Trạng thái: **BUILD LYLI GHN CONNECTOR — deployed active, connector disabled/unconfigured; no GHN shipment created**. Ngày kiểm tra/triển khai: 2026-08-10. Starting commit: `97a93fa76bec3cec4406c45e1b6d1b2aafa72f81`; implementation commit: `1d7bb7b93a241eaf4448e8f1e70f5ccc2d0853c6`.
 
 ## 1. Quyết định kiến trúc
 
@@ -124,7 +124,9 @@ Không hard-code service ID lịch sử. Owner chọn `service_type_id` 2 (hàng
 
 Network-free validator `scripts/validate-ghn-connector.php` covers serialization, response/application errors, timeout, token redaction, two-level mapping, missing dimensions, COD/refund logic, status mapping, existing client-code idempotency, capability denial, nonce rejection and absence of public webhook/live-rate code.
 
-Code can be deployed only when PHP lint, GHN validator, storefront validator, Bedrock bootstrap validator, secret scan and artifact inspection pass. Safe deployment state is active WordPress plugin but connector disabled, empty Token/ShopId, no GHN rate and no shipment.
+PHP lint, GHN validator, storefront validator, Bedrock bootstrap validator, Composer validation/audit, secret scan and artifact inspection đều PASS. Production release `20260810210244` dùng artifact `release-20260810210129.tar.gz` (SHA-256 `e1cdfc5bc9fa56605799f2c48fa0d9f202a9ce590128d848112d71f6ab08db05`). Backup trước switch là `shared/backups/20260810210321`; rollback target `20260810190111` vẫn còn và không ở maintenance.
+
+Runtime giữ đúng safe state: WordPress plugin 0.1.0 active; connector chưa enabled; không có option `lyli_ghn*`, Token, ShopId, provider runtime hoặc shipment meta GHN. Menu **WooCommerce → Kết nối GHN** đăng ký với `manage_woocommerce`; form Token luôn masked/blank khi render. Production chưa có account role `shop_owner`, nên developer phải provision account đúng người trước handoff. Public Home/Shop/Cart/Checkout/Account/login đều HTTP 200, checkout vẫn có Province/Ward của Toolkit, và không lộ PHP warning/fatal.
 
 `CODE VALIDATED` does not mean `GHN API END-TO-END VALIDATED`. E2E requires owner-provided test Token + test ShopId and explicit later authorization. See `docs/GHN-OWNER-SETUP.md`.
 

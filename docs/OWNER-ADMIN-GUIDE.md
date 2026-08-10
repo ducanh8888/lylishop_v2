@@ -37,6 +37,12 @@ Developer chỉ cài/activate code. Shop Owner tự nhập số tài khoản, ch
 
 VietQR của plugin chỉ hiển thị thông tin/QR trên WooCommerce Direct Bank Transfer (`bacs`); không tự xác nhận tiền về và không tự đánh dấu đơn đã thanh toán. BACS/VietQR phải giữ tắt/chưa cấu hình cho tới khi owner hoàn tất dữ liệu merchant và privacy disclosure. SePay là **DEFERRED / OPTIONAL**, chỉ xem lại nếu sau này cần đối soát tự động.
 
+## GHN — plugin đã active, connector đang tắt
+
+Sau khi developer provision account `shop_owner`, vào **WooCommerce → Kết nối GHN**. Chỉ nhập Token/ShopId do chính shop nhận từ GHN, bắt đầu bằng môi trường **Test**, nhập khối lượng/kích thước kiện thật và chốt COD/payer/inspection/insurance trước khi bật. Token đã lưu không được hiển thị lại.
+
+V1 không tính cước GHN live ở checkout; phí checkout vẫn do **Vietnam Store → Shipping rules** quản lý. Connector không tự tạo vận đơn, không tự đổi trạng thái Woo order, không nhận webhook và không tự thu COD. Owner phải mở từng order, review dữ liệu rồi chủ động Create/Sync/Cancel/Print qua shipment panel của Vietnam Store Toolkit. Xem checklist tại `docs/GHN-OWNER-SETUP.md`.
+
 ## Việc cần nhà phát triển
 
 Shop Owner không thể cài/cập nhật plugin hoặc giao diện, đổi mã PHP, thay cấu hình hệ thống hay quản lý người dùng. Sau khi Vietnam Store Toolkit được developer triển khai, owner được cấu hình/bật BACS/VietQR và shipping trong các màn hình WooCommerce đã whitelist; việc thêm gateway/plugin mới vẫn thuộc developer. Đổi font mặc định toàn website hoặc thêm font family mới là thay đổi source-controlled; gửi các việc này cho nhà phát triển. Không dùng tài khoản Administrator cho công việc hằng ngày.

@@ -21,23 +21,23 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 
 | Mục | Kết quả |
 |---|---|
-| Deployed source commit | `11d0201fe0e1ffe1f7d56e844bec8d1096ee59b3` (cascade implementation `ae0e28d4431110ac13981e2f0325a47ff1289c51`) |
+| Deployed source commit | `1d7bb7b93a241eaf4448e8f1e70f5ccc2d0853c6` (GHN connector; prior cascade implementation `ae0e28d4431110ac13981e2f0325a47ff1289c51`) |
 | Deployment gate | WSL/local validators; GitHub Actions chỉ cung cấp thông tin, không chặn deploy |
 | Domain/DNS | `lylishop.online` → `103.75.184.20` — đúng hosting |
 | SSL/public routes | HTTPS hợp lệ; Home, Shop, Cart, My Account và trang đăng nhập admin trả HTTP 200; Checkout có session sản phẩm trả 200, còn giỏ trống chuyển về Cart đúng hành vi WooCommerce |
 | Web PHP | `8.3.30` (LiteSpeed) |
 | WordPress/storefront | WordPress 7.0.2 đã cài; `shop-child` active trên Botiga 2.4.7; WooCommerce 10.9.4 active |
-| Plugin runtime | AI Engine 3.7.0, WooCommerce 10.9.4 và Vietnam Store Toolkit 1.1.2 active; aThemes Starter Sites đã gỡ khỏi Composer/artifact |
+| Plugin runtime | AI Engine 3.7.0, WooCommerce 10.9.4, Vietnam Store Toolkit 1.1.2 và `lyli-ghn-connector` 0.1.0 active; connector GHN tắt/chưa cấu hình; aThemes Starter Sites đã gỡ khỏi Composer/artifact |
 | MU plugin / CLI | Bedrock autoloader active; Lyli settings hook có mặt; `wp lyli bootstrap` và `wp lyli editorial` khả dụng |
 | Code policy | `DISALLOW_FILE_MODS=true`, `DISALLOW_FILE_EDIT=true`; nội dung/cấu hình cửa hàng vẫn chỉnh trong WP Admin |
 | WP-CLI path trên host | `--path=apps/lylishop/current/web/wp` |
 | `public_html` | Symlink → `apps/lylishop/current/web`; bản provider cũ giữ tại `shared/rollback/provider-public_html-20260807135123` |
 | Theme integration | `shop-child` 1.3.1; sáu brand token chính thức từ `theme.json`; Fraunces/Be Vietnam Pro giữ weight `600/400/500`; Botiga runtime palette/CSS generated được reconcile một lần; mobile header là logo + cart + hamburger, search/account trong offcanvas; Gutenberg content không bị overwrite |
 | Admin locale | Site và tài khoản vận hành dùng `vi`; WordPress core + WooCommerce language packs nằm tại `shared/languages` và được dùng lại qua release |
-| `apps/lylishop/current` | → `releases/20260810190111` |
-| Artifact | `release-20260810190111.tar.gz`; SHA-256 `a3380e017a64c9a4d6a5fae6a54f416b9a99cefd42f6e8a01251df9368d67044` |
-| Release rollback | `releases/20260810145039`; full pre-editorial rollback `releases/20260807205828` |
-| Backup gần nhất | `shared/backups/20260810185536/{database.sql.gz,uploads.tar.gz}` (`gzip -t`/`tar -tzf` PASS); full backup trước đó `shared/backups/20260808001000/{database.sql.gz,uploads.tar.gz}` |
+| `apps/lylishop/current` | → `releases/20260810210244` |
+| Artifact | `release-20260810210129.tar.gz`; SHA-256 `e1cdfc5bc9fa56605799f2c48fa0d9f202a9ce590128d848112d71f6ab08db05` |
+| Release rollback | `releases/20260810190111`; full pre-editorial rollback `releases/20260807205828` |
+| Backup gần nhất | `shared/backups/20260810210321/{database.sql.gz,uploads.tar.gz}` (`gzip -t`/`tar -tzf` PASS); full backup trước đó `shared/backups/20260810185536/{database.sql.gz,uploads.tar.gz}` |
 | `.env` | `shared/.env` mode 600, ngoài `public_html`, owner đúng |
 | Baseline content | 5 blog, 25 ảnh nguồn, 9 trang editorial/policy publish và 2 sản phẩm thật đã có trước rollout này; không tạo test product/order; promotion tắt |
 | Mốc đạt được | 1–5; chưa đạt commerce launch readiness |
@@ -59,6 +59,20 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 | Workflow | LOCAL/WSL VALIDATE → BUILD → BACKUP IF PRODUCTION WILL CHANGE → DEPLOY → SMOKE → KEEP OR ROLLBACK; GitHub Actions informational only |
 
 Chi tiết: `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md` và `docs/BRAND-MOBILE-REMEDIATION-PLAN.md`.
+
+## GHN connector rollout (2026-08-10)
+
+| Mục | Trạng thái |
+|---|---|
+| Architecture verdict | **BUILD LYLI GHN CONNECTOR**; ShipDepot 1.2.19 bị từ chối do CVE-2025-31866/CWE-862 chưa có patched release; hai plugin GHN lịch sử chỉ dùng làm reference |
+| Runtime | Plugin nội bộ 0.1.0 active trong release `20260810210244`; connector disabled/unconfigured, không có `lyli_ghn*` option, Token, ShopId, provider runtime, live rate hoặc shipment GHN |
+| Address/fee | Manual Create dùng tên Province/Ward hai cấp + `is_new_to_address=true`; live fee deferred vì Toolkit code và GHN WardID v2 chưa có mapping runtime contract ổn định; checkout tiếp tục dùng Toolkit shipping rules |
+| Security | Settings và shipment mutations dùng `manage_woocommerce`, nonce/order validation; Token option không autoload và không render lại; không webhook/public AJAX/REST; không retry create; không tự đổi Woo order status |
+| Owner access | Menu **WooCommerce → Kết nối GHN** đã đăng ký đúng capability và form render/mask Token PASS bằng WP-CLI; production chưa có account `shop_owner`, nên chưa thể handoff credential thật |
+| Smoke | WordPress/WooCommerce/Toolkit/theme vẫn active; Home/Shop/Cart/Checkout/Account/login HTTP 200; checkout còn Province/Ward của Toolkit; `.env` 403, SQL/backup 404, directory listing denied; không lộ PHP warning/fatal |
+| Validation boundary | Code/network-free tests PASS; chưa GHN API E2E vì không có test Token/ShopId. Không tạo vận đơn hoặc giao dịch thật |
+
+Chi tiết và checklist owner: `docs/GHN-INTEGRATION-PREFLIGHT.md`, `docs/GHN-OWNER-SETUP.md`.
 
 ## Storefront color cascade correction (2026-08-10)
 
@@ -91,3 +105,4 @@ Chính sách phê duyệt chung cho lần deploy sau **không** bị suy yếu. 
 - **2026-08-08:** cài WordPress core/WooCommerce language pack `vi`, đặt locale tài khoản vận hành thành `vi` và chuyển language packs sang `shared/languages` để bền qua release. Chi tiết tại `docs/WOOCOMMERCE-VIETNAMESE-2026-08-08.md`.
 - **2026-08-10:** pre-flight docs-only xác nhận Vietnam Store Toolkit exact 1.1.2 resolve qua WPackagist, audit source/default/capability/privacy; founder chốt sáu màu và mobile-first remediation plan. Không đổi production/runtime.
 - **2026-08-10:** triển khai commit `1db61fbcccc92cc9f199ff8423d393a1fe5a1726`, release `20260810145039`: activate Vietnam Store Toolkit 1.1.2, sáu-color `theme.json`, mobile-first CSS/header, DevVN migration guard. Backup `20260810145157`; public functional/security smoke PASS; rendered visual sign-off và tài khoản `shop_owner` thật còn chờ handoff.
+- **2026-08-10:** triển khai GHN connector commit `1d7bb7b93a241eaf4448e8f1e70f5ccc2d0853c6`, release `20260810210244`, backup `20260810210321`; plugin active nhưng connector tắt/chưa cấu hình, không Token/ShopId/rate/shipment; public/security smoke PASS, rollback `20260810190111` giữ nguyên.

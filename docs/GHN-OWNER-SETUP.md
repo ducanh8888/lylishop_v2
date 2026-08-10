@@ -1,6 +1,6 @@
 # GHN owner setup
 
-Trạng thái hiện tại: connector được thiết kế để **tắt và chưa cấu hình** sau deploy. Không có Token, ShopId hoặc vận đơn mẫu trong repo/docs.
+Trạng thái production 2026-08-10: WordPress plugin `lyli-ghn-connector` 0.1.0 đã active trong release `20260810210244`, nhưng connector **tắt và chưa cấu hình**. Không có option cấu hình, Token, ShopId, rate GHN hoặc vận đơn GHN trong runtime/repo/docs. Production cũng chưa có account `shop_owner`; developer phải provision account đúng người trước khi owner cấu hình.
 
 ## Khi shop đã có tài khoản GHN test
 
