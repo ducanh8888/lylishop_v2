@@ -142,6 +142,12 @@ Owner xác nhận saved Token được lấy từ `5sao.ghn.dev`, không phải 
 
 Vì direct request và connector request cùng bị GHN Test từ chối, root cause được phân loại là **GHN staging credential/account provisioning problem**. Không có bằng chứng lỗi settings save, option read, masking hoặc HTTP-header construction; không sửa source. ShopId và shipment lifecycle chỉ được kiểm tra sau khi direct province request trả 200. Owner cần kiểm tra account/shop đã được kích hoạt trong 5Sao staging hoặc cấp lại Token staging, nhập qua wp-admin và không gửi credential qua chat/Git.
 
+### Credential retry and pickup-address gate — 2026-08-11
+
+Token mới PASS direct Province API trên GHN Test (`HTTP/GHN 200`, 65 tỉnh). `v2/shop/all` cũng PASS; saved ShopId khớp store duy nhất của staging account. Không có credential/header defect và không sửa connector source.
+
+Controlled Woo order `145` cùng draft product `144` được tạo riêng với BACS/non-COD và địa chỉ hai cấp, sau đó Preview qua connector xác thực thành công nhưng GHN trả `400 Address convert from fail`. Read-only store response giải thích nguyên nhân: matched store không có cả pickup address legacy (`address`, `ward_code`, `district_id`) lẫn pickup address v2 (`address_v2`, `ward_id_v2`). Không được phép bịa merchant pickup data, nên dừng trước Create/Sync/Print/Cancel. Test order/product đã xóa, shipment metadata không tồn tại, connector trả về disabled/Test và saved staging credential được giữ. Owner phải cấu hình pickup address trong `5sao.ghn.dev`, rồi chạy lại E2E.
+
 ## 11. Primary evidence
 
 - WordPress.org/SVN: `https://wordpress.org/plugins/ship-depot/`, `https://plugins.svn.wordpress.org/ship-depot/trunk/`, `https://wordpress.org/plugins/shipping-viet-nam-woocommerce/`, `https://plugins.svn.wordpress.org/vnshipping-for-woocommerce/`.
