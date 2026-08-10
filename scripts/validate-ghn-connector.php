@@ -35,6 +35,7 @@ function sanitize_text_field($value): string { return trim(strip_tags((string) $
 function sanitize_textarea_field($value): string { return trim(strip_tags((string) $value)); }
 function sanitize_key($value): string { return preg_replace('/[^a-z0-9_\-]/', '', strtolower((string) $value)) ?: ''; }
 function sanitize_file_name($value): string { return preg_replace('/[^A-Za-z0-9._-]/', '-', (string) $value) ?: ''; }
+function esc_url_raw($value): string { return filter_var((string) $value, FILTER_SANITIZE_URL) ?: ''; }
 function absint($value): int { return abs((int) $value); }
 function wp_unslash($value) { return $value; }
 function wp_json_encode($value, int $flags = 0): string { return json_encode($value, $flags | JSON_THROW_ON_ERROR); }
@@ -43,13 +44,14 @@ function wp_remote_retrieve_body(array $response): string { return (string) ($re
 function wp_remote_retrieve_header(array $response, string $name): string { return (string) ($response['headers'][strtolower($name)] ?? ''); }
 function get_option(string $name, $default = false) { return $GLOBALS['lyli_test_options'][$name] ?? $default; }
 function current_user_can(string $capability): bool { return $capability === 'manage_woocommerce' && $GLOBALS['lyli_test_can_manage']; }
-function wp_verify_nonce(string $nonce, string $action): bool { return $GLOBALS['lyli_test_nonce_valid'] && ('lyli_ghn_save_settings' === $action || str_starts_with($action, 'yoohw_vietnam_store_tools_shipping_action_')); }
+function wp_verify_nonce(string $nonce, string $action): bool { return $GLOBALS['lyli_test_nonce_valid'] && ('lyli_ghn_save_settings' === $action || str_starts_with($action, 'yoohw_vietnam_store_tools_shipping_action_') || str_starts_with($action, 'lyli_ghn_shipment_action_')); }
 function wp_parse_url(string $url, int $component = -1) { return -1 === $component ? parse_url($url) : parse_url($url, $component); }
 function remove_accents(string $text): string { return $text; }
 function wc_get_weight($value, string $unit): float { return (float) $value * 1000; }
 function wc_get_dimension($value, string $unit): float { return (float) $value; }
 function wc_price($value): string { return (string) $value; }
 function wp_strip_all_tags($value): string { return strip_tags((string) $value); }
+function WC() { return (object) ['countries' => new class { public function get_states(string $country): array { return ['SG' => 'Thành phố Hồ Chí Minh']; } }]; }
 
 final class Yoohw_Vietnam_Store_Tools_Vietnam_Address_Data
 {
@@ -86,8 +88,9 @@ final class Test_Item
     public function get_product(): ?Test_Product { return $this->product; }
 }
 
-final class Test_Order
+class Test_Order
 {
+    private array $meta = [];
     public function __construct(private string $payment = 'cod', private bool $paid = false, private ?Test_Product $product = null) {}
     public function get_id(): int { return 120; }
     public function get_shipping_address_1(): string { return '12 Nguyễn Huệ'; }
@@ -105,11 +108,28 @@ final class Test_Order
     public function get_total_refunded(): float { return 20000; }
     public function get_customer_note(): string { return 'Gọi trước khi giao'; }
     public function get_items(): array { return [new Test_Item($this->product)]; }
+    public function get_meta(string $key, bool $single = true) { return $this->meta[$key] ?? ''; }
+    public function update_meta_data(string $key, $value): void { $this->meta[$key] = $value; }
+    public function save_meta_data(): void {}
+}
+
+final class Test_Native_Order extends Test_Order
+{
+    public function get_shipping_state(): string { return 'SG'; }
+    public function get_shipping_city(): string { return 'Phường Sài Gòn'; }
 }
 
 $plugin_dir = __DIR__ . '/../web/app/plugins/lyli-ghn-connector';
 require_once $plugin_dir . '/includes/class-settings.php';
 require_once $plugin_dir . '/includes/class-api-client.php';
+require_once $plugin_dir . '/includes/contracts/interface-address-resolver.php';
+require_once $plugin_dir . '/includes/contracts/interface-legacy-shipment-reader.php';
+require_once $plugin_dir . '/includes/domain/class-address.php';
+require_once $plugin_dir . '/includes/woocommerce/class-woo-address-resolver.php';
+require_once $plugin_dir . '/includes/woocommerce/class-composite-address-resolver.php';
+require_once $plugin_dir . '/includes/integrations/vietnam-store-toolkit/class-toolkit-address-resolver.php';
+require_once $plugin_dir . '/includes/integrations/vietnam-store-toolkit/class-toolkit-legacy-shipment-reader.php';
+require_once $plugin_dir . '/includes/woocommerce/class-shipment-repository.php';
 require_once $plugin_dir . '/includes/class-order-mapper.php';
 require_once $plugin_dir . '/includes/class-provider.php';
 require_once $plugin_dir . '/includes/class-print-controller.php';
@@ -139,12 +159,23 @@ $settings = [
 $GLOBALS['lyli_test_options']['lyli_ghn_settings'] = $settings;
 $GLOBALS['lyli_test_options']['lyli_ghn_token'] = 'secret-token';
 
-$mapper = new Lyli\GHN\Order_Mapper();
+$address_resolver = new Lyli\GHN\WooCommerce\Composite_Address_Resolver([
+    new Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Address_Resolver(),
+    new Lyli\GHN\WooCommerce\Woo_Address_Resolver(),
+]);
+$mapper = new Lyli\GHN\Order_Mapper($address_resolver);
+$repository = new Lyli\GHN\WooCommerce\Shipment_Repository(new Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Legacy_Shipment_Reader());
 $payload = $mapper->build_payload(new Test_Order(), $settings);
 check_ghn('Two-level address maps to GHN name mode', is_array($payload)
     && true === $payload['is_new_to_address']
     && 'Phường Tân Định' === $payload['to_ward_name']
     && ! isset($payload['to_district_name']));
+$native_mapper = new Lyli\GHN\Order_Mapper(new Lyli\GHN\WooCommerce\Woo_Address_Resolver());
+$native_payload = $native_mapper->build_payload(new Test_Native_Order(), $settings);
+check_ghn('WooCommerce-native address fallback resolves names', is_array($native_payload)
+    && 'Thành phố Hồ Chí Minh' === $native_payload['to_province_name']
+    && 'Phường Sài Gòn' === $native_payload['to_ward_name']);
+check_ghn('WooCommerce-native fallback rejects unresolved numeric ward', is_wp_error($native_mapper->build_payload(new Test_Order(), $settings)));
 check_ghn('COD is conservative and refund-aware', 200000 === $payload['cod_amount']);
 check_ghn('Insurance value is capped from remaining total policy', 200000 === $payload['insurance_value']);
 check_ghn('Non-COD order never collects COD', 0 === Lyli\GHN\Order_Mapper::cod_amount(new Test_Order('bacs'), $settings));
@@ -181,11 +212,18 @@ $idempotent_client = new Lyli\GHN\Api_Client($settings, 'secret-token', static f
     $idempotent_calls[] = $url;
     return ['response' => ['code' => 200], 'headers' => [], 'body' => json_encode(['code' => 200, 'data' => ['order_code' => 'EXISTING', 'status' => 'ready_to_pick', 'service_type_id' => 2]])];
 });
-$provider = new Lyli\GHN\Provider($idempotent_client, $mapper);
+$provider = new Lyli\GHN\Provider($idempotent_client, $mapper, $repository);
 $shipment = $provider->create_shipment(new Test_Order());
 check_ghn('Existing client_order_code prevents duplicate create', 1 === count($idempotent_calls)
     && str_ends_with($idempotent_calls[0], '/detail-by-client-code')
     && 'EXISTING' === $shipment['tracking_code']);
+check_ghn('Canonical shipment state is connector-owned', 'ghn' === $shipment['provider'] && 'EXISTING' === $shipment['order_code']);
+$legacy_order = new Test_Order();
+$legacy_order->update_meta_data('_vck_shipping_provider', 'lyli_ghn');
+$legacy_order->update_meta_data('_vck_shipping_tracking_code', 'LEGACY123');
+$legacy_order->update_meta_data('_vck_shipping_status_id', 'picked');
+$legacy = $repository->read($legacy_order);
+check_ghn('Legacy Toolkit shipment metadata remains readable', 'LEGACY123' === ($legacy['tracking_code'] ?? '') && 'vietnam-store-toolkit' === ($legacy['legacy_source'] ?? ''));
 check_ghn('GHN status mapping stays separate from Woo status', 'Đã giao hàng' === Lyli\GHN\Provider::status_label('delivered'));
 
 $test_print_client = new Lyli\GHN\Api_Client($settings, 'secret-token');
@@ -213,10 +251,11 @@ $print_transport = static function (string $url, array $args) use (&$print_calls
     $print_calls[] = [$url, $args];
     return ['response' => ['code' => 200], 'headers' => [], 'body' => json_encode(['code' => 200, 'data' => ['token' => 'temporary-print-token']])];
 };
-$print_provider = new Lyli\GHN\Provider(new Lyli\GHN\Api_Client($settings, 'secret-token', $print_transport), $mapper);
-$GLOBALS['lyli_test_shipping_data'] = ['provider' => 'lyli_ghn', 'tracking_code' => 'GHN123'];
+$print_provider = new Lyli\GHN\Provider(new Lyli\GHN\Api_Client($settings, 'secret-token', $print_transport), $mapper, $repository);
+$print_order = new Test_Order();
+$repository->save($print_order, ['order_code' => 'GHN123', 'tracking_code' => 'GHN123']);
 $options_before_print = $GLOBALS['lyli_test_options'];
-$print_result = $print_provider->print_shipment(new Test_Order());
+$print_result = $print_provider->print_shipment($print_order);
 check_ghn('Print token is not persisted', $options_before_print === $GLOBALS['lyli_test_options']);
 check_ghn('Print document is not fetched server-side', 1 === count($print_calls)
     && str_ends_with($print_calls[0][0], '/v2/a5/gen-token')
@@ -235,11 +274,19 @@ check_ghn('Settings reject invalid nonce', is_wp_error(Lyli\GHN\Settings::author
 check_ghn('Print rejects invalid nonce', is_wp_error(Lyli\GHN\Print_Controller::authorize(120, 'invalid')));
 
 $owned_source = '';
-foreach (glob($plugin_dir . '/**/*.php') ?: [] as $file) { $owned_source .= file_get_contents($file); }
+$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($plugin_dir));
+foreach ($iterator as $file) { if ($file->isFile() && 'php' === $file->getExtension()) { $owned_source .= file_get_contents($file->getPathname()); } }
 $owned_source .= file_get_contents($plugin_dir . '/lyli-ghn-connector.php');
 check_ghn('No unauthenticated AJAX or webhook surface', ! str_contains($owned_source, 'wp_ajax_nopriv') && ! str_contains($owned_source, 'register_rest_route'));
 check_ghn('No live checkout rate method in V1', ! str_contains($owned_source, 'WC_Shipping_Method'));
 check_ghn('Token is never rendered back into input value', str_contains($owned_source, 'name="lyli_ghn[token]" value=""'));
 check_ghn('Print opens external page without opener or referrer', str_contains($owned_source, "setAttribute('rel', 'noopener noreferrer')"));
+$core_source = file_get_contents($plugin_dir . '/includes/class-api-client.php')
+    . file_get_contents($plugin_dir . '/includes/class-order-mapper.php')
+    . file_get_contents($plugin_dir . '/includes/class-provider.php')
+    . file_get_contents($plugin_dir . '/includes/woocommerce/class-shipment-repository.php')
+    . file_get_contents($plugin_dir . '/includes/domain/class-address.php');
+check_ghn('GHN domain and persistence contain no Toolkit import', false === stripos($core_source, 'yoohw'));
+check_ghn('Standalone Woo admin uses capability and nonce authorization', str_contains($owned_source, 'lyli_ghn_shipment_action_') && str_contains($owned_source, "current_user_can('manage_woocommerce')"));
 
 exit($failures > 0 ? 1 : 0);

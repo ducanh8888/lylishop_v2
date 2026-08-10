@@ -2,8 +2,15 @@
 
 namespace Lyli\GHN;
 
+use Lyli\GHN\Contracts\Address_Resolver;
+use Lyli\GHN\Domain\Address;
+
 final class Order_Mapper
 {
+    public function __construct(private Address_Resolver $address_resolver)
+    {
+    }
+
     /** @param object $order @param array<string,mixed> $settings */
     public function build_payload($order, array $settings)
     {
@@ -53,7 +60,6 @@ final class Order_Mapper
         if ('cod_gateway_only' !== ($settings['cod_policy'] ?? 'disabled')) {
             return 0;
         }
-
         if ('cod' !== (string) $order->get_payment_method() || $order->is_paid()) {
             return 0;
         }
@@ -91,7 +97,6 @@ final class Order_Mapper
         if (min($values) < 1) {
             return new \WP_Error('lyli_ghn_missing_package', __('Thiếu khối lượng hoặc kích thước kiện hàng GHN.', 'lyli-ghn-connector'));
         }
-
         if ($values['weight'] > 50000 || max($values['length'], $values['width'], $values['height']) > 200) {
             return new \WP_Error('lyli_ghn_package_limit', __('Kiện hàng vượt giới hạn GHN đã cấu hình.', 'lyli-ghn-connector'));
         }
@@ -102,52 +107,15 @@ final class Order_Mapper
     /** @param object $order */
     private function destination($order)
     {
-        $has_shipping = '' !== trim((string) $order->get_shipping_address_1())
-            || '' !== trim((string) $order->get_shipping_first_name());
-        $prefix = $has_shipping ? 'shipping' : 'billing';
-        $get = static function (string $field) use ($order, $prefix): string {
-            $method = 'get_' . $prefix . '_' . $field;
-            return method_exists($order, $method) ? trim((string) $order->{$method}()) : '';
-        };
-
-        $country = strtoupper($get('country'));
-        if ('' !== $country && 'VN' !== $country) {
-            return new \WP_Error('lyli_ghn_country', __('GHN connector V1 chỉ hỗ trợ địa chỉ Việt Nam.', 'lyli-ghn-connector'));
+        $address = $this->address_resolver->resolve($order);
+        if (is_wp_error($address)) {
+            return $address;
+        }
+        if (! $address instanceof Address) {
+            return new \WP_Error('lyli_ghn_address_contract', __('Address resolver trả về dữ liệu không hợp lệ.', 'lyli-ghn-connector'));
         }
 
-        $province_code = $get('state');
-        $ward_code = $get('city');
-        if ('' === $province_code || '' === $ward_code || ! class_exists('Yoohw_Vietnam_Store_Tools_Vietnam_Address_Data')) {
-            return new \WP_Error('lyli_ghn_address_codes', __('Đơn hàng thiếu Tỉnh/Thành hoặc Phường/Xã theo Vietnam Store Toolkit.', 'lyli-ghn-connector'));
-        }
-
-        if (! \Yoohw_Vietnam_Store_Tools_Vietnam_Address_Data::province_exists($province_code)
-            || ! \Yoohw_Vietnam_Store_Tools_Vietnam_Address_Data::ward_exists($ward_code, $province_code)) {
-            return new \WP_Error('lyli_ghn_address_unknown', __('Mã Tỉnh/Thành hoặc Phường/Xã không thuộc dữ liệu hai cấp hiện tại.', 'lyli-ghn-connector'));
-        }
-
-        $province_name = \Yoohw_Vietnam_Store_Tools_Vietnam_Address_Data::get_province_name($province_code);
-        $ward_name = \Yoohw_Vietnam_Store_Tools_Vietnam_Address_Data::get_ward_name($ward_code, $province_code);
-        $street = trim(implode(', ', array_filter([$get('address_1'), $get('address_2')])));
-        $name = trim($get('first_name') . ' ' . $get('last_name'));
-        $phone = $get('phone');
-        if ('' === $phone && 'shipping' === $prefix && method_exists($order, 'get_billing_phone')) {
-            $phone = trim((string) $order->get_billing_phone());
-        }
-
-        $normalized_phone = preg_replace('/[^0-9+]/', '', $phone) ?: '';
-        if ('' === $name || '' === $normalized_phone || '' === $street) {
-            return new \WP_Error('lyli_ghn_address_incomplete', __('Đơn hàng thiếu tên, số điện thoại hoặc địa chỉ đường.', 'lyli-ghn-connector'));
-        }
-
-        return [
-            'to_name' => mb_substr(sanitize_text_field($name), 0, 1024),
-            'to_phone' => mb_substr($normalized_phone, 0, 20),
-            'to_address' => mb_substr(sanitize_text_field($street . ', ' . $ward_name . ', ' . $province_name), 0, 1024),
-            'to_ward_name' => sanitize_text_field($ward_name),
-            'to_province_name' => sanitize_text_field($province_name),
-            'is_new_to_address' => true,
-        ];
+        return $address->to_ghn_payload();
     }
 
     /** @param object $order */

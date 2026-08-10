@@ -2,21 +2,38 @@
 
 namespace Lyli\GHN;
 
+use Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Address_Resolver;
+use Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Adapter;
+use Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Legacy_Shipment_Reader;
+use Lyli\GHN\WooCommerce\Composite_Address_Resolver;
+use Lyli\GHN\WooCommerce\Customer_Tracking;
+use Lyli\GHN\WooCommerce\Shipment_Repository;
+use Lyli\GHN\WooCommerce\Standalone_Admin;
+use Lyli\GHN\WooCommerce\Woo_Address_Resolver;
+
 final class Plugin
 {
     private static ?Provider $provider = null;
+    private static ?Shipment_Repository $shipments = null;
 
     public static function init(): void
     {
         Settings::init();
-
-        if (! class_exists('WooCommerce') || ! class_exists('Yoohw_Vietnam_Store_Tools_Shipping')) {
+        if (! class_exists('WooCommerce')) {
             add_action('admin_notices', [self::class, 'dependency_notice']);
             return;
         }
 
-        add_filter('yoohw_vietnam_store_tools_shipping_providers', [self::class, 'register_provider']);
-        Print_Controller::init();
+        $provider = self::provider();
+        $toolkit_supported = Toolkit_Adapter::is_supported();
+        if (null !== $provider && $toolkit_supported) {
+            (new Toolkit_Adapter($provider))->init();
+        } elseif (null !== $provider) {
+            (new Standalone_Admin($provider, self::shipments()))->init();
+        }
+        if (! $toolkit_supported) {
+            (new Customer_Tracking(self::shipments()))->init();
+        }
     }
 
     public static function provider(): ?Provider
@@ -25,44 +42,35 @@ final class Plugin
         if (! Settings::is_ready($settings)) {
             return null;
         }
-
         if (null === self::$provider) {
-            self::$provider = new Provider(new Api_Client($settings, Settings::token()), new Order_Mapper());
+            $resolvers = [];
+            if (Toolkit_Address_Resolver::is_supported()) {
+                $resolvers[] = new Toolkit_Address_Resolver();
+            }
+            $resolvers[] = new Woo_Address_Resolver();
+            self::$provider = new Provider(
+                new Api_Client($settings, Settings::token()),
+                new Order_Mapper(new Composite_Address_Resolver($resolvers)),
+                self::shipments()
+            );
         }
 
         return self::$provider;
     }
 
-    /** @param array<string,array<string,mixed>> $providers */
-    public static function register_provider(array $providers): array
+    public static function shipments(): Shipment_Repository
     {
-        $provider = self::provider();
-        if (null === $provider) {
-            return $providers;
+        if (null === self::$shipments) {
+            self::$shipments = new Shipment_Repository(new Toolkit_Legacy_Shipment_Reader());
         }
 
-        $providers['lyli_ghn'] = [
-            'id' => 'lyli_ghn',
-            'name' => __('GHN (Lyli)', 'lyli-ghn-connector'),
-            'supports' => ['create', 'sync', 'cancel', 'print'],
-            'render_create_fields' => [$provider, 'render_create_fields'],
-            'create_shipment' => [$provider, 'create_shipment'],
-            'sync_shipment' => [$provider, 'sync_shipment'],
-            'cancel_shipment' => [$provider, 'cancel_shipment'],
-            'print_shipment' => [$provider, 'print_shipment'],
-        ];
-
-        return $providers;
+        return self::$shipments;
     }
 
     public static function dependency_notice(): void
     {
-        if (! current_user_can('activate_plugins')) {
-            return;
+        if (current_user_can('activate_plugins')) {
+            echo '<div class="notice notice-error"><p>' . esc_html__('GHN Connector requires WooCommerce.', 'lyli-ghn-connector') . '</p></div>';
         }
-
-        echo '<div class="notice notice-error"><p>';
-        echo esc_html__('Lyli GHN Connector requires WooCommerce and Vietnam Store Toolkit.', 'lyli-ghn-connector');
-        echo '</p></div>';
     }
 }

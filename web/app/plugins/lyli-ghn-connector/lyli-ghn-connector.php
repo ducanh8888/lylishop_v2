@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Lyli GHN Connector
- * Description: Repo-controlled GHN shipment connector for Vietnam Store Toolkit.
- * Version: 0.1.1
+ * Description: Repo-controlled GHN shipment connector for WooCommerce with optional integration adapters.
+ * Version: 0.2.0
  * Requires at least: 7.0
  * Requires PHP: 8.3
- * Requires Plugins: woocommerce, yoohw-vietnam-store-tools
+ * Requires Plugins: woocommerce
  * Author: Lyli Shop
  * License: Proprietary
  * Text Domain: lyli-ghn-connector
@@ -17,15 +17,26 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-const VERSION = '0.1.1';
+const VERSION = '0.2.0';
 const SETTINGS_OPTION = 'lyli_ghn_settings';
 const TOKEN_OPTION = 'lyli_ghn_token';
 
 require_once __DIR__ . '/includes/class-settings.php';
 require_once __DIR__ . '/includes/class-api-client.php';
+require_once __DIR__ . '/includes/contracts/interface-address-resolver.php';
+require_once __DIR__ . '/includes/contracts/interface-legacy-shipment-reader.php';
+require_once __DIR__ . '/includes/domain/class-address.php';
+require_once __DIR__ . '/includes/woocommerce/class-woo-address-resolver.php';
+require_once __DIR__ . '/includes/woocommerce/class-composite-address-resolver.php';
+require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-address-resolver.php';
+require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-legacy-shipment-reader.php';
+require_once __DIR__ . '/includes/woocommerce/class-shipment-repository.php';
 require_once __DIR__ . '/includes/class-order-mapper.php';
 require_once __DIR__ . '/includes/class-provider.php';
 require_once __DIR__ . '/includes/class-print-controller.php';
+require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-adapter.php';
+require_once __DIR__ . '/includes/woocommerce/class-standalone-admin.php';
+require_once __DIR__ . '/includes/woocommerce/class-customer-tracking.php';
 require_once __DIR__ . '/includes/class-plugin.php';
 
 add_action('plugins_loaded', [Plugin::class, 'init'], 30);
