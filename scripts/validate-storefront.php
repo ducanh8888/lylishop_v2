@@ -99,6 +99,7 @@ $approved_exempt = [
     'woocommerce' => true, 'fluent-smtp' => true, 'simple-history' => true,
     'updraftplus' => true, 'wp-2fa' => true, 'wp-seopress' => true, 'wp-super-cache' => true,
     'yoohw-vietnam-store-tools' => true,
+    'lyli-ghn-connector' => true,
 ];
 $unapproved = [];
 foreach (glob("$root/web/app/plugins/*", GLOB_ONLYDIR) as $dir) {
@@ -352,6 +353,26 @@ check('Toolkit migration guard removes owner tool entries', str_contains($toolki
 check('Toolkit migration AJAX is denied server-side for shop_owner', str_contains($toolkit_policy_php, "const DEVVN_AJAX_ACTION = 'wp_ajax_yoohw_vietnam_store_tools_devvn_migration_step'") && str_contains($toolkit_policy_php, 'add_action(DEVVN_AJAX_ACTION') && str_contains($toolkit_policy_php, 'wp_send_json_error'));
 check('Toolkit migration card is hidden from normal owner navigation', str_contains($toolkit_policy_php, "admin_head-toplevel_page_yoohw-vietnam-store") && str_contains($toolkit_policy_php, 'yoohw-vietnam-store__card:last-child'));
 check('Toolkit policy does not grant manage_options', ! str_contains($toolkit_policy_php, 'manage_options'));
+
+/* Repo-controlled GHN connector: manual shipment lifecycle only, disabled until owner configures it. */
+$ghn_dir = "$root/web/app/plugins/lyli-ghn-connector";
+$ghn_main_php = (string) file_get_contents("$ghn_dir/lyli-ghn-connector.php");
+$ghn_plugin_php = (string) file_get_contents("$ghn_dir/includes/class-plugin.php");
+$ghn_settings_php = (string) file_get_contents("$ghn_dir/includes/class-settings.php");
+$ghn_client_php = (string) file_get_contents("$ghn_dir/includes/class-api-client.php");
+$ghn_mapper_php = (string) file_get_contents("$ghn_dir/includes/class-order-mapper.php");
+$ghn_provider_php = (string) file_get_contents("$ghn_dir/includes/class-provider.php");
+$ghn_owned_php = $ghn_main_php . $ghn_plugin_php . $ghn_settings_php . $ghn_client_php . $ghn_mapper_php . $ghn_provider_php;
+check('Lyli GHN connector is repo-controlled', str_contains($ghn_main_php, 'Plugin Name: Lyli GHN Connector'));
+check('GHN connector uses Toolkit provider framework', str_contains($ghn_plugin_php, 'yoohw_vietnam_store_tools_shipping_providers'));
+check('GHN owner settings use manage_woocommerce', str_contains($ghn_settings_php, "current_user_can('manage_woocommerce')") && ! str_contains($ghn_settings_php, 'manage_options'));
+check('GHN token is never rendered back', str_contains($ghn_settings_php, 'name="lyli_ghn[token]" value=""'));
+check('GHN client allowlists official gateways', str_contains($ghn_client_php, 'dev-online-gateway.ghn.vn') && str_contains($ghn_client_php, 'online-gateway.ghn.vn'));
+check('GHN connector uses two-level name-mode address', str_contains($ghn_mapper_php, "'is_new_to_address' => true") && str_contains($ghn_mapper_php, "'to_ward_name'"));
+check('GHN mutations have defense-in-depth capability check', str_contains($ghn_provider_php, "current_user_can('manage_woocommerce')"));
+check('GHN V1 exposes no unauthenticated webhook/AJAX', ! str_contains($ghn_owned_php, 'register_rest_route') && ! str_contains($ghn_owned_php, 'wp_ajax_nopriv'));
+check('GHN V1 does not inject live checkout rates', ! str_contains($ghn_owned_php, 'WC_Shipping_Method'));
+check('GHN connector focused validator exists', is_file("$root/scripts/validate-ghn-connector.php"));
 
 /* composer.json validate script updated? */
 check(
