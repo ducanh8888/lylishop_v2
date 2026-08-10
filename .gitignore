@@ -23,6 +23,8 @@ Lyli-Shop-90-Day-Project-Management-Workbook.xlsx
 !/web/app/plugins/.gitkeep
 !/web/app/plugins/lyli-ghn-connector/
 !/web/app/plugins/lyli-ghn-connector/**
+!/web/app/plugins/vietqr-bacs-for-woocommerce/
+!/web/app/plugins/vietqr-bacs-for-woocommerce/**
 /web/app/themes/botiga/
 /web/app/themes/storefront/
 /vendor/
