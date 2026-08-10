@@ -148,6 +148,12 @@ Token mới PASS direct Province API trên GHN Test (`HTTP/GHN 200`, 65 tỉnh).
 
 Controlled Woo order `145` cùng draft product `144` được tạo riêng với BACS/non-COD và địa chỉ hai cấp, sau đó Preview qua connector xác thực thành công nhưng GHN trả `400 Address convert from fail`. Read-only store response giải thích nguyên nhân: matched store không có cả pickup address legacy (`address`, `ward_code`, `district_id`) lẫn pickup address v2 (`address_v2`, `ward_id_v2`). Không được phép bịa merchant pickup data, nên dừng trước Create/Sync/Print/Cancel. Test order/product đã xóa, shipment metadata không tồn tại, connector trả về disabled/Test và saved staging credential được giữ. Owner phải cấu hình pickup address trong `5sao.ghn.dev`, rồi chạy lại E2E.
 
+### Shipment lifecycle retry — 2026-08-11
+
+Sau khi owner bổ sung pickup address, direct Token/ShopId/store probes và Preview đều PASS. Controlled BACS/non-COD order `147` tạo đúng một GHN Test shipment `L89VMY`; Toolkit lưu provider/tracking/status/fee/COD đúng. Create lần hai trả cùng tracking code, `detail-by-client-code` cũng trả `L89VMY`; Sync giữ tracking và Woo status, đồng thời cập nhật `last_synced`. Cancel rồi Sync xác nhận status `cancel`; Woo order không bị đổi trạng thái. Shipment đã hủy và order `147`/draft product `146` đã xóa.
+
+Print-token API PASS và token không persist, nhưng official GHN Test print URL trả HTTP 200 `text/html` (16.862 bytes) chứa script/style và external GHN/CDN assets, không phải PDF. Connector từ chối bằng `lyli_ghn_print_type` đúng security policy; không được nới gate để proxy raw third-party HTML dưới origin Lyli. Print cần task source riêng để thiết kế allowlisted redirect hoặc static sanitization phù hợp Toolkit contract. Connector trở về disabled/Test; live rate/webhook/COD production vẫn tắt. Saved API Token không xuất hiện trong admin/frontend/REST/options khác/order meta; public smoke PASS.
+
 ## 11. Primary evidence
 
 - WordPress.org/SVN: `https://wordpress.org/plugins/ship-depot/`, `https://plugins.svn.wordpress.org/ship-depot/trunk/`, `https://wordpress.org/plugins/shipping-viet-nam-woocommerce/`, `https://plugins.svn.wordpress.org/vnshipping-for-woocommerce/`.

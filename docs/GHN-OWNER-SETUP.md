@@ -1,6 +1,6 @@
 # GHN owner setup
 
-Trạng thái production cập nhật 2026-08-11: WordPress plugin `lyli-ghn-connector` 0.1.0 active trong release `20260810210244`; connector đang **tắt ở môi trường Test** và saved Token/ShopId đều hợp lệ. Blocker hiện tại là store trong `5sao.ghn.dev` chưa có địa chỉ lấy hàng: cả address legacy lẫn v2 đều trống, nên Preview trả `Address convert from fail`. Owner phải cập nhật pickup address trực tiếp trong 5Sao rồi yêu cầu chạy lại E2E. Không chuyển environment sang Production và không gửi Token qua chat.
+Trạng thái production cập nhật 2026-08-11: WordPress plugin `lyli-ghn-connector` 0.1.0 active trong release `20260810210244`; connector đang **tắt ở môi trường Test**. Token, ShopId, pickup address, Preview, Create, idempotency, Detail, Sync và Cancel đã PASS trên GHN staging; test shipment đã hủy và test data đã xóa. Print còn bị chặn an toàn vì GHN trả active HTML thay vì PDF. Chưa bật production cho tới khi developer triển khai và xác minh print flow an toàn. Không gửi Token qua chat.
 
 ## Khi shop đã có tài khoản GHN test
 
