@@ -12,6 +12,8 @@
 
 > **Amendment 2026-08-04 — quyết định theme V1:** Theme cha chốt là **Botiga Free** (không phải Storefront). Kiến trúc classic/hybrid, `shop-child` làm child theme, Classic Cart/Checkout giữ nguyên, không dùng Full Site Editing làm kiến trúc chính cho V1. Botiga Pro **không được phép mua/dùng**. Fallback: Blocksy Free rồi tới Storefront, chỉ khi có FAIL không thể khắc phục bằng cấu hình/hook nhỏ/CSS/patch tương thích — xem `docs/THEME-DECISION.md`, `docs/THEME-IMPLEMENTATION-PLAN.md`, `docs/THEME-COMPATIBILITY-GATE.md`. §3.1 bên dưới đã cập nhật theo quyết định này; nội dung Storefront cũ được giữ lại có đánh dấu để biết lý do thay đổi.
 
+> **Amendment 2026-08-11 — source decoupling, chưa deploy:** main có GHN connector 0.2.0 độc lập trên WooCommerce với Toolkit adapter tùy chọn và plugin generic VietQR BACS 0.1.0. Production vẫn ở GHN 0.1.1 + Toolkit 1.1.2; payment/shipping/runtime chưa đổi. Toolkit Composer package được giữ cho address fields/dataset và shipping rules cho tới controlled cutover. Xem `docs/VIETNAM-TOOLKIT-DECOUPLING.md`.
+
 > **Amendment 2026-08-10 — deployment gate và commerce/UI plan:** Workflow hiện hành là **LOCAL/WSL VALIDATE → BUILD → BACKUP IF PRODUCTION WILL CHANGE → DEPLOY → SMOKE → KEEP OR ROLLBACK**. GitHub Actions informational only. Vietnam Store Toolkit 1.1.2 đã pre-flight xong nhưng chưa deployed; VietQR/BACS là transfer UI thủ công V1, SePay **DEFERRED / OPTIONAL**. Sáu màu founder-approved và mobile-first remediation đang **PLANNED**; xem hai pre-flight plan trong `docs/`.
 
 ---
