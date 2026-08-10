@@ -35,8 +35,8 @@
 .editor-styles-wrapper .lyli-final-cta { border: 1px solid var(--lyli-color-border); background: var(--lyli-color-lavender); }
 .editor-styles-wrapper .wp-element-button { min-height: 44px; background: var(--lyli-color-primary); color: var(--lyli-color-warm-white); border-radius: 999px; font-weight: 500; }
 .editor-styles-wrapper .wp-element-button:hover { background: var(--lyli-color-action-hover); color: var(--lyli-color-warm-white); }
-.editor-styles-wrapper .wp-block-button.is-style-outline .wp-element-button { background: transparent; color: var(--lyli-color-primary); border-color: var(--lyli-color-primary); }
-.editor-styles-wrapper .wp-block-button.is-style-outline .wp-element-button:hover { background: var(--lyli-color-cream); color: var(--lyli-color-primary); border-color: var(--lyli-color-primary); }
+.editor-styles-wrapper .wp-block-button.is-style-outline .wp-element-button:not(.has-background):not(.has-text-color) { background: transparent; color: var(--lyli-color-primary); border-color: var(--lyli-color-primary); }
+.editor-styles-wrapper .wp-block-button.is-style-outline:hover .wp-element-button:not(.has-background):not(.has-text-color) { background: var(--lyli-color-cream); color: var(--lyli-color-primary); border-color: var(--lyli-color-primary); }
 .editor-styles-wrapper .lyli-category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .editor-styles-wrapper .lyli-category-card { min-width: 0; border: 1px solid var(--lyli-color-border); border-radius: 16px; padding: 16px; background: var(--lyli-color-warm-white); }
 .editor-styles-wrapper .lyli-category-card:nth-child(even) { background: var(--lyli-color-cream); }

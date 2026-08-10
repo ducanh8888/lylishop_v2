@@ -294,13 +294,12 @@ form {
     transform: translateY(-1px);
     box-shadow: 0 8px 18px rgba(122, 59, 23, 0.16);
 }
-.is-style-outline > .wp-block-button__link {
+.wp-block-button.is-style-outline > .wp-block-button__link:not(.has-background):not(.has-text-color) {
     background: transparent;
     color: var(--lyli-color-primary);
     border-color: var(--lyli-color-primary);
 }
-.wp-block-button.is-style-outline > .wp-block-button__link:hover,
-.wp-block-button.is-style-outline:hover > .wp-block-button__link {
+.wp-block-button.is-style-outline:hover > .wp-block-button__link:not(.has-background):not(.has-text-color) {
     background: var(--lyli-color-cream);
     color: var(--lyli-color-primary);
     border-color: var(--lyli-color-primary);
