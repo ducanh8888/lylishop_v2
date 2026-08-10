@@ -136,6 +136,12 @@ Owner đã lưu Token/ShopId và bật connector, nhưng environment ban đầu 
 
 Không tiếp tục Preview/Create/Sync/Print/Cancel vì credential gate chưa PASS; Woo test order và GHN shipment không được tạo. Connector vẫn ở Test, COD disabled, live fee/webhook disabled. Secret audit PASS: Token không xuất hiện trong admin HTML, frontend, REST index, log, order meta, source hoặc option khác; option Token không autoload. Permission runtime cho Settings/Create/Sync/Cancel/Print và invalid-nonce denial PASS. 18 network-free checks cùng 7 runtime error/parser checks đều PASS.
 
+### Direct Token diagnosis update — 2026-08-11
+
+Owner xác nhận saved Token được lấy từ `5sao.ghn.dev`, không phải production. Để tách connector khỏi phép thử, server gọi trực tiếp `GET https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province` bằng WordPress HTTP API với đúng saved Token và không có ShopId/header connector khác. Kết quả: TLS/transport thành công, HTTP `401`, GHN code `401`, sanitized message `Token is not valid`, latency 259 ms; Token không được in/log.
+
+Vì direct request và connector request cùng bị GHN Test từ chối, root cause được phân loại là **GHN staging credential/account provisioning problem**. Không có bằng chứng lỗi settings save, option read, masking hoặc HTTP-header construction; không sửa source. ShopId và shipment lifecycle chỉ được kiểm tra sau khi direct province request trả 200. Owner cần kiểm tra account/shop đã được kích hoạt trong 5Sao staging hoặc cấp lại Token staging, nhập qua wp-admin và không gửi credential qua chat/Git.
+
 ## 11. Primary evidence
 
 - WordPress.org/SVN: `https://wordpress.org/plugins/ship-depot/`, `https://plugins.svn.wordpress.org/ship-depot/trunk/`, `https://wordpress.org/plugins/shipping-viet-nam-woocommerce/`, `https://plugins.svn.wordpress.org/vnshipping-for-woocommerce/`.

@@ -1,6 +1,6 @@
 # GHN owner setup
 
-Trạng thái production 2026-08-10: WordPress plugin `lyli-ghn-connector` 0.1.0 active trong release `20260810210244`; connector đang **bật ở môi trường Test**, Token và ShopId có mặt nhưng không được ghi vào docs. Credential probe bị GHN staging từ chối với `Token is not valid`, nên chưa có Woo test order, rate hoặc vận đơn GHN. Owner phải thay bằng credential dành đúng cho GHN Test rồi yêu cầu chạy lại E2E. Không chuyển environment sang Production.
+Trạng thái production cập nhật 2026-08-11: WordPress plugin `lyli-ghn-connector` 0.1.0 active trong release `20260810210244`; connector đang **bật ở môi trường Test**, Token và ShopId có mặt nhưng không được ghi vào docs. Owner xác nhận Token lấy từ `5sao.ghn.dev`, tuy nhiên direct test không qua connector tới GHN staging Province API vẫn trả `Token is not valid`. Đây là vấn đề credential/account provisioning phía GHN staging; chưa có Woo test order, rate hoặc vận đơn GHN. Owner cần kiểm tra 5Sao account/shop activation hoặc cấp lại Token staging rồi yêu cầu chạy lại E2E. Không chuyển environment sang Production và không gửi Token qua chat.
 
 ## Khi shop đã có tài khoản GHN test
 
