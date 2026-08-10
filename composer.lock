@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b4f7e6b39f89895297c0c488482c091",
+    "content-hash": "b58c1bbd1512702c30470dc89e854599",
     "packages": [
         {
             "name": "composer/installers",
@@ -1125,6 +1125,24 @@
             },
             "type": "wordpress-plugin",
             "homepage": "https://wordpress.org/plugins/wp-super-cache/"
+        },
+        {
+            "name": "wpackagist-plugin/yoohw-vietnam-store-tools",
+            "version": "1.1.2",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/yoohw-vietnam-store-tools/",
+                "reference": "tags/1.1.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/yoohw-vietnam-store-tools.1.1.2.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/yoohw-vietnam-store-tools/"
         },
         {
             "name": "wpackagist-theme/botiga",

@@ -1,13 +1,17 @@
 .editor-styles-wrapper {
     --lyli-color-primary: var(--wp--preset--color--lyli-primary);
-    --lyli-color-secondary: var(--wp--preset--color--lyli-secondary);
+    --lyli-color-warm-white: var(--wp--preset--color--lyli-warm-white);
+    --lyli-color-cream: var(--wp--preset--color--lyli-cream);
+    --lyli-color-blush: var(--wp--preset--color--lyli-blush);
+    --lyli-color-sage: var(--wp--preset--color--lyli-sage);
+    --lyli-color-lavender: var(--wp--preset--color--lyli-lavender);
     --lyli-color-text: var(--wp--preset--color--lyli-text);
     --lyli-color-muted: var(--wp--preset--color--lyli-text-muted);
     --lyli-color-border: var(--wp--preset--color--lyli-border);
-    --lyli-color-surface-soft: var(--wp--preset--color--lyli-surface-soft);
     font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
     font-weight: 400;
     color: var(--lyli-color-text);
+    background: var(--lyli-color-warm-white);
     padding-inline: clamp(16px, 3vw, 40px);
 }
 
@@ -21,10 +25,23 @@
 }
 
 .editor-styles-wrapper .wp-block[data-align="wide"] { max-width: 1140px; }
-.editor-styles-wrapper .lyli-pattern { margin-block: 48px; }
-.editor-styles-wrapper .lyli-hero,
-.editor-styles-wrapper .lyli-custom-cta,
-.editor-styles-wrapper .lyli-final-cta { border: 1px solid var(--lyli-color-border); }
-.editor-styles-wrapper .wp-element-button { background: var(--lyli-color-primary); border-radius: 999px; font-weight: 500; }
-.editor-styles-wrapper .lyli-category-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
-.editor-styles-wrapper .lyli-category-card { border: 1px solid var(--lyli-color-border); border-radius: 16px; padding: 20px; }
+.editor-styles-wrapper .lyli-pattern { margin-block: clamp(36px, 7vw, 72px); }
+.editor-styles-wrapper .lyli-hero { border: 1px solid var(--lyli-color-border); background: linear-gradient(135deg, var(--lyli-color-warm-white), var(--lyli-color-cream) 72%, var(--lyli-color-blush)); }
+.editor-styles-wrapper .lyli-hero-visual { background: var(--lyli-color-lavender); }
+.editor-styles-wrapper .lyli-custom-cta { border: 1px solid var(--lyli-color-border); background: var(--lyli-color-blush); }
+.editor-styles-wrapper .lyli-usp-section { background: var(--lyli-color-cream); }
+.editor-styles-wrapper .lyli-info-card { background: var(--lyli-color-warm-white); }
+.editor-styles-wrapper .lyli-story-visual { background: var(--lyli-color-sage); }
+.editor-styles-wrapper .lyli-final-cta { border: 1px solid var(--lyli-color-border); background: var(--lyli-color-lavender); }
+.editor-styles-wrapper .wp-element-button { min-height: 44px; background: var(--lyli-color-primary); color: var(--lyli-color-warm-white); border-radius: 999px; font-weight: 500; }
+.editor-styles-wrapper .lyli-category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.editor-styles-wrapper .lyli-category-card { min-width: 0; border: 1px solid var(--lyli-color-border); border-radius: 16px; padding: 16px; background: var(--lyli-color-warm-white); }
+.editor-styles-wrapper .lyli-category-card:nth-child(even) { background: var(--lyli-color-cream); }
+
+@media (min-width: 700px) {
+    .editor-styles-wrapper .lyli-category-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1025px) {
+    .editor-styles-wrapper .lyli-category-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+}

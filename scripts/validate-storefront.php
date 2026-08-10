@@ -50,6 +50,7 @@ $required_theme_files = [
     'web/app/themes/shop-child/inc/footer.php',
     'web/app/themes/shop-child/inc/accessibility.php',
     'web/app/themes/shop-child/inc/block-patterns.php',
+    'web/app/themes/shop-child/inc/mobile-header.php',
     'web/app/themes/shop-child/inc/woocommerce.php',
     'web/app/mu-plugins/lyli-site-settings/lyli-site-settings.php',
     'web/app/mu-plugins/lyli-site-settings/inc/settings-page.php',
@@ -58,6 +59,7 @@ $required_theme_files = [
     'web/app/mu-plugins/lyli-editorial-import/lyli-editorial-import.php',
     'web/app/mu-plugins/lyli-editorial-import/inc/command.php',
     'web/app/mu-plugins/lyli-editorial-import/data/editorial-content.json',
+    'web/app/mu-plugins/site-policy/inc/vietnam-toolkit.php',
     'web/app/mu-plugins/bedrock-autoloader.php',
 ];
 foreach ($required_theme_files as $rel) {
@@ -95,6 +97,7 @@ $approved_exempt = [
     'ai-engine' => true,
     'woocommerce' => true, 'fluent-smtp' => true, 'simple-history' => true,
     'updraftplus' => true, 'wp-2fa' => true, 'wp-seopress' => true, 'wp-super-cache' => true,
+    'yoohw-vietnam-store-tools' => true,
 ];
 $unapproved = [];
 foreach (glob("$root/web/app/plugins/*", GLOB_ONLYDIR) as $dir) {
@@ -222,6 +225,36 @@ check(
         && ($theme_json['styles']['elements']['heading']['typography']['fontWeight'] ?? '') === '600'
         && ($theme_json['styles']['elements']['button']['typography']['fontWeight'] ?? '') === '500'
 );
+$palette = $theme_json['settings']['color']['palette'] ?? [];
+$palette_by_slug = [];
+foreach ($palette as $color) {
+    if (isset($color['slug'])) {
+        $palette_by_slug[$color['slug']] = strtoupper((string) ($color['color'] ?? ''));
+    }
+}
+$official_palette = [
+    'lyli-primary' => '#7A3B17',
+    'lyli-warm-white' => '#FFFCF7',
+    'lyli-cream' => '#FBEFE5',
+    'lyli-blush' => '#F6E4E3',
+    'lyli-sage' => '#E9F1EA',
+    'lyli-lavender' => '#C2C3D2',
+];
+foreach ($official_palette as $slug => $color) {
+    check("Official Gutenberg color: $slug", ($palette_by_slug[$slug] ?? '') === $color);
+}
+check(
+    'Gutenberg disables the unrelated default palette',
+    ($theme_json['settings']['color']['defaultPalette'] ?? null) === false
+);
+check(
+    'Official palette excludes retired brand secondary',
+    ! isset($palette_by_slug['lyli-secondary']) && ! in_array('#8A4A23', $palette_by_slug, true)
+);
+check(
+    'Functional colors are explicitly separate from brand colors',
+    isset($palette_by_slug['lyli-text'], $palette_by_slug['lyli-text-muted'], $palette_by_slug['lyli-border'])
+);
 
 /* 11. Namespaced root helpers referenced from inc/ sub-namespaces must be
  * fully qualified so PHP cannot resolve them inside the child namespace. */
@@ -251,7 +284,14 @@ check('Lyli footer does not render a second footer element', ! str_contains($foo
 check('Botiga footer container is not hidden', preg_match('/\\.bhfb-footer\\s*\\{[^}]*display\\s*:\\s*none/si', $theme_css) !== 1);
 check('Theme CSS tokens reference theme.json presets', str_contains($theme_css, '--lyli-color-primary: var(--wp--preset--color--lyli-primary)'));
 check('Legacy duplicate CSS block is removed', preg_match_all('/^\\.lyli-pattern\\s*\\{/m', $theme_css) === 1 && substr_count($theme_css, 'Product-ready V1 visual system') === 1);
-check('Child stylesheet stays focused', substr_count($theme_css, "\n") < 600);
+check('Theme fixes overflow sources without a page-wide concealment rule', preg_match('/(?:html|body)[^{]*\\{[^}]*overflow-x\\s*:\\s*hidden/si', $theme_css) !== 1);
+check('Theme provides compact two-column mobile category and product grids', substr_count($theme_css, 'grid-template-columns: repeat(2, minmax(0, 1fr))') >= 2);
+check('Theme has fluid responsive typography', substr_count($theme_css, 'clamp(') >= 8);
+$editor_css = (string) file_get_contents("$root/web/app/themes/shop-child/editor-style.css");
+$brand_sources = $theme_json_raw . $theme_css . $editor_css . $patterns_php;
+check('Retired #8A4A23 is absent from owner-facing theme sources', stripos($brand_sources, '#8A4A23') === false);
+check('Patterns avoid retired desktop-only 56/44 column ratios', ! str_contains($patterns_php, '"width":"56%"') && ! str_contains($patterns_php, '"width":"44%"'));
+check('Patterns avoid fixed 520px hero height', ! str_contains($patterns_php, '"minHeight":520'));
 $design_tokens_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/design-tokens.php");
 check('Botiga cannot overwrite child theme.json palette', str_contains($design_tokens_php, "remove_filter('wp_theme_json_data_theme', 'botiga_filter_theme_json_data_theme')"));
 check(
@@ -280,6 +320,25 @@ check('Child theme loads Botiga admin compatibility', str_contains($child_functi
 check('Unavailable Starter Sites tab is removed', str_contains($botiga_admin_php, "unset(\$settings['tabs']['starter-sites'])"));
 check('Starter Sites availability uses its runtime hook', str_contains($botiga_admin_php, "has_action('atss_starter_sites')"));
 check('Botiga compatibility does not weaken file-mod locks', ! str_contains($botiga_admin_php, "DISALLOW_FILE_MODS', false"));
+
+/* Mobile header is composed once, then left owner-editable in Botiga. */
+$mobile_header_php = (string) file_get_contents("$root/web/app/themes/shop-child/inc/mobile-header.php");
+check('Child theme loads mobile header composition', str_contains($child_functions_php, "inc/mobile-header.php"));
+check('Mobile header composition is one-time and versioned', str_contains($mobile_header_php, 'lyli_mobile_header_composition_version'));
+check('Mobile header keeps only cart beside logo and hamburger', str_contains($mobile_header_php, "['mobile_woocommerce_icons']"));
+check('Mobile drawer contains search and account controls', str_contains($mobile_header_php, "'search', 'mobile_offcanvas_woocommerce_icons'"));
+
+/* Vietnam toolkit dependency and least-privilege migration guard. */
+check(
+    'Composer pins Vietnam Store Toolkit exactly',
+    ($composer['require']['wpackagist-plugin/yoohw-vietnam-store-tools'] ?? '') === '1.1.2'
+);
+$toolkit_policy_php = (string) file_get_contents("$root/web/app/mu-plugins/site-policy/inc/vietnam-toolkit.php");
+check('Toolkit migration guard names both DevVN tools', str_contains($toolkit_policy_php, 'yoohw_vietnam_store_tools_devvn_migration_dry_run') && str_contains($toolkit_policy_php, 'yoohw_vietnam_store_tools_devvn_migration'));
+check('Toolkit migration guard removes owner tool entries', str_contains($toolkit_policy_php, "add_filter('woocommerce_debug_tools'"));
+check('Toolkit migration AJAX is denied server-side for shop_owner', str_contains($toolkit_policy_php, "const DEVVN_AJAX_ACTION = 'wp_ajax_yoohw_vietnam_store_tools_devvn_migration_step'") && str_contains($toolkit_policy_php, 'add_action(DEVVN_AJAX_ACTION') && str_contains($toolkit_policy_php, 'wp_send_json_error'));
+check('Toolkit migration card is hidden from normal owner navigation', str_contains($toolkit_policy_php, "admin_head-toplevel_page_yoohw-vietnam-store") && str_contains($toolkit_policy_php, 'yoohw-vietnam-store__card:last-child'));
+check('Toolkit policy does not grant manage_options', ! str_contains($toolkit_policy_php, 'manage_options'));
 
 /* composer.json validate script updated? */
 check(

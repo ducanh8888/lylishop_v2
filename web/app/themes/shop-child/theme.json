@@ -8,49 +8,50 @@
       "wideSize": "1140px"
     },
     "color": {
+      "defaultPalette": false,
       "palette": [
         {
-          "name": "Nâu chính (primary)",
+          "name": "Nâu ấm chủ đạo",
           "slug": "lyli-primary",
           "color": "#7A3B17"
         },
         {
-          "name": "Nâu phụ (secondary)",
-          "slug": "lyli-secondary",
-          "color": "#8A4A23"
+          "name": "Trắng ấm — nền chính",
+          "slug": "lyli-warm-white",
+          "color": "#FFFCF7"
         },
         {
-          "name": "Nền trắng",
-          "slug": "lyli-white",
-          "color": "#FFFFFF"
+          "name": "Kem — nền phụ",
+          "slug": "lyli-cream",
+          "color": "#FBEFE5"
         },
         {
-          "name": "Nền nhạt trung tính",
-          "slug": "lyli-surface-soft",
-          "color": "#F8F5F2"
+          "name": "Hồng phấn — điểm nhấn",
+          "slug": "lyli-blush",
+          "color": "#F6E4E3"
         },
         {
-          "name": "Nền trang",
-          "slug": "lyli-canvas",
-          "color": "#FCFBFA"
+          "name": "Xanh sage — điểm nhấn",
+          "slug": "lyli-sage",
+          "color": "#E9F1EA"
         },
         {
-          "name": "Nền hero",
-          "slug": "lyli-hero-soft",
-          "color": "#F0E9E3"
+          "name": "Tím xám — điểm nhấn",
+          "slug": "lyli-lavender",
+          "color": "#C2C3D2"
         },
         {
-          "name": "Chữ chính",
+          "name": "Trung tính chức năng — chữ chính",
           "slug": "lyli-text",
           "color": "#2D2A26"
         },
         {
-          "name": "Chữ mờ",
+          "name": "Trung tính chức năng — chữ phụ",
           "slug": "lyli-text-muted",
           "color": "#6B6560"
         },
         {
-          "name": "Viền",
+          "name": "Trung tính chức năng — viền",
           "slug": "lyli-border",
           "color": "#E4DED8"
         }
@@ -84,27 +85,27 @@
         {
           "name": "Large",
           "slug": "large",
-          "size": "18px"
+          "size": "clamp(17px, calc(16px + 0.25vw), 18px)"
         },
         {
           "name": "Larger",
           "slug": "larger",
-          "size": "24px"
+          "size": "clamp(21px, calc(18px + 0.75vw), 24px)"
         },
         {
           "name": "Extra large",
           "slug": "extra-large",
-          "size": "32px"
+          "size": "clamp(28px, calc(24px + 1.2vw), 36px)"
         },
         {
           "name": "Huge",
           "slug": "huge",
-          "size": "48px"
+          "size": "clamp(32px, calc(24px + 2.4vw), 48px)"
         },
         {
           "name": "Gigantic",
           "slug": "gigantic",
-          "size": "64px"
+          "size": "clamp(34px, calc(22px + 3.4vw), 64px)"
         }
       ]
     },
@@ -156,7 +157,7 @@
     },
     "color": {
       "text": "var(--wp--preset--color--lyli-text)",
-      "background": "var(--wp--preset--color--lyli-canvas)"
+      "background": "var(--wp--preset--color--lyli-warm-white)"
     },
     "elements": {
       "heading": {
@@ -175,7 +176,7 @@
         },
         "color": {
           "background": "var(--wp--preset--color--lyli-primary)",
-          "text": "var(--wp--preset--color--lyli-white)"
+          "text": "var(--wp--preset--color--lyli-warm-white)"
         },
         "typography": {
           "fontFamily": "var(--wp--preset--font-family--lyli-body)",

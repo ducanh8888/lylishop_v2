@@ -24,6 +24,7 @@
         "roots/wp-config": "^1.0",
 
         "wpackagist-plugin/woocommerce": "10.9.4",
+        "wpackagist-plugin/yoohw-vietnam-store-tools": "1.1.2",
         "wpackagist-plugin/ai-engine": "3.7.0",
         "wpackagist-theme/botiga": "2.4.7",
         "wpackagist-theme/storefront": "4.6.2",
@@ -54,7 +55,6 @@
         "pending-commercial-plugins": {
             "note": "Not resolvable via public Packagist/wpackagist. See docs/PLUGIN-MANIFEST.md before adding — each needs a private repository entry or manual artifact under web/app/plugins/, plus the Phase-2 plugin audit in TECH_STACK.md section 6.2 before production use.",
             "plugins": [
-                "Vietnam Store Toolkit for WooCommerce 1.1.2 (audit required)",
                 "SePay Gateway 1.1.23",
                 "WooCommerce Product Bundles 8.5.10 (WooCommerce.com Marketplace)",
                 "WooCommerce Smart Coupons 9.80.0 (WooCommerce.com Marketplace)",
