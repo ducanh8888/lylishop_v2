@@ -16,32 +16,40 @@ final class Plugin
         }
 
         add_filter('yoohw_vietnam_store_tools_shipping_providers', [self::class, 'register_provider']);
+        Print_Controller::init();
+    }
+
+    public static function provider(): ?Provider
+    {
+        $settings = Settings::get();
+        if (! Settings::is_ready($settings)) {
+            return null;
+        }
+
+        if (null === self::$provider) {
+            self::$provider = new Provider(new Api_Client($settings, Settings::token()), new Order_Mapper());
+        }
+
+        return self::$provider;
     }
 
     /** @param array<string,array<string,mixed>> $providers */
     public static function register_provider(array $providers): array
     {
-        $settings = Settings::get();
-        if (! Settings::is_ready($settings)) {
+        $provider = self::provider();
+        if (null === $provider) {
             return $providers;
-        }
-
-        if (null === self::$provider) {
-            self::$provider = new Provider(
-                new Api_Client($settings, Settings::token()),
-                new Order_Mapper()
-            );
         }
 
         $providers['lyli_ghn'] = [
             'id' => 'lyli_ghn',
             'name' => __('GHN (Lyli)', 'lyli-ghn-connector'),
             'supports' => ['create', 'sync', 'cancel', 'print'],
-            'render_create_fields' => [self::$provider, 'render_create_fields'],
-            'create_shipment' => [self::$provider, 'create_shipment'],
-            'sync_shipment' => [self::$provider, 'sync_shipment'],
-            'cancel_shipment' => [self::$provider, 'cancel_shipment'],
-            'print_shipment' => [self::$provider, 'print_shipment'],
+            'render_create_fields' => [$provider, 'render_create_fields'],
+            'create_shipment' => [$provider, 'create_shipment'],
+            'sync_shipment' => [$provider, 'sync_shipment'],
+            'cancel_shipment' => [$provider, 'cancel_shipment'],
+            'print_shipment' => [$provider, 'print_shipment'],
         ];
 
         return $providers;

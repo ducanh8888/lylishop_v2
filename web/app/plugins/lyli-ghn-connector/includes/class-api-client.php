@@ -9,6 +9,17 @@ final class Api_Client
         'production' => 'https://online-gateway.ghn.vn/shiip/public-api/',
     ];
 
+    private const PRINT_HOSTS = [
+        'test' => 'dev-online-gateway.ghn.vn',
+        'production' => 'online-gateway.ghn.vn',
+    ];
+
+    private const PRINT_PATHS = [
+        'a5' => '/a5/public-api/printA5',
+        '80x80' => '/a5/public-api/print80x80',
+        '52x70' => '/a5/public-api/print52x70',
+    ];
+
     /** @var array<string,mixed> */
     private array $settings;
     private string $token;
@@ -55,42 +66,58 @@ final class Api_Client
         return $this->request('v2/a5/gen-token', ['order_codes' => [$order_code]], false, 10);
     }
 
-    public function fetch_print_document(string $print_token)
+    /** Build a GHN-hosted print URL. The print document is never fetched by WordPress. */
+    public function build_print_url(string $print_token, string $format = 'a5')
     {
-        if (! preg_match('/^[A-Za-z0-9_-]{8,200}$/', $print_token)) {
+        if ('' === $print_token || strlen($print_token) > 200 || preg_match('/[\x00-\x1F\x7F]/', $print_token)) {
             return new \WP_Error('lyli_ghn_invalid_print_token', __('GHN trả về print token không hợp lệ.', 'lyli-ghn-connector'));
+        }
+        if (! isset(self::PRINT_PATHS[$format])) {
+            return new \WP_Error('lyli_ghn_invalid_print_format', __('Định dạng nhãn GHN không hợp lệ.', 'lyli-ghn-connector'));
         }
 
         $environment = $this->environment();
-        $host = 'production' === $environment
-            ? 'https://online-gateway.ghn.vn'
-            : 'https://dev-online-gateway.ghn.vn';
-        $url = $host . '/a5/public-api/printA5?token=' . rawurlencode($print_token);
-        $response = $this->send($url, [
-            'method' => 'GET',
-            'timeout' => 12,
-            'redirection' => 2,
-            'reject_unsafe_urls' => true,
-            'limit_response_size' => 10485760,
-        ]);
+        $url = 'https://' . self::PRINT_HOSTS[$environment] . self::PRINT_PATHS[$format]
+            . '?token=' . rawurlencode($print_token);
 
-        if (is_wp_error($response)) {
-            return $this->redacted_error($response, $print_token);
+        return $this->validate_print_url($url, $format) ? $url : new \WP_Error(
+            'lyli_ghn_invalid_print_url',
+            __('URL in GHN không hợp lệ.', 'lyli-ghn-connector')
+        );
+    }
+
+    /** Validate an already-built URL against the exact environment, path and query allowlist. */
+    public function validate_print_url(string $url, string $format = 'a5'): bool
+    {
+        if (! isset(self::PRINT_PATHS[$format])) {
+            return false;
         }
 
-        $status = (int) wp_remote_retrieve_response_code($response);
-        $body = (string) wp_remote_retrieve_body($response);
-        if ($status < 200 || $status >= 300 || '' === $body) {
-            return new \WP_Error('lyli_ghn_print_failed', __('Không thể tải nhãn GHN.', 'lyli-ghn-connector'));
+        $parts = wp_parse_url($url);
+        if (! is_array($parts)
+            || 'https' !== strtolower((string) ($parts['scheme'] ?? ''))
+            || strtolower((string) ($parts['host'] ?? '')) !== self::PRINT_HOSTS[$this->environment()]
+            || self::PRINT_PATHS[$format] !== ($parts['path'] ?? '')
+            || isset($parts['user'])
+            || isset($parts['pass'])
+            || isset($parts['port'])
+            || isset($parts['fragment'])
+        ) {
+            return false;
         }
 
-        $content_type = (string) wp_remote_retrieve_header($response, 'content-type');
-        $content_type = strtolower(trim(explode(';', $content_type)[0] ?? ''));
-        if ('application/pdf' !== $content_type) {
-            return new \WP_Error('lyli_ghn_print_type', __('Định dạng nhãn GHN không được hỗ trợ.', 'lyli-ghn-connector'));
+        $raw_query = (string) ($parts['query'] ?? '');
+        if (1 !== preg_match('/^token=[^&]+$/', $raw_query)) {
+            return false;
         }
-
-        return ['content' => $body, 'content_type' => $content_type];
+        $query = [];
+        parse_str($raw_query, $query);
+        return 1 === count($query)
+            && isset($query['token'])
+            && is_string($query['token'])
+            && '' !== $query['token']
+            && strlen($query['token']) <= 200
+            && ! preg_match('/[\x00-\x1F\x7F]/', $query['token']);
     }
 
     public function is_not_found_error($error): bool

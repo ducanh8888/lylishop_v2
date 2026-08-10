@@ -149,15 +149,13 @@ final class Provider
             return new \WP_Error('lyli_ghn_missing_print_token', __('GHN không trả về print token.', 'lyli-ghn-connector'));
         }
 
-        $document = $this->client->fetch_print_document($token);
-        if (is_wp_error($document)) {
-            return $document;
+        $url = $this->client->build_print_url($token, sanitize_key((string) (Settings::get()['print_format'] ?? 'a5')));
+        if (is_wp_error($url)) {
+            return $url;
         }
 
         return [
-            'content' => $document['content'],
-            'content_type' => $document['content_type'],
-            'filename' => 'ghn-' . sanitize_file_name($tracking_code) . (str_contains($document['content_type'], 'pdf') ? '.pdf' : '.html'),
+            'url' => $url,
         ];
     }
 

@@ -18,6 +18,7 @@ final class Settings
             'service_type_id' => 0,
             'payment_type_id' => 0,
             'required_note' => '',
+            'print_format' => 'a5',
             'cod_policy' => 'disabled',
             'insurance_policy' => 'disabled',
             'package_weight_g' => 0,
@@ -133,6 +134,7 @@ final class Settings
         $required_note = self::input_key($input, 'required_note');
         $cod_policy = self::input_key($input, 'cod_policy', 'disabled');
         $insurance_policy = self::input_key($input, 'insurance_policy', 'disabled');
+        $print_format = self::input_key($input, 'print_format', 'a5');
 
         return [
             'enabled' => ! empty($input['enabled']),
@@ -143,6 +145,7 @@ final class Settings
             'required_note' => in_array($required_note, ['khongchoxemhang', 'choxemhangkhongthu', 'chothuhang'], true)
                 ? strtoupper($required_note)
                 : '',
+            'print_format' => in_array($print_format, ['a5', '80x80', '52x70'], true) ? $print_format : 'a5',
             'cod_policy' => in_array($cod_policy, ['disabled', 'cod_gateway_only'], true) ? $cod_policy : 'disabled',
             'insurance_policy' => in_array($insurance_policy, ['disabled', 'remaining_total'], true) ? $insurance_policy : 'disabled',
             'package_weight_g' => self::input_int($input, 'package_weight_g'),
@@ -213,6 +216,7 @@ final class Settings
                         <label><?php esc_html_e('Rộng (cm)', 'lyli-ghn-connector'); ?> <input type="number" min="1" max="200" name="lyli_ghn[package_width_cm]" value="<?php echo esc_attr((string) $settings['package_width_cm']); ?>"></label>
                         <label><?php esc_html_e('Cao (cm)', 'lyli-ghn-connector'); ?> <input type="number" min="1" max="200" name="lyli_ghn[package_height_cm]" value="<?php echo esc_attr((string) $settings['package_height_cm']); ?>"></label>
                     </td></tr>
+                    <tr><th scope="row"><label for="lyli-ghn-print-format"><?php esc_html_e('Khổ nhãn in', 'lyli-ghn-connector'); ?></label></th><td><select id="lyli-ghn-print-format" name="lyli_ghn[print_format]"><option value="a5" <?php selected($settings['print_format'], 'a5'); ?>>A5</option><option value="80x80" <?php selected($settings['print_format'], '80x80'); ?>>80 × 80 mm</option><option value="52x70" <?php selected($settings['print_format'], '52x70'); ?>>52 × 70 mm</option></select></td></tr>
                 </table>
                 <?php submit_button(__('Lưu cấu hình GHN', 'lyli-ghn-connector')); ?>
             </form>

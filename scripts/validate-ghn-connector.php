@@ -43,7 +43,8 @@ function wp_remote_retrieve_body(array $response): string { return (string) ($re
 function wp_remote_retrieve_header(array $response, string $name): string { return (string) ($response['headers'][strtolower($name)] ?? ''); }
 function get_option(string $name, $default = false) { return $GLOBALS['lyli_test_options'][$name] ?? $default; }
 function current_user_can(string $capability): bool { return $capability === 'manage_woocommerce' && $GLOBALS['lyli_test_can_manage']; }
-function wp_verify_nonce(string $nonce, string $action): bool { return $GLOBALS['lyli_test_nonce_valid'] && 'lyli_ghn_save_settings' === $action; }
+function wp_verify_nonce(string $nonce, string $action): bool { return $GLOBALS['lyli_test_nonce_valid'] && ('lyli_ghn_save_settings' === $action || str_starts_with($action, 'yoohw_vietnam_store_tools_shipping_action_')); }
+function wp_parse_url(string $url, int $component = -1) { return -1 === $component ? parse_url($url) : parse_url($url, $component); }
 function remove_accents(string $text): string { return $text; }
 function wc_get_weight($value, string $unit): float { return (float) $value * 1000; }
 function wc_get_dimension($value, string $unit): float { return (float) $value; }
@@ -111,6 +112,7 @@ require_once $plugin_dir . '/includes/class-settings.php';
 require_once $plugin_dir . '/includes/class-api-client.php';
 require_once $plugin_dir . '/includes/class-order-mapper.php';
 require_once $plugin_dir . '/includes/class-provider.php';
+require_once $plugin_dir . '/includes/class-print-controller.php';
 
 $failures = 0;
 function check_ghn(string $label, bool $ok, string $detail = ''): void
@@ -186,13 +188,51 @@ check_ghn('Existing client_order_code prevents duplicate create', 1 === count($i
     && 'EXISTING' === $shipment['tracking_code']);
 check_ghn('GHN status mapping stays separate from Woo status', 'Đã giao hàng' === Lyli\GHN\Provider::status_label('delivered'));
 
+$test_print_client = new Lyli\GHN\Api_Client($settings, 'secret-token');
+$production_settings = $settings;
+$production_settings['environment'] = 'production';
+$production_print_client = new Lyli\GHN\Api_Client($production_settings, 'secret-token');
+$test_a5_url = $test_print_client->build_print_url('test-token-123', 'a5');
+$production_a5_url = $production_print_client->build_print_url('prod-token-123', 'a5');
+check_ghn('Print test A5 URL', 'https://dev-online-gateway.ghn.vn/a5/public-api/printA5?token=test-token-123' === $test_a5_url);
+check_ghn('Print production A5 URL', 'https://online-gateway.ghn.vn/a5/public-api/printA5?token=prod-token-123' === $production_a5_url);
+check_ghn('Print 80x80 URL', str_contains((string) $test_print_client->build_print_url('test-token-123', '80x80'), '/a5/public-api/print80x80?token='));
+check_ghn('Print 52x70 URL', str_contains((string) $test_print_client->build_print_url('test-token-123', '52x70'), '/a5/public-api/print52x70?token='));
+check_ghn('Print rejects wrong scheme', ! $test_print_client->validate_print_url('http://dev-online-gateway.ghn.vn/a5/public-api/printA5?token=x', 'a5'));
+check_ghn('Print rejects arbitrary host', ! $test_print_client->validate_print_url('https://example.com/a5/public-api/printA5?token=x', 'a5'));
+check_ghn('Print rejects lookalike, subdomain and userinfo hosts',
+    ! $test_print_client->validate_print_url('https://dev-online-gateway.ghn.vn.evil.test/a5/public-api/printA5?token=x', 'a5')
+    && ! $test_print_client->validate_print_url('https://dev-online-gateway.ghn.vn@evil.test/a5/public-api/printA5?token=x', 'a5')
+    && ! $test_print_client->validate_print_url('https://sub.dev-online-gateway.ghn.vn/a5/public-api/printA5?token=x', 'a5'));
+check_ghn('Print rejects arbitrary path', ! $test_print_client->validate_print_url('https://dev-online-gateway.ghn.vn/a5/public-api/other?token=x', 'a5'));
+$encoded_url = $test_print_client->build_print_url('token +/value', 'a5');
+check_ghn('Print token is URL encoded', is_string($encoded_url) && str_ends_with($encoded_url, '?token=token%20%2B%2Fvalue'));
+
+$print_calls = [];
+$print_transport = static function (string $url, array $args) use (&$print_calls): array {
+    $print_calls[] = [$url, $args];
+    return ['response' => ['code' => 200], 'headers' => [], 'body' => json_encode(['code' => 200, 'data' => ['token' => 'temporary-print-token']])];
+};
+$print_provider = new Lyli\GHN\Provider(new Lyli\GHN\Api_Client($settings, 'secret-token', $print_transport), $mapper);
+$GLOBALS['lyli_test_shipping_data'] = ['provider' => 'lyli_ghn', 'tracking_code' => 'GHN123'];
+$options_before_print = $GLOBALS['lyli_test_options'];
+$print_result = $print_provider->print_shipment(new Test_Order());
+check_ghn('Print token is not persisted', $options_before_print === $GLOBALS['lyli_test_options']);
+check_ghn('Print document is not fetched server-side', 1 === count($print_calls)
+    && str_ends_with($print_calls[0][0], '/v2/a5/gen-token')
+    && is_array($print_result)
+    && isset($print_result['url'])
+    && ! isset($print_result['content']));
+
 $_POST = ['_lyli_ghn_nonce' => 'test'];
 $GLOBALS['lyli_test_can_manage'] = false;
 check_ghn('Settings deny missing manage_woocommerce', is_wp_error(Lyli\GHN\Settings::authorize_save()));
 check_ghn('Shipment mutation denies missing manage_woocommerce', is_wp_error($provider->create_shipment(new Test_Order())));
+check_ghn('Print denies missing manage_woocommerce', is_wp_error(Lyli\GHN\Print_Controller::authorize(120, 'valid')));
 $GLOBALS['lyli_test_can_manage'] = true;
 $GLOBALS['lyli_test_nonce_valid'] = false;
 check_ghn('Settings reject invalid nonce', is_wp_error(Lyli\GHN\Settings::authorize_save()));
+check_ghn('Print rejects invalid nonce', is_wp_error(Lyli\GHN\Print_Controller::authorize(120, 'invalid')));
 
 $owned_source = '';
 foreach (glob($plugin_dir . '/**/*.php') ?: [] as $file) { $owned_source .= file_get_contents($file); }
@@ -200,5 +240,6 @@ $owned_source .= file_get_contents($plugin_dir . '/lyli-ghn-connector.php');
 check_ghn('No unauthenticated AJAX or webhook surface', ! str_contains($owned_source, 'wp_ajax_nopriv') && ! str_contains($owned_source, 'register_rest_route'));
 check_ghn('No live checkout rate method in V1', ! str_contains($owned_source, 'WC_Shipping_Method'));
 check_ghn('Token is never rendered back into input value', str_contains($owned_source, 'name="lyli_ghn[token]" value=""'));
+check_ghn('Print opens external page without opener or referrer', str_contains($owned_source, "setAttribute('rel', 'noopener noreferrer')"));
 
 exit($failures > 0 ? 1 : 0);
