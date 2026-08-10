@@ -65,12 +65,12 @@ Chi tiết: `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md` và `docs/BRAND-MOBILE-REM
 | Mục | Trạng thái |
 |---|---|
 | Architecture verdict | **BUILD LYLI GHN CONNECTOR**; ShipDepot 1.2.19 bị từ chối do CVE-2025-31866/CWE-862 chưa có patched release; hai plugin GHN lịch sử chỉ dùng làm reference |
-| Runtime | Plugin nội bộ 0.1.0 active trong release `20260810210244`; connector disabled/unconfigured, không có `lyli_ghn*` option, Token, ShopId, provider runtime, live rate hoặc shipment GHN |
+| Runtime | Plugin nội bộ 0.1.0 active trong release `20260810210244`; owner đã lưu Token/ShopId và bật connector. Validation task đã chuyển lựa chọn từ Production sang **Test** qua normal settings handler trước request đầu tiên; live rate/webhook vẫn không tồn tại và shipment GHN vẫn bằng 0 |
 | Address/fee | Manual Create dùng tên Province/Ward hai cấp + `is_new_to_address=true`; live fee deferred vì Toolkit code và GHN WardID v2 chưa có mapping runtime contract ổn định; checkout tiếp tục dùng Toolkit shipping rules |
 | Security | Settings và shipment mutations dùng `manage_woocommerce`, nonce/order validation; Token option không autoload và không render lại; không webhook/public AJAX/REST; không retry create; không tự đổi Woo order status |
-| Owner access | Menu **WooCommerce → Kết nối GHN** đã đăng ký đúng capability và form render/mask Token PASS bằng WP-CLI; production chưa có account `shop_owner`, nên chưa thể handoff credential thật |
+| Owner access | Menu **WooCommerce → Kết nối GHN** đăng ký đúng capability; form mask Token, secret audit và server-side denial cho Settings/Create/Sync/Cancel/Print đều PASS. Production chưa có account `shop_owner`, nên owner đang cấu hình bằng account khác và vẫn cần provision đúng role |
 | Smoke | WordPress/WooCommerce/Toolkit/theme vẫn active; Home/Shop/Cart/Checkout/Account/login HTTP 200; checkout còn Province/Ward của Toolkit; `.env` 403, SQL/backup 404, directory listing denied; không lộ PHP warning/fatal |
-| Validation boundary | Code/network-free tests PASS; chưa GHN API E2E vì không có test Token/ShopId. Không tạo vận đơn hoặc giao dịch thật |
+| Validation boundary | Probe official test `detail-by-client-code` tới `dev-online-gateway.ghn.vn` kết nối TLS/HTTP thành công nhưng GHN trả `HTTP 401 / code 401 / Token is not valid` trong 172 ms. Dừng trước Preview/Create; không tạo Woo test order, vận đơn hoặc giao dịch thật. 18 unit checks + 7 runtime error checks + permission/nonce/secret audit PASS; owner phải thay credential TEST hợp lệ rồi chạy lại E2E |
 
 Chi tiết và checklist owner: `docs/GHN-INTEGRATION-PREFLIGHT.md`, `docs/GHN-OWNER-SETUP.md`.
 

@@ -1,6 +1,6 @@
 # GHN owner setup
 
-Trạng thái production 2026-08-10: WordPress plugin `lyli-ghn-connector` 0.1.0 đã active trong release `20260810210244`, nhưng connector **tắt và chưa cấu hình**. Không có option cấu hình, Token, ShopId, rate GHN hoặc vận đơn GHN trong runtime/repo/docs. Production cũng chưa có account `shop_owner`; developer phải provision account đúng người trước khi owner cấu hình.
+Trạng thái production 2026-08-10: WordPress plugin `lyli-ghn-connector` 0.1.0 active trong release `20260810210244`; connector đang **bật ở môi trường Test**, Token và ShopId có mặt nhưng không được ghi vào docs. Credential probe bị GHN staging từ chối với `Token is not valid`, nên chưa có Woo test order, rate hoặc vận đơn GHN. Owner phải thay bằng credential dành đúng cho GHN Test rồi yêu cầu chạy lại E2E. Không chuyển environment sang Production.
 
 ## Khi shop đã có tài khoản GHN test
 

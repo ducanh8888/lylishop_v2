@@ -1,6 +1,6 @@
 # GHN integration preflight
 
-Trạng thái: **BUILD LYLI GHN CONNECTOR — deployed active, connector disabled/unconfigured; no GHN shipment created**. Ngày kiểm tra/triển khai: 2026-08-10. Starting commit: `97a93fa76bec3cec4406c45e1b6d1b2aafa72f81`; implementation commit: `1d7bb7b93a241eaf4448e8f1e70f5ccc2d0853c6`.
+Trạng thái: **BUILD LYLI GHN CONNECTOR — deployed active; TEST E2E blocked by rejected credential; no GHN shipment created**. Ngày kiểm tra/triển khai: 2026-08-10. Starting commit: `97a93fa76bec3cec4406c45e1b6d1b2aafa72f81`; implementation commit: `1d7bb7b93a241eaf4448e8f1e70f5ccc2d0853c6`.
 
 ## 1. Quyết định kiến trúc
 
@@ -129,6 +129,12 @@ PHP lint, GHN validator, storefront validator, Bedrock bootstrap validator, Comp
 Runtime giữ đúng safe state: WordPress plugin 0.1.0 active; connector chưa enabled; không có option `lyli_ghn*`, Token, ShopId, provider runtime hoặc shipment meta GHN. Menu **WooCommerce → Kết nối GHN** đăng ký với `manage_woocommerce`; form Token luôn masked/blank khi render. Production chưa có account role `shop_owner`, nên developer phải provision account đúng người trước handoff. Public Home/Shop/Cart/Checkout/Account/login đều HTTP 200, checkout vẫn có Province/Ward của Toolkit, và không lộ PHP warning/fatal.
 
 `CODE VALIDATED` does not mean `GHN API END-TO-END VALIDATED`. E2E requires owner-provided test Token + test ShopId and explicit later authorization. See `docs/GHN-OWNER-SETUP.md`.
+
+### TEST gateway validation update — 2026-08-10
+
+Owner đã lưu Token/ShopId và bật connector, nhưng environment ban đầu là Production. Validation dừng trước network, chuyển riêng environment sang **Test** bằng settings handler có capability/nonce, rồi xác nhận resolved base URL là `https://dev-online-gateway.ghn.vn/shiip/public-api/`. Non-mutating `detail-by-client-code` probe trả `HTTP 401`, GHN code `401`, sanitized message `Token is not valid`, latency 172 ms. Đây khớp error contract chính thức và không phải parser/endpoint defect.
+
+Không tiếp tục Preview/Create/Sync/Print/Cancel vì credential gate chưa PASS; Woo test order và GHN shipment không được tạo. Connector vẫn ở Test, COD disabled, live fee/webhook disabled. Secret audit PASS: Token không xuất hiện trong admin HTML, frontend, REST index, log, order meta, source hoặc option khác; option Token không autoload. Permission runtime cho Settings/Create/Sync/Cancel/Print và invalid-nonce denial PASS. 18 network-free checks cùng 7 runtime error/parser checks đều PASS.
 
 ## 11. Primary evidence
 
