@@ -138,6 +138,8 @@ check_reuse(str_contains($presentation, 'esc_attr($qr_uri)') && str_contains($pr
 
 $address_adapter_source = file_get_contents($root . '/web/app/plugins/lyli-vietnam-address/includes/class-woo-adapter.php') ?: '';
 check_reuse(str_contains($address_adapter_source, "check_ajax_referer('lyli_vn_wards'") && str_contains($address_adapter_source, 'woocommerce_after_checkout_validation'), 'address UI has nonce and server-side relationship validation');
+$address_script_source = file_get_contents($root . '/web/app/plugins/lyli-vietnam-address/assets/checkout.js') ?: '';
+check_reuse(str_contains($address_script_source, 'requestSequence') && str_contains($address_script_source, "state !== $('#"), 'late ward responses cannot overwrite the currently selected province');
 
 if ([] !== $failures) {
     fwrite(STDERR, sprintf("\n%d reuse validation(s) failed.\n", count($failures)));

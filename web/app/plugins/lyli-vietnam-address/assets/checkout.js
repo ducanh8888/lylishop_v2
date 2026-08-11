@@ -1,6 +1,8 @@
 (function ($) {
     'use strict';
 
+    var requestSequence = {billing: 0, shipping: 0};
+
     function refresh(scope) {
         var state = $('#' + scope + '_state').val();
         var city = $('#' + scope + '_city');
@@ -8,11 +10,17 @@
             return;
         }
         var selected = city.val();
+        var sequence = ++requestSequence[scope];
         $.getJSON(lyliVietnamAddress.endpoint, {
             nonce: lyliVietnamAddress.nonce,
             province: state
         }).done(function (response) {
-            if (!response || !response.success || !response.data.wards) {
+            if (sequence !== requestSequence[scope]
+                || state !== $('#' + scope + '_state').val()
+                || !response
+                || !response.success
+                || !response.data.wards
+            ) {
                 return;
             }
             city.empty().append($('<option>', {value: '', text: lyliVietnamAddress.placeholder}));
