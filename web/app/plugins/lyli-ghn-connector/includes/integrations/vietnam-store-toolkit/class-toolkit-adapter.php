@@ -2,8 +2,9 @@
 
 namespace Lyli\GHN\Integrations\VietnamStoreToolkit;
 
+use Lyli\GHN\Application\Shipment_Application;
+use Lyli\GHN\Admin\Create_Summary;
 use Lyli\GHN\Print_Controller;
-use Lyli\GHN\Provider;
 
 final class Toolkit_Adapter
 {
@@ -11,7 +12,7 @@ final class Toolkit_Adapter
     private const PROVIDER_ID = 'lyli_ghn';
     private const NONCE_FIELD = 'yoohw_vietnam_store_tools_shipping_nonce';
 
-    public function __construct(private Provider $provider)
+    public function __construct(private Shipment_Application $application)
     {
     }
 
@@ -36,11 +37,11 @@ final class Toolkit_Adapter
             'id' => self::PROVIDER_ID,
             'name' => __('GHN', 'lyli-ghn-connector'),
             'supports' => ['create', 'sync', 'cancel', 'print'],
-            'render_create_fields' => [$this->provider, 'render_create_fields'],
-            'create_shipment' => fn ($order, array $context = []) => $this->toolkit_result($this->provider->create_shipment($order, $context)),
-            'sync_shipment' => fn ($order, array $context = []) => $this->toolkit_result($this->provider->sync_shipment($order, $context)),
-            'cancel_shipment' => fn ($order, array $context = []) => $this->toolkit_result($this->provider->cancel_shipment($order, $context)),
-            'print_shipment' => [$this->provider, 'print_shipment'],
+            'render_create_fields' => [$this, 'render_create_fields'],
+            'create_shipment' => fn ($order, array $context = []) => $this->toolkit_result($this->application->create($order)),
+            'sync_shipment' => fn ($order, array $context = []) => $this->toolkit_result($this->application->sync($order)),
+            'cancel_shipment' => fn ($order, array $context = []) => $this->toolkit_result($this->application->cancel($order)),
+            'print_shipment' => [$this->application, 'print'],
         ];
 
         return $providers;
@@ -61,8 +62,13 @@ final class Toolkit_Adapter
             $order_id,
             $nonce,
             'yoohw_vietnam_store_tools_shipping_action_' . $order_id,
-            $this->provider
+            $this->application
         );
+    }
+
+    public function render_create_fields($order, array $context = []): void
+    {
+        Create_Summary::render($this->application, $order);
     }
 
     /** @param mixed $result @return mixed */

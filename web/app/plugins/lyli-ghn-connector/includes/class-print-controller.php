@@ -2,6 +2,8 @@
 
 namespace Lyli\GHN;
 
+use Lyli\GHN\Application\Shipment_Application;
+
 final class Print_Controller
 {
     public static function authorize(int $order_id, string $nonce, string $nonce_action = '')
@@ -17,7 +19,7 @@ final class Print_Controller
         return true;
     }
 
-    public static function handle_authorized_request(int $order_id, string $nonce, string $nonce_action, Provider $provider): void
+    public static function handle_authorized_request(int $order_id, string $nonce, string $nonce_action, Shipment_Application $application): void
     {
         $authorized = self::authorize($order_id, $nonce, $nonce_action);
         if (is_wp_error($authorized)) {
@@ -27,7 +29,7 @@ final class Print_Controller
         if (! $order) {
             wp_die(esc_html__('Không thể chuẩn bị nhãn GHN cho đơn hàng này.', 'lyli-ghn-connector'), '', ['response' => 400]);
         }
-        $result = $provider->print_shipment($order);
+        $result = $application->print($order);
         if (is_wp_error($result) || ! is_array($result) || empty($result['url'])) {
             $message = is_wp_error($result) ? $result->get_error_message() : __('GHN không trả về URL in hợp lệ.', 'lyli-ghn-connector');
             wp_die(esc_html($message), '', ['response' => 400]);

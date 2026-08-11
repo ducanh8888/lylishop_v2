@@ -4,6 +4,8 @@ namespace Lyli\GHN;
 
 use Lyli\GHN\Contracts\Address_Resolver;
 use Lyli\GHN\Domain\Address;
+use Lyli\GHN\Domain\Cod_Policy;
+use Lyli\GHN\Domain\Package;
 
 final class Order_Mapper
 {
@@ -14,28 +16,26 @@ final class Order_Mapper
     /** @param object $order @param array<string,mixed> $settings */
     public function build_payload($order, array $settings)
     {
-        $package = $this->package($settings);
+        $package = Package::from_settings($settings);
         if (is_wp_error($package)) {
             return $package;
         }
-
         $destination = $this->destination($order);
         if (is_wp_error($destination)) {
             return $destination;
         }
-
         $items = $this->items($order, (int) $settings['service_type_id']);
         if (is_wp_error($items)) {
             return $items;
         }
 
-        $payload = array_merge($destination, $package, [
+        $payload = array_merge($destination, $package->to_array(), [
             'client_order_code' => self::client_order_code($order),
             'service_type_id' => (int) $settings['service_type_id'],
             'payment_type_id' => (int) $settings['payment_type_id'],
             'required_note' => (string) $settings['required_note'],
-            'cod_amount' => self::cod_amount($order, $settings),
-            'insurance_value' => self::insurance_value($order, $settings),
+            'cod_amount' => Cod_Policy::amount($order, $settings),
+            'insurance_value' => Cod_Policy::insurance_value($order, $settings),
             'content' => $this->content($items),
             'items' => $items,
         ]);
@@ -48,63 +48,12 @@ final class Order_Mapper
         return $payload;
     }
 
-    /** @param object $order */
     public static function client_order_code($order): string
     {
+        /* Retained for idempotency compatibility with existing GHN test/production shipments. */
         return 'LYLI-WC-' . absint($order->get_id());
     }
 
-    /** @param object $order @param array<string,mixed> $settings */
-    public static function cod_amount($order, array $settings): int
-    {
-        if ('cod_gateway_only' !== ($settings['cod_policy'] ?? 'disabled')) {
-            return 0;
-        }
-        if ('cod' !== (string) $order->get_payment_method() || $order->is_paid()) {
-            return 0;
-        }
-
-        return min(50000000, self::remaining_total($order));
-    }
-
-    /** @param object $order @param array<string,mixed> $settings */
-    public static function insurance_value($order, array $settings): int
-    {
-        if ('remaining_total' !== ($settings['insurance_policy'] ?? 'disabled')) {
-            return 0;
-        }
-
-        return min(5000000, self::remaining_total($order));
-    }
-
-    /** @param object $order */
-    private static function remaining_total($order): int
-    {
-        $remaining = (float) $order->get_total() - (float) $order->get_total_refunded();
-        return max(0, (int) round($remaining));
-    }
-
-    /** @param array<string,mixed> $settings */
-    private function package(array $settings)
-    {
-        $values = [
-            'weight' => (int) ($settings['package_weight_g'] ?? 0),
-            'length' => (int) ($settings['package_length_cm'] ?? 0),
-            'width' => (int) ($settings['package_width_cm'] ?? 0),
-            'height' => (int) ($settings['package_height_cm'] ?? 0),
-        ];
-
-        if (min($values) < 1) {
-            return new \WP_Error('lyli_ghn_missing_package', __('Thiếu khối lượng hoặc kích thước kiện hàng GHN.', 'lyli-ghn-connector'));
-        }
-        if ($values['weight'] > 50000 || max($values['length'], $values['width'], $values['height']) > 200) {
-            return new \WP_Error('lyli_ghn_package_limit', __('Kiện hàng vượt giới hạn GHN đã cấu hình.', 'lyli-ghn-connector'));
-        }
-
-        return $values;
-    }
-
-    /** @param object $order */
     private function destination($order)
     {
         $address = $this->address_resolver->resolve($order);
@@ -114,11 +63,9 @@ final class Order_Mapper
         if (! $address instanceof Address) {
             return new \WP_Error('lyli_ghn_address_contract', __('Address resolver trả về dữ liệu không hợp lệ.', 'lyli-ghn-connector'));
         }
-
         return $address->to_ghn_payload();
     }
 
-    /** @param object $order */
     private function items($order, int $service_type_id)
     {
         $mapped = [];
@@ -133,7 +80,6 @@ final class Order_Mapper
             if ($product && '' !== (string) $product->get_sku()) {
                 $entry['code'] = mb_substr(sanitize_text_field((string) $product->get_sku()), 0, 100);
             }
-
             if (5 === $service_type_id) {
                 $dimensions = $this->product_dimensions($product);
                 if (is_wp_error($dimensions)) {
@@ -141,15 +87,12 @@ final class Order_Mapper
                 }
                 $entry = array_merge($entry, $dimensions);
             }
-
             $mapped[] = $entry;
         }
 
-        if ([] === $mapped) {
-            return new \WP_Error('lyli_ghn_no_items', __('Đơn hàng không có sản phẩm để tạo vận đơn GHN.', 'lyli-ghn-connector'));
-        }
-
-        return $mapped;
+        return [] === $mapped
+            ? new \WP_Error('lyli_ghn_no_items', __('Đơn hàng không có sản phẩm để tạo vận đơn GHN.', 'lyli-ghn-connector'))
+            : $mapped;
     }
 
     private function product_dimensions($product)
@@ -157,24 +100,20 @@ final class Order_Mapper
         if (! $product) {
             return new \WP_Error('lyli_ghn_missing_item_dimensions', __('Hàng nặng GHN cần đủ khối lượng và kích thước cho từng sản phẩm.', 'lyli-ghn-connector'));
         }
-
         $values = [
             'weight' => (int) round((float) wc_get_weight($product->get_weight(), 'g')),
             'length' => (int) round((float) wc_get_dimension($product->get_length(), 'cm')),
             'width' => (int) round((float) wc_get_dimension($product->get_width(), 'cm')),
             'height' => (int) round((float) wc_get_dimension($product->get_height(), 'cm')),
         ];
-        if (min($values) < 1) {
-            return new \WP_Error('lyli_ghn_missing_item_dimensions', __('Hàng nặng GHN cần đủ khối lượng và kích thước cho từng sản phẩm.', 'lyli-ghn-connector'));
-        }
-
-        return $values;
+        return min($values) < 1
+            ? new \WP_Error('lyli_ghn_missing_item_dimensions', __('Hàng nặng GHN cần đủ khối lượng và kích thước cho từng sản phẩm.', 'lyli-ghn-connector'))
+            : $values;
     }
 
     /** @param array<int,array<string,mixed>> $items */
     private function content(array $items): string
     {
-        $names = array_map(static fn (array $item): string => (string) $item['name'], $items);
-        return mb_substr(implode(', ', $names), 0, 2000);
+        return mb_substr(implode(', ', array_map(static fn (array $item): string => (string) $item['name'], $items)), 0, 2000);
     }
 }

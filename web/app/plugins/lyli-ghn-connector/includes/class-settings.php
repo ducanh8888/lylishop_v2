@@ -2,30 +2,23 @@
 
 namespace Lyli\GHN;
 
+use Lyli\GHN\Infrastructure\WooCommerce\Settings_Repository;
+
 final class Settings
 {
     private const PAGE_SLUG = 'lyli-ghn';
     private const SAVE_ACTION = 'lyli_ghn_save_settings';
     private const NONCE_ACTION = 'lyli_ghn_save_settings';
 
+    private static function repository(): Settings_Repository
+    {
+        return new Settings_Repository();
+    }
+
     /** @return array<string,mixed> */
     public static function defaults(): array
     {
-        return [
-            'enabled' => false,
-            'environment' => 'test',
-            'shop_id' => 0,
-            'service_type_id' => 0,
-            'payment_type_id' => 0,
-            'required_note' => '',
-            'print_format' => 'a5',
-            'cod_policy' => 'disabled',
-            'insurance_policy' => 'disabled',
-            'package_weight_g' => 0,
-            'package_length_cm' => 0,
-            'package_width_cm' => 0,
-            'package_height_cm' => 0,
-        ];
+        return self::repository()->defaults();
     }
 
     public static function init(): void
@@ -37,32 +30,18 @@ final class Settings
     /** @return array<string,mixed> */
     public static function get(): array
     {
-        $saved = get_option(SETTINGS_OPTION, []);
-        return array_merge(self::defaults(), is_array($saved) ? $saved : []);
+        return self::repository()->get();
     }
 
     public static function token(): string
     {
-        $token = get_option(TOKEN_OPTION, '');
-        return is_string($token) ? trim($token) : '';
+        return self::repository()->token();
     }
 
     /** @param array<string,mixed>|null $settings */
     public static function is_ready(?array $settings = null): bool
     {
-        $settings = $settings ?? self::get();
-
-        return ! empty($settings['enabled'])
-            && in_array($settings['environment'], ['test', 'production'], true)
-            && (int) $settings['shop_id'] > 0
-            && in_array((int) $settings['service_type_id'], [2, 5], true)
-            && in_array((int) $settings['payment_type_id'], [1, 2], true)
-            && in_array($settings['required_note'], ['KHONGCHOXEMHANG', 'CHOXEMHANGKHONGTHU', 'CHOTHUHANG'], true)
-            && (int) $settings['package_weight_g'] > 0
-            && (int) $settings['package_length_cm'] > 0
-            && (int) $settings['package_width_cm'] > 0
-            && (int) $settings['package_height_cm'] > 0
-            && '' !== self::token();
+        return self::repository()->is_ready($settings);
     }
 
     public static function authorize_save()
@@ -106,9 +85,9 @@ final class Settings
         $settings = self::sanitize($input);
 
         if (! empty($input['clear_token'])) {
-            delete_option(TOKEN_OPTION);
+            self::repository()->delete_token();
         } elseif (isset($input['token']) && is_scalar($input['token']) && '' !== trim((string) $input['token'])) {
-            self::write_private_option(TOKEN_OPTION, sanitize_text_field((string) $input['token']));
+            self::repository()->save_token((string) $input['token']);
         }
 
         $requested_enabled = ! empty($settings['enabled']);
@@ -119,7 +98,7 @@ final class Settings
             $result = 'saved';
         }
 
-        self::write_private_option(SETTINGS_OPTION, $settings);
+        self::repository()->save_settings($settings);
 
         wp_safe_redirect(add_query_arg('lyli_ghn_result', $result, admin_url('admin.php?page=' . self::PAGE_SLUG)));
         exit;
@@ -165,17 +144,6 @@ final class Settings
     private static function input_int(array $input, string $key): int
     {
         return isset($input[$key]) && is_scalar($input[$key]) ? absint($input[$key]) : 0;
-    }
-
-    /** @param mixed $value */
-    private static function write_private_option(string $name, $value): void
-    {
-        if (false === get_option($name, false)) {
-            add_option($name, $value, '', false);
-            return;
-        }
-
-        update_option($name, $value, false);
     }
 
     public static function render_page(): void

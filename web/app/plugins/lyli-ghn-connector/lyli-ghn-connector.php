@@ -18,21 +18,26 @@ if (! defined('ABSPATH')) {
 }
 
 const VERSION = '0.2.0';
-const SETTINGS_OPTION = 'lyli_ghn_settings';
-const TOKEN_OPTION = 'lyli_ghn_token';
 
+require_once __DIR__ . '/includes/infrastructure/woocommerce/class-settings-repository.php';
 require_once __DIR__ . '/includes/class-settings.php';
 require_once __DIR__ . '/includes/class-api-client.php';
 require_once __DIR__ . '/includes/contracts/interface-address-resolver.php';
 require_once __DIR__ . '/includes/contracts/interface-legacy-shipment-reader.php';
 require_once __DIR__ . '/includes/domain/class-address.php';
+require_once __DIR__ . '/includes/domain/class-package.php';
+require_once __DIR__ . '/includes/domain/class-cod-policy.php';
+require_once __DIR__ . '/includes/infrastructure/ghn/class-status-mapper.php';
+require_once __DIR__ . '/includes/infrastructure/woocommerce/class-shipment-meta-keys.php';
+require_once __DIR__ . '/includes/infrastructure/woocommerce/class-lyli-legacy-shipment-reader.php';
 require_once __DIR__ . '/includes/woocommerce/class-woo-address-resolver.php';
 require_once __DIR__ . '/includes/woocommerce/class-composite-address-resolver.php';
 require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-address-resolver.php';
 require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-legacy-shipment-reader.php';
 require_once __DIR__ . '/includes/woocommerce/class-shipment-repository.php';
 require_once __DIR__ . '/includes/class-order-mapper.php';
-require_once __DIR__ . '/includes/class-provider.php';
+require_once __DIR__ . '/includes/application/class-shipment-application.php';
+require_once __DIR__ . '/includes/admin/class-create-summary.php';
 require_once __DIR__ . '/includes/class-print-controller.php';
 require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-adapter.php';
 require_once __DIR__ . '/includes/woocommerce/class-standalone-admin.php';

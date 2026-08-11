@@ -100,7 +100,6 @@ $approved_exempt = [
     'updraftplus' => true, 'wp-2fa' => true, 'wp-seopress' => true, 'wp-super-cache' => true,
     'yoohw-vietnam-store-tools' => true,
     'lyli-ghn-connector' => true,
-    'vietqr-bacs-for-woocommerce' => true,
 ];
 $unapproved = [];
 foreach (glob("$root/web/app/plugins/*", GLOB_ONLYDIR) as $dir) {
@@ -363,38 +362,29 @@ $ghn_settings_php = (string) file_get_contents("$ghn_dir/includes/class-settings
 $ghn_client_php = (string) file_get_contents("$ghn_dir/includes/class-api-client.php");
 $ghn_mapper_php = (string) file_get_contents("$ghn_dir/includes/class-order-mapper.php");
 $ghn_address_php = (string) file_get_contents("$ghn_dir/includes/domain/class-address.php");
-$ghn_provider_php = (string) file_get_contents("$ghn_dir/includes/class-provider.php");
+$ghn_application_php = (string) file_get_contents("$ghn_dir/includes/application/class-shipment-application.php");
+$ghn_meta_keys_php = (string) file_get_contents("$ghn_dir/includes/infrastructure/woocommerce/class-shipment-meta-keys.php");
 $ghn_toolkit_adapter_php = (string) file_get_contents("$ghn_dir/includes/integrations/vietnam-store-toolkit/class-toolkit-adapter.php");
 $ghn_repository_php = (string) file_get_contents("$ghn_dir/includes/woocommerce/class-shipment-repository.php");
 $ghn_standalone_admin_php = (string) file_get_contents("$ghn_dir/includes/woocommerce/class-standalone-admin.php");
-$ghn_owned_php = $ghn_main_php . $ghn_plugin_php . $ghn_settings_php . $ghn_client_php . $ghn_mapper_php . $ghn_provider_php . $ghn_toolkit_adapter_php . $ghn_repository_php . $ghn_standalone_admin_php;
+$ghn_owned_php = $ghn_main_php . $ghn_plugin_php . $ghn_settings_php . $ghn_client_php . $ghn_mapper_php . $ghn_application_php . $ghn_toolkit_adapter_php . $ghn_repository_php . $ghn_standalone_admin_php;
 check('Lyli GHN connector is repo-controlled', str_contains($ghn_main_php, 'Plugin Name: Lyli GHN Connector'));
 check('GHN requires WooCommerce but not Toolkit', str_contains($ghn_main_php, 'Requires Plugins: woocommerce') && ! str_contains($ghn_main_php, 'Requires Plugins: woocommerce, yoohw'));
-check('GHN Toolkit provider framework is isolated in adapter', str_contains($ghn_toolkit_adapter_php, 'yoohw_vietnam_store_tools_shipping_providers') && ! str_contains($ghn_mapper_php . $ghn_provider_php . $ghn_client_php, 'Yoohw_'));
+check('GHN Toolkit provider framework is isolated in adapter', str_contains($ghn_toolkit_adapter_php, 'yoohw_vietnam_store_tools_shipping_providers') && ! str_contains($ghn_mapper_php . $ghn_application_php . $ghn_client_php, 'Yoohw_'));
 check('GHN owner settings use manage_woocommerce', str_contains($ghn_settings_php, "current_user_can('manage_woocommerce')") && ! str_contains($ghn_settings_php, 'manage_options'));
 check('GHN token is never rendered back', str_contains($ghn_settings_php, 'name="lyli_ghn[token]" value=""'));
 check('GHN client allowlists official gateways', str_contains($ghn_client_php, 'dev-online-gateway.ghn.vn') && str_contains($ghn_client_php, 'online-gateway.ghn.vn'));
 check('GHN connector uses two-level name-mode address', str_contains($ghn_address_php, "'is_new_to_address' => true") && str_contains($ghn_address_php, "'to_ward_name'"));
-check('GHN mutations have defense-in-depth capability check', str_contains($ghn_provider_php, "current_user_can('manage_woocommerce')"));
+check('GHN mutations have defense-in-depth capability check', str_contains($ghn_application_php, "current_user_can('manage_woocommerce')"));
 check('GHN owns HPOS-compatible shipment persistence', str_contains($ghn_repository_php, 'update_meta_data') && str_contains($ghn_repository_php, 'save_meta_data') && ! str_contains($ghn_repository_php, '$wpdb'));
+check('GHN canonical shipment keys are neutral and centralized', str_contains($ghn_meta_keys_php, '_openship_ghn_order_code') && ! str_contains($ghn_repository_php, "'_openship_ghn_"));
+check('GHN panels share one application lifecycle', str_contains($ghn_toolkit_adapter_php, '$this->application->create(') && str_contains($ghn_standalone_admin_php, '$this->application->{$operation}('));
 check('GHN has standalone Woo order admin fallback', str_contains($ghn_standalone_admin_php, 'add_meta_box') && str_contains($ghn_standalone_admin_php, 'admin_post_'));
 check('GHN V1 exposes no unauthenticated webhook/AJAX', ! str_contains($ghn_owned_php, 'register_rest_route') && ! str_contains($ghn_owned_php, 'wp_ajax_nopriv'));
 check('GHN V1 does not inject live checkout rates', ! str_contains($ghn_owned_php, 'WC_Shipping_Method'));
 check('GHN connector focused validator exists', is_file("$root/scripts/validate-ghn-connector.php"));
 
-/* Standalone VietQR enhancement: native BACS semantics, owner configured, no settlement/webhook. */
-$vietqr_dir = "$root/web/app/plugins/vietqr-bacs-for-woocommerce";
-$vietqr_main_php = (string) file_get_contents("$vietqr_dir/vietqr-bacs-for-woocommerce.php");
-$vietqr_integration_php = (string) file_get_contents("$vietqr_dir/includes/class-integration.php");
-$vietqr_builder_php = (string) file_get_contents("$vietqr_dir/includes/class-qr-builder.php");
-$vietqr_renderer_php = (string) file_get_contents("$vietqr_dir/includes/class-renderer.php");
-$vietqr_owned_php = $vietqr_main_php . $vietqr_integration_php . $vietqr_builder_php . $vietqr_renderer_php;
-check('VietQR BACS plugin is repo-controlled and generic', str_contains($vietqr_main_php, 'Plugin Name: VietQR BACS for WooCommerce'));
-check('VietQR uses WooCommerce integration settings', str_contains($vietqr_integration_php, 'extends \\WC_Integration') && str_contains($vietqr_integration_php, 'woocommerce_update_options_integration_'));
-check('VietQR only renders for native BACS order surfaces', str_contains($vietqr_renderer_php, 'woocommerce_thankyou_bacs') && str_contains($vietqr_builder_php, "'bacs' !=="));
-check('VietQR uses exact external image host', str_contains($vietqr_builder_php, "private const HOST = 'img.vietqr.io'"));
-check('VietQR has no automatic settlement or callback surface', ! str_contains($vietqr_owned_php, 'payment_complete') && ! str_contains($vietqr_owned_php, 'register_rest_route') && ! str_contains($vietqr_owned_php, 'wp_ajax_nopriv'));
-check('VietQR focused validator exists', is_file("$root/scripts/validate-vietqr-bacs.php"));
+check('Custom VietQR prototype is absent', ! is_file("$root/web/app/plugins/vietqr-bacs-for-woocommerce/vietqr-bacs-for-woocommerce.php") && ! is_file("$root/scripts/validate-vietqr-bacs.php"));
 
 /* composer.json validate script updated? */
 check(

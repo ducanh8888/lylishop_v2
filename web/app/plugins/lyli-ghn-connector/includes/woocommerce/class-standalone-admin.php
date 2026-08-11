@@ -2,8 +2,9 @@
 
 namespace Lyli\GHN\WooCommerce;
 
+use Lyli\GHN\Application\Shipment_Application;
+use Lyli\GHN\Admin\Create_Summary;
 use Lyli\GHN\Print_Controller;
-use Lyli\GHN\Provider;
 use Lyli\GHN\Settings;
 
 final class Standalone_Admin
@@ -15,7 +16,7 @@ final class Standalone_Admin
         'print' => 'lyli_ghn_print_shipment',
     ];
 
-    public function __construct(private Provider $provider, private Shipment_Repository $shipments)
+    public function __construct(private Shipment_Application $application, private Shipment_Repository $shipments)
     {
     }
 
@@ -62,7 +63,7 @@ final class Standalone_Admin
             $this->button($order, 'print', __('In nhãn', 'lyli-ghn-connector'), true);
             $this->button($order, 'cancel', __('Hủy vận đơn', 'lyli-ghn-connector'));
         } else {
-            $this->provider->render_create_fields($order);
+            Create_Summary::render($this->application, $order);
             $this->button($order, 'create', __('Tạo vận đơn GHN', 'lyli-ghn-connector'));
         }
     }
@@ -87,15 +88,14 @@ final class Standalone_Admin
             wp_die(esc_html($authorized->get_error_message()), '', ['response' => 403]);
         }
         if ('print' === $operation) {
-            Print_Controller::handle_authorized_request($order_id, $nonce, $this->nonce_action($order_id), $this->provider);
+            Print_Controller::handle_authorized_request($order_id, $nonce, $this->nonce_action($order_id), $this->application);
         }
 
         $order = wc_get_order($order_id);
         if (! $order) {
             wp_die(esc_html__('Không tìm thấy đơn WooCommerce.', 'lyli-ghn-connector'), '', ['response' => 404]);
         }
-        $method = $operation . '_shipment';
-        $result = $this->provider->{$method}($order);
+        $result = $this->application->{$operation}($order);
         $args = is_wp_error($result)
             ? ['lyli_ghn_error' => $result->get_error_message()]
             : ['lyli_ghn_notice' => $operation];
@@ -121,4 +121,5 @@ final class Standalone_Admin
     {
         return 'lyli_ghn_shipment_action_' . $order_id;
     }
+
 }

@@ -3,25 +3,12 @@
 namespace Lyli\GHN\WooCommerce;
 
 use Lyli\GHN\Contracts\Legacy_Shipment_Reader;
+use Lyli\GHN\Infrastructure\WooCommerce\Shipment_Meta_Keys;
 
 final class Shipment_Repository
 {
-    private const META = [
-        'provider' => '_lyli_ghn_provider',
-        'order_code' => '_lyli_ghn_order_code',
-        'client_order_code' => '_lyli_ghn_client_order_code',
-        'service_code' => '_lyli_ghn_service_code',
-        'service_name' => '_lyli_ghn_service_name',
-        'status_id' => '_lyli_ghn_status',
-        'status' => '_lyli_ghn_status_label',
-        'tracking_url' => '_lyli_ghn_tracking_url',
-        'fee' => '_lyli_ghn_fee',
-        'insurance_fee' => '_lyli_ghn_insurance_fee',
-        'cod_amount' => '_lyli_ghn_cod_amount',
-        'last_synced' => '_lyli_ghn_last_synced_at',
-    ];
-
-    public function __construct(private ?Legacy_Shipment_Reader $legacy_reader = null)
+    /** @param array<int,Legacy_Shipment_Reader> $legacy_readers */
+    public function __construct(private array $legacy_readers = [])
     {
     }
 
@@ -32,13 +19,19 @@ final class Shipment_Repository
             return [];
         }
 
-        $order_code = sanitize_text_field((string) $order->get_meta(self::META['order_code'], true));
+        $order_code = sanitize_text_field((string) $order->get_meta(Shipment_Meta_Keys::CANONICAL['order_code'], true));
         if ('' === $order_code) {
-            return $this->legacy_reader ? $this->legacy_reader->read($order) : [];
+            foreach ($this->legacy_readers as $reader) {
+                $legacy = $reader->read($order);
+                if ([] !== $legacy) {
+                    return $legacy;
+                }
+            }
+            return [];
         }
 
         $data = [];
-        foreach (self::META as $key => $meta_key) {
+        foreach (Shipment_Meta_Keys::CANONICAL as $key => $meta_key) {
             $data[$key] = $order->get_meta($meta_key, true);
         }
         $data['provider'] = 'ghn';
@@ -55,7 +48,6 @@ final class Shipment_Repository
         if (! is_object($order) || ! method_exists($order, 'update_meta_data') || ! method_exists($order, 'save_meta_data')) {
             return new \WP_Error('lyli_ghn_persistence_order', __('Không thể lưu trạng thái GHN vào đơn WooCommerce.', 'lyli-ghn-connector'));
         }
-
         $order_code = sanitize_text_field((string) ($data['order_code'] ?? $data['tracking_code'] ?? ''));
         if ('' === $order_code) {
             return new \WP_Error('lyli_ghn_persistence_code', __('Trạng thái GHN thiếu order_code.', 'lyli-ghn-connector'));
@@ -77,7 +69,7 @@ final class Shipment_Repository
             'last_synced' => gmdate('c'),
         ];
 
-        foreach (self::META as $key => $meta_key) {
+        foreach (Shipment_Meta_Keys::CANONICAL as $key => $meta_key) {
             $order->update_meta_data($meta_key, $normalized[$key]);
         }
         $order->save_meta_data();

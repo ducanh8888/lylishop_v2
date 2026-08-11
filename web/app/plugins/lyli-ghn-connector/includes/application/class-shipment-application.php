@@ -1,53 +1,44 @@
 <?php
 
-namespace Lyli\GHN;
+namespace Lyli\GHN\Application;
 
+use Lyli\GHN\Api_Client;
+use Lyli\GHN\Infrastructure\GHN\Status_Mapper;
+use Lyli\GHN\Infrastructure\WooCommerce\Settings_Repository;
+use Lyli\GHN\Order_Mapper;
 use Lyli\GHN\WooCommerce\Shipment_Repository;
 
-final class Provider
+/** The single Create/Sync/Cancel/Print workflow used by every admin integration. */
+final class Shipment_Application
 {
     public function __construct(
         private Api_Client $client,
         private Order_Mapper $mapper,
-        private Shipment_Repository $shipments
+        private Shipment_Repository $shipments,
+        private Settings_Repository $settings
     ) {
     }
 
-    /** @param object $order @param array<string,mixed> $context */
-    public function render_create_fields($order, array $context = []): void
+    public function preview_payload($order)
     {
-        $payload = $this->mapper->build_payload($order, Settings::get());
-        if (is_wp_error($payload)) {
-            echo '<p class="description" style="color:#b32d2e">' . esc_html($payload->get_error_message()) . '</p>';
-            return;
-        }
-
-        echo '<p class="description">' . esc_html(sprintf(
-            __('Kiện %1$s cm, %2$s g. Thu hộ dự kiến: %3$s. GHN dùng địa chỉ Việt Nam hai cấp của đơn hàng.', 'lyli-ghn-connector'),
-            $payload['length'] . '×' . $payload['width'] . '×' . $payload['height'],
-            $payload['weight'],
-            wp_strip_all_tags(wc_price($payload['cod_amount']))
-        )) . '</p>';
+        return $this->mapper->build_payload($order, $this->settings->get());
     }
 
-    /** @param object $order @param array<string,mixed> $context */
-    public function create_shipment($order, array $context = [])
+    public function create($order)
     {
-        $authorized = $this->authorize_action($order);
+        $authorized = $this->authorize($order);
         if (is_wp_error($authorized)) {
             return $authorized;
         }
-
         $local = $this->shipments->read($order);
         if ('ghn' === ($local['provider'] ?? '') && ! empty($local['tracking_code'])) {
             return $local;
         }
 
-        $payload = $this->mapper->build_payload($order, Settings::get());
+        $payload = $this->preview_payload($order);
         if (is_wp_error($payload)) {
             return $payload;
         }
-
         $existing = $this->client->order_info_by_client_code($payload['client_order_code']);
         if (! is_wp_error($existing)) {
             return $this->persist($order, $this->shipment_data($existing, $payload));
@@ -55,24 +46,18 @@ final class Provider
         if (! $this->client->is_not_found_error($existing)) {
             return $existing;
         }
-
         $preview = $this->client->preview_order($payload);
         if (is_wp_error($preview)) {
             return $preview;
         }
-
         $created = $this->client->create_order($payload);
-        if (is_wp_error($created)) {
-            return $created;
-        }
 
-        return $this->persist($order, $this->shipment_data($created, $payload));
+        return is_wp_error($created) ? $created : $this->persist($order, $this->shipment_data($created, $payload));
     }
 
-    /** @param object $order @param array<string,mixed> $context */
-    public function sync_shipment($order, array $context = [])
+    public function sync($order)
     {
-        $authorized = $this->authorize_action($order);
+        $authorized = $this->authorize($order);
         if (is_wp_error($authorized)) {
             return $authorized;
         }
@@ -81,17 +66,15 @@ final class Provider
             return $tracking_code;
         }
         $data = $this->client->order_info($tracking_code);
-        if (is_wp_error($data)) {
-            return $data;
-        }
 
-        return $this->persist($order, $this->shipment_data($data, ['client_order_code' => Order_Mapper::client_order_code($order)]));
+        return is_wp_error($data)
+            ? $data
+            : $this->persist($order, $this->shipment_data($data, ['client_order_code' => Order_Mapper::client_order_code($order)]));
     }
 
-    /** @param object $order @param array<string,mixed> $context */
-    public function cancel_shipment($order, array $context = [])
+    public function cancel($order)
     {
-        $authorized = $this->authorize_action($order);
+        $authorized = $this->authorize($order);
         if (is_wp_error($authorized)) {
             return $authorized;
         }
@@ -114,14 +97,13 @@ final class Provider
             'client_order_code' => Order_Mapper::client_order_code($order),
             'tracking_url' => 'https://donhang.ghn.vn/',
             'status_id' => 'cancel',
-            'status' => self::status_label('cancel'),
+            'status' => Status_Mapper::label('cancel'),
         ]);
     }
 
-    /** @param object $order @param array<string,mixed> $context */
-    public function print_shipment($order, array $context = [])
+    public function print($order)
     {
-        $authorized = $this->authorize_action($order);
+        $authorized = $this->authorize($order);
         if (is_wp_error($authorized)) {
             return $authorized;
         }
@@ -137,12 +119,29 @@ final class Provider
         if ('' === $token) {
             return new \WP_Error('lyli_ghn_missing_print_token', __('GHN không trả về print token.', 'lyli-ghn-connector'));
         }
-        $url = $this->client->build_print_url($token, sanitize_key((string) (Settings::get()['print_format'] ?? 'a5')));
+        $url = $this->client->build_print_url($token, sanitize_key((string) ($this->settings->get()['print_format'] ?? 'a5')));
 
         return is_wp_error($url) ? $url : ['url' => $url];
     }
 
-    /** @param array<string,mixed>|\WP_Error $data */
+    private function tracking_code($order)
+    {
+        $data = $this->shipments->read($order);
+        $tracking_code = sanitize_text_field((string) ($data['tracking_code'] ?? ''));
+        return '' !== $tracking_code ? $tracking_code : new \WP_Error('lyli_ghn_missing_tracking', __('Đơn hàng chưa có vận đơn GHN.', 'lyli-ghn-connector'));
+    }
+
+    private function authorize($order)
+    {
+        if (! current_user_can('manage_woocommerce')) {
+            return new \WP_Error('lyli_ghn_forbidden', __('Bạn không có quyền thao tác vận đơn GHN.', 'lyli-ghn-connector'));
+        }
+        if (! is_object($order) || ! method_exists($order, 'get_id') || absint($order->get_id()) < 1) {
+            return new \WP_Error('lyli_ghn_invalid_order', __('Đơn WooCommerce không hợp lệ.', 'lyli-ghn-connector'));
+        }
+        return true;
+    }
+
     private function persist($order, $data)
     {
         return is_wp_error($data) ? $data : $this->shipments->save($order, $data);
@@ -156,7 +155,6 @@ final class Provider
         if ('' === $order_code) {
             return new \WP_Error('lyli_ghn_missing_order_code', __('GHN không trả về mã vận đơn.', 'lyli-ghn-connector'));
         }
-
         $status_id = sanitize_key((string) ($data['status'] ?? 'ready_to_pick'));
         $fee = $data['total_fee'] ?? $data['fee']['total'] ?? $data['fee']['main_service'] ?? 0;
         $insurance_fee = $data['fee']['insurance'] ?? $data['insurance_fee'] ?? 0;
@@ -167,57 +165,18 @@ final class Provider
             'client_order_code' => sanitize_text_field((string) ($data['client_order_code'] ?? $fallback['client_order_code'] ?? '')),
             'service_code' => (string) $service_type,
             'service_name' => 5 === $service_type ? __('GHN Hàng nặng', 'lyli-ghn-connector') : __('GHN Hàng nhẹ', 'lyli-ghn-connector'),
-            'label_id' => $order_code,
-            'tracking_code' => $order_code,
-            'tracking_id' => $order_code,
             'tracking_url' => 'https://donhang.ghn.vn/',
             'status_id' => $status_id,
-            'status' => self::status_label($status_id),
+            'status' => Status_Mapper::label($status_id),
             'fee' => max(0, (float) $fee),
             'insurance_fee' => max(0, (float) $insurance_fee),
             'cod_amount' => max(0, (float) ($data['cod_amount'] ?? $fallback['cod_amount'] ?? 0)),
         ];
     }
 
-    public static function status_label(string $status): string
-    {
-        $labels = [
-            'ready_to_pick' => __('Mới tạo vận đơn', 'lyli-ghn-connector'), 'picking' => __('Đang lấy hàng', 'lyli-ghn-connector'),
-            'cancel' => __('Đã hủy', 'lyli-ghn-connector'), 'picked' => __('Đã lấy hàng', 'lyli-ghn-connector'),
-            'storing' => __('Đang lưu kho', 'lyli-ghn-connector'), 'transporting' => __('Đang luân chuyển', 'lyli-ghn-connector'),
-            'sorting' => __('Đang phân loại', 'lyli-ghn-connector'), 'delivering' => __('Đang giao hàng', 'lyli-ghn-connector'),
-            'delivered' => __('Đã giao hàng', 'lyli-ghn-connector'), 'delivery_fail' => __('Giao hàng thất bại', 'lyli-ghn-connector'),
-            'waiting_to_return' => __('Đang chờ trả hàng', 'lyli-ghn-connector'), 'return' => __('Đang trả hàng', 'lyli-ghn-connector'),
-            'returning' => __('Đang trả cho shop', 'lyli-ghn-connector'), 'returned' => __('Đã trả cho shop', 'lyli-ghn-connector'),
-            'exception' => __('Vận đơn ngoại lệ', 'lyli-ghn-connector'), 'damage' => __('Hàng bị hư hỏng', 'lyli-ghn-connector'),
-            'lost' => __('Hàng bị thất lạc', 'lyli-ghn-connector'),
-        ];
-
-        return $labels[$status] ?? sanitize_text_field($status);
-    }
-
-    private function tracking_code($order)
-    {
-        $data = $this->shipments->read($order);
-        $tracking_code = sanitize_text_field((string) ($data['tracking_code'] ?? ''));
-        return '' !== $tracking_code ? $tracking_code : new \WP_Error('lyli_ghn_missing_tracking', __('Đơn hàng chưa có vận đơn GHN.', 'lyli-ghn-connector'));
-    }
-
     /** @param array<string,mixed> $data @return array<string,mixed> */
     private function first_row(array $data): array
     {
         return isset($data[0]) && is_array($data[0]) ? $data[0] : $data;
-    }
-
-    private function authorize_action($order)
-    {
-        if (! current_user_can('manage_woocommerce')) {
-            return new \WP_Error('lyli_ghn_forbidden', __('Bạn không có quyền thao tác vận đơn GHN.', 'lyli-ghn-connector'));
-        }
-        if (! is_object($order) || ! method_exists($order, 'get_id') || absint($order->get_id()) < 1) {
-            return new \WP_Error('lyli_ghn_invalid_order', __('Đơn WooCommerce không hợp lệ.', 'lyli-ghn-connector'));
-        }
-
-        return true;
     }
 }

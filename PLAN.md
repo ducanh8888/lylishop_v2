@@ -547,7 +547,7 @@ WooCommerce đã có Direct Bank Transfer trong core; đơn sử dụng phương
 
 **Quyết định V1 cập nhật 2026-08-10:** Vietnam Store Toolkit 1.1.2 được chọn làm UI chuyển khoản trước mắt bằng cách mở rộng gateway `bacs` với VietQR. Đây không phải gateway mới, không đối soát ngân hàng, không xác nhận tiền tự động và không tự đánh dấu đơn paid. BACS/VietQR chỉ được owner cấu hình/bật sau khi developer deploy plugin và privacy disclosure đã sẵn sàng. SePay giữ trạng thái **DEFERRED / OPTIONAL**, chỉ xem lại nếu sau này cần automatic reconciliation; không chạy hai QR implementation song song. Xem `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md`.
 
-**Source direction cập nhật 2026-08-11 — chưa deploy:** GHN 0.2.0 đã tách Toolkit thành optional adapter; plugin `vietqr-bacs-for-woocommerce` 0.1.0 thay thế dependency payment ở source nhưng chưa active. Toolkit vẫn nằm trong Composer/runtime cho address fields/dataset và shipping rules cho tới cutover riêng; không bật hai QR implementation cùng lúc. Xem `docs/VIETNAM-TOOLKIT-DECOUPLING.md`.
+**Source direction cập nhật 2026-08-11 — chưa deploy:** GHN 0.2.0 có một application lifecycle first-party, Toolkit chỉ là optional adapter. Prototype VietQR custom chưa deploy đã bị gỡ; address và VietQR đều **REUSE-FIRST / chưa chọn nguồn**. Toolkit vẫn nằm trong Composer/runtime cho address fields/data và shipping rules tới controlled cutover. Xem `docs/VIETNAM-TOOLKIT-DECOUPLING.md`.
 
 Dùng plugin có sẵn cho:
 

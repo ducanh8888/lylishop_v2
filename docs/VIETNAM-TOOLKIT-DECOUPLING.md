@@ -1,75 +1,55 @@
 # Vietnam Store Toolkit decoupling
 
-## Trạng thái
+Updated: 2026-08-11
 
-- **CURRENT RUNTIME:** production vẫn chạy `lyli-ghn-connector` 0.1.1 và Vietnam Store Toolkit 1.1.2. Không có thay đổi activation, option, payment, shipping hay merchant data trong refactor này.
-- **CURRENT SOURCE:** GHN connector 0.2.0 chỉ hard-require WooCommerce; Toolkit là adapter tùy chọn. Plugin generic `vietqr-bacs-for-woocommerce` 0.1.0 đã có trong repo nhưng chưa deploy/activate.
-- **COMPOSER:** giữ `wpackagist-plugin/yoohw-vietnam-store-tools:1.1.2`. Dependency chưa đạt zero vì production address fields/dataset hai cấp và checkout shipping rules chưa có cutover thay thế.
+## Current truth
 
-## Dependency inventory
+- **CURRENT RUNTIME:** production remains on `lyli-ghn-connector` 0.1.1 plus Vietnam Store Toolkit 1.1.2. This source cleanup does not deploy, activate, deactivate, migrate data, or call GHN.
+- **CURRENT SOURCE:** GHN connector 0.2.0 has one first-party application workflow for Create/Sync/Cancel/Print. WooCommerce admin and the optional Toolkit adapter dispatch that same workflow.
+- **TRANSITIONAL DEPENDENCY:** keep `wpackagist-plugin/yoohw-vietnam-store-tools:1.1.2` because production still uses its Vietnamese two-level address UI/data and checkout shipping rules.
+- **ADDRESS:** **REUSE-FIRST / SOURCE NOT YET SELECTED.** No administrative dataset is copied into owned code. The GHN canonical address boundary accepts recipient, phone, optional province/ward codes, names, and street; unresolved numeric values fail instead of fabricating a district.
+- **VIETQR:** **REUSE-FIRST / CANDIDATE NOT YET SELECTED.** The undeployed custom `vietqr-bacs-for-woocommerce` prototype was removed. No replacement is selected or added by this cleanup.
 
-| Nhóm | Trước refactor | Phân loại và kết quả |
-|---|---|---|
-| A. GHN | Core mapper gọi Toolkit address helper; Provider đọc Toolkit shipment meta; chỉ có Toolkit order panel/actions | **REPLACEABLE BY SMALL FIRST-PARTY MODULE — DONE IN SOURCE.** Domain/API/COD/idempotency/print/status không import Toolkit. Connector sở hữu shipment repository và Woo order admin fallback; thin adapter giữ Toolkit UI khi contract tương thích |
-| B. VietQR/payment | Toolkit mở rộng native `bacs` | **REPLACEABLE BY SMALL FIRST-PARTY MODULE — IMPLEMENTED, NOT ACTIVE.** `vietqr-bacs-for-woocommerce` dùng WC Integration settings và native BACS semantics; không gateway mới, autobank, webhook hoặc auto-paid |
-| C. Address | Toolkit sở hữu checkout Province/Ward fields và national two-level dataset | **REQUIRED AT CURRENT RUNTIME.** GHN có address contract, Toolkit resolver tùy chọn và Woo fallback đọc state/city dạng tên. Fallback từ chối numeric/unresolved codes; không dựng district mapping |
-| D. Shipping rules | Toolkit shipping rules hiện là nguồn phí checkout; GHN live fee deferred | **REQUIRED UNTIL NATIVE CUTOVER.** GHN không còn tham chiếu shipping rules. Tương lai migrate có kiểm soát sang Woo Shipping Zones + Flat Rate/Free Shipping; task này không đổi production |
-| E. Tracking | Toolkit metadata/panel/customer display | **OPTIONAL INTEGRATION.** GHN ghi canonical order meta bằng Woo CRUD và có standalone admin/customer display. Legacy `_vck_shipping_*` vẫn đọc được; Toolkit adapter mirror dữ liệu UI cần qua framework hiện hữu |
-| F. Invoice/e-invoice | Toolkit có VAT, electronic invoice và credential surfaces | **OBSOLETE FOR CURRENT LYLI REQUIREMENTS.** Chưa cấu hình/dùng; không tái tạo. Chỉ thêm giải pháp riêng nếu có requirement kinh doanh sau này |
-| G. Owner/admin UI | Toolkit main page, shipping/provider panel và BACS extension | **PARTLY REPLACED.** GHN có settings + order controls với `manage_woocommerce`/nonce. VietQR dùng WooCommerce Integrations. Toolkit UI còn cần cho address/shipping trong runtime hiện tại |
-| H. Phone/migration/other | Phone normalization, DevVN migration tools, tax/order utilities | Phone normalization là **OPTIONAL** vì GHN tự normalize payload; DevVN tools là **OBSOLETE after Toolkit removal** nhưng site-policy guard vẫn cần khi Toolkit còn active; tax/order utilities chưa có requirement phải tái tạo |
-
-## GHN source architecture
+## Source boundaries
 
 ```text
-Domain Address + GHN API/Print/Status/COD
-        ↓
-Woo OrderAdapter / Shipment_Repository / Standalone_Admin
-        ↓
-WooCommerce CRUD and capabilities
-
-Optional composition adapters:
-Integrations/VietnamStoreToolkit/Toolkit_Address_Resolver
-Integrations/VietnamStoreToolkit/Toolkit_Adapter
-Integrations/VietnamStoreToolkit/Toolkit_Legacy_Shipment_Reader
+Woo order panel ─┐
+                 ├─ Shipment_Application ─ GHN Client
+Toolkit adapter ─┘          │
+                            ├─ Order Mapper / canonical Address
+                            ├─ Settings Repository
+                            └─ Shipment Repository
 ```
 
-Canonical state dùng `_lyli_ghn_*` order meta qua `WC_Order::update_meta_data()`/`save_meta_data()`: provider `ghn`, GHN order code, client order code, service/status, last sync, fee, insurance và COD. Không lưu GHN Token hoặc print token. Read order: canonical trước, legacy Toolkit metadata sau. New create/sync/cancel writes canonical; Toolkit framework chỉ là optional UI adapter.
+`Shipment_Application` is the only implementation of the lifecycle. Admin surfaces own capability/nonce checks and presentation; application also performs defense-in-depth order/capability validation. API endpoint selection, transport parsing, print allowlists and redaction remain in the GHN client. COD and package validation are domain policies.
 
-Khi Toolkit contract hợp lệ, chỉ Toolkit panel được đăng ký để tránh hai panel. Khi Toolkit vắng/không hỗ trợ, Woo-native meta box cung cấp Create/Sync/Print/Cancel và customer tracking. Mọi mutation tiếp tục yêu cầu `manage_woocommerce`, nonce và server-side order validation.
+Toolkit-specific provider hooks, address lookup and `_vck_*` compatibility live only under `includes/integrations/vietnam-store-toolkit/`, apart from the composition-root detection/registration needed to load the optional adapter. GHN core continues when Toolkit support is absent and falls back to the standalone Woo panel/customer tracking.
 
-## VietQR BACS replacement
+## Persistence and naming
 
-Plugin `vietqr-bacs-for-woocommerce`:
+New writes use one centralized canonical schema in `Shipment_Meta_Keys`:
 
-- owner cấu hình trong **WooCommerce → Settings → Integrations → VietQR BACS**;
-- mặc định disabled; không chứa bank/account data trong source;
-- render QR chỉ cho order BACS chưa paid tại Thank You, Order Pay và My Account order view;
-- amount = total trừ refund; transfer description deterministic từ order number/id;
-- URL chỉ dùng `https://img.vietqr.io/image/`; không callback, settlement hay tự đổi order status;
-- owner phải duyệt privacy disclosure trước khi enable vì URL ảnh chứa merchant/order fields.
+- `_openship_ghn_provider`
+- `_openship_ghn_order_code`
+- `_openship_ghn_client_order_code`
+- `_openship_ghn_service_code`, `_openship_ghn_service_name`
+- `_openship_ghn_status`, `_openship_ghn_status_label`
+- `_openship_ghn_tracking_url`
+- `_openship_ghn_fee`, `_openship_ghn_insurance_fee`, `_openship_ghn_cod_amount`
+- `_openship_ghn_last_synced_at`
 
-Không chạy đồng thời QR của Toolkit và plugin mới. Runtime cutover phải tắt Toolkit VietQR trước, activate/configure replacement, smoke rồi mới cân nhắc deactivate Toolkit.
+Read priority is canonical, legacy `_lyli_ghn_*`, then legacy Toolkit `_vck_shipping_*`. Each legacy schema is isolated in a reader; application, admin and GHN client know none of those keys. There is no multi-write and no credential/print token in order metadata.
 
-## Điều kiện gỡ Toolkit hoàn toàn
+The physical plugin slug, PHP namespace, text domain, action/nonces, settings option `lyli_ghn_settings`, private non-autoload Token option `lyli_ghn_token`, and GHN `LYLI-WC-{order_id}` client code remain stable deliberately. They were already part of deployed 0.1.1 settings/idempotency behavior; renaming them would create credential loss, broken admin requests, or duplicate-shipment risk without improving the carrier boundary. New shipment storage is neutral because 0.2.0 has not been deployed.
 
-Chỉ remove Composer package sau khi tất cả gate sau PASS trong task cutover riêng:
+## Runtime cutover gate
 
-1. Cấu hình Woo Shipping Zones/Flat Rate/Free Shipping tương đương rule production và checkout regression PASS.
-2. Có owner-approved source cho Province/Ward fields hai cấp, hoặc xác nhận standard Woo state/city dạng tên đủ cho checkout và GHN; không để order mới lưu numeric codes không resolve được.
-3. VietQR replacement đã deploy nhưng giữ disabled cho tới khi owner nhập merchant data; Toolkit VietQR không còn active.
-4. Historical GHN orders đọc được qua canonical/legacy fallback; standalone order controls và customer tracking PASS khi Toolkit inactive.
-5. Xác nhận VAT/e-invoice/phone/tracking Toolkit không còn production requirement.
-6. Backup DB, deactivate Toolkit có kiểm soát, smoke Home/Shop/Cart/Checkout/Account/order admin; keep hoặc rollback.
+1. Migrate checkout shipping rules to WooCommerce Shipping Zones/native methods and verify totals at 375/768/1440.
+2. Select and audit a reusable two-level Vietnam address component; preserve order/account address compatibility.
+3. Select and audit a reusable VietQR component only if owner requirements still call for it; do not run two QR renderers.
+4. Deploy GHN 0.2.x through immutable release workflow and verify canonical writes plus both legacy read paths.
+5. Confirm Toolkit VAT/e-invoice/migrations/tracking surfaces are no longer required.
+6. Back up DB, deactivate Toolkit in a controlled cutover, smoke Home/Shop/Cart/Checkout/Account/order admin, then keep or rollback.
+7. Remove the Toolkit Composer package only in a later source task after the runtime gate passes.
 
-## Runtime cutover sau này
-
-1. Local validate source; build immutable release.
-2. Backup DB/uploads và ghi rollback release.
-3. Deploy code nhưng chưa activate VietQR replacement và chưa deactivate Toolkit.
-4. Verify GHN 0.2 standalone persistence/adapter compatibility; migrate/sync một disposable Test order nếu được duyệt.
-5. Cấu hình native shipping zones và regression checkout.
-6. Activate VietQR replacement disabled; owner tự nhập merchant values và privacy disclosure.
-7. Tắt Toolkit VietQR, verify không có hai QR implementation.
-8. Chỉ khi address/shipping/invoice gates đều đạt: deactivate Toolkit, smoke, rồi remove Composer package trong source task tiếp theo.
-9. Không đạt gate nào thì giữ Toolkit active hoặc rollback; không xóa options/order metadata.
+Until every gate passes, Toolkit remains a transitional runtime dependency. This document does not authorize production cutover.
