@@ -5,7 +5,7 @@ Updated: 2026-08-11
 ## Current truth
 
 - **CURRENT RUNTIME:** production remains on `lyli-ghn-connector` 0.1.1 plus Vietnam Store Toolkit 1.1.2. This source cleanup does not deploy, activate, deactivate, migrate data, or call GHN.
-- **CURRENT SOURCE:** GHN connector 0.2.1 has one first-party application workflow for Create/Sync/Cancel/Print. WooCommerce admin and optional address/Toolkit adapters dispatch that same workflow.
+- **CURRENT SOURCE:** GHN connector 0.2.1 has one first-party application workflow for Create/Sync/Cancel/Print. WooCommerce admin and optional address/Toolkit adapters dispatch that same workflow. Commit `7c36070db7fc9cc95091f1119e83b220785a28da` also prevents a late ward AJAX response from replacing the current province selection.
 - **TRANSITIONAL DEPENDENCY:** keep `wpackagist-plugin/yoohw-vietnam-store-tools:1.1.2` because production still uses its Vietnamese two-level address UI/data and checkout shipping rules.
 - **ADDRESS:** **SELECTED / SOURCE-INTEGRATED / NOT ACTIVE IN PRODUCTION.** `lyli-vietnam-address` uses the pinned MIT-licensed `thanglequoc/vietnamese-provinces-database` `v4.0.0` asset (34 provinces, 3,321 wards) behind a thin Woo adapter and canonical DTO. The storage contract remains compatible with current Toolkit two-level codes.
 - **VIETQR:** **SELECTED / SOURCE-INTEGRATED / NOT ACTIVE IN PRODUCTION.** `lyli-vietqr-bacs` uses `liopay/vietqr` `1.0.0` plus `chillerlan/php-qrcode` `6.0.1`. It presents a locally generated QR for native BACS only; it adds no gateway, SaaS, webhook or paid-status mutation.
@@ -61,7 +61,7 @@ The physical plugin slug, PHP namespace, text domain, action/nonces, settings op
 
 ## Runtime cutover gate
 
-1. Add supported Checkout Blocks integration or bind the cutover explicitly to the already-used Classic Checkout contract.
+1. **Classic Cart + Classic Checkout are the binding V1 contract.** Checkout Blocks are deferred and are not a cutover gate.
 2. Migrate checkout shipping rules to WooCommerce Shipping Zones/native methods and verify equivalent totals at 375/768/1440.
 3. Back up DB, activate `lyli-vietnam-address`, and verify existing customer/order codes plus new checkout/account save and display flows.
 4. Configure and validate `lyli-vietqr-bacs` with owner merchant data only; ensure Toolkit VietQR is off so two QR renderers never run together.
@@ -70,3 +70,34 @@ The physical plugin slug, PHP namespace, text domain, action/nonces, settings op
 7. Remove optional Toolkit provider/address wiring and the Composer package only in a later source task after the runtime gate remains healthy; retain read-only legacy metadata compatibility only as long as needed.
 
 Until every gate passes, Toolkit remains a transitional runtime dependency. This document does not authorize production cutover.
+
+## Controlled cutover attempt — blocked before deployment (2026-08-11)
+
+The production inventory found that Toolkit is not merely carrying stale configuration. Three existing orders contain shipping items from method `yoohw_vietnam_store_tools_shipping_rules`, instance `2`. The active `Vietnam` country zone contains one enabled rule with these effective constraints:
+
+- geography: all Vietnamese provinces and wards;
+- cart total: `0` through `100,000,000` VND;
+- package weight: `0` through `1` kg;
+- shipping fee: `0` VND;
+- free-shipping threshold: `500,000` VND;
+- customer title: `Vận chuyển`;
+- COD allowed by the Toolkit rule.
+
+Native WooCommerce Flat Rate and Free Shipping can reproduce a zero fee and a minimum-order free-shipping threshold, but neither native method can make the rate unavailable above both a package-weight ceiling and a cart-total ceiling. Consequently the proposed native-only replacement fails exact equivalence at the exclusion boundaries:
+
+| Representative package | Toolkit result | Native Flat Rate / Free Shipping result | Gate |
+|---|---|---|---|
+| `100,000` VND, `0.50` kg | `Vận chuyển`, `0` VND | zero-cost rate | PASS |
+| `500,000` VND, `1.00` kg | `Vận chuyển`, `0` VND | zero-cost/free-shipping rate | PASS |
+| `100,000` VND, `1.01` kg | no matching rate | zero-cost rate remains available | **FAIL** |
+| `100,000,001` VND, `0.50` kg | no matching rate | zero-cost rate remains available | **FAIL** |
+
+The task explicitly prohibited silent approximation and a new custom shipping engine. The cutover therefore stopped before Release A, maintenance mode, database mutation, plugin activation/deactivation, or symlink changes. No rollback execution or new production backup was necessary because production state did not change.
+
+The smallest decision needed to resume is one of:
+
+1. retain Toolkit for this shipping availability rule;
+2. explicitly retire/change the `1 kg` and `100,000,000` VND ceilings so native Woo methods become equivalent; or
+3. separately authorize a narrowly scoped Woo shipping-method availability integration for those two conditions.
+
+Additional runtime truth captured without merchant data disclosure: BACS is currently enabled and has one configured account; Toolkit VietQR remains disabled. Production remains on release `20260811011830`, GHN connector 0.1.1 disabled/Test, and Toolkit 1.1.2 active.

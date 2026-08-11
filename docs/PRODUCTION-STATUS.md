@@ -42,6 +42,19 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 | Baseline content | 5 blog, 25 ảnh nguồn, 9 trang editorial/policy publish và 2 sản phẩm thật đã có trước rollout này; không tạo test product/order; promotion tắt |
 | Mốc đạt được | 1–5; chưa đạt commerce launch readiness |
 
+## Toolkit removal gate (2026-08-11)
+
+Cutover was **stopped before deployment**. Runtime inspection proved that the active Toolkit shipping rule is used by existing orders and includes both a maximum package weight of `1 kg` and a maximum cart total of `100,000,000` VND. Native WooCommerce Flat Rate/Free Shipping cannot express those two rate-availability ceilings exactly. Replacing it would therefore change checkout behavior for boundary cases, contrary to the no-approximation requirement.
+
+- Source validation passed; the narrow ward-AJAX race fix was committed as `7c36070db7fc9cc95091f1119e83b220785a28da`.
+- No Release A was built or deployed after the blocker became known.
+- No production DB/options/plugins/symlinks were changed, so no rollback execution or new backup was required.
+- `current` remains `releases/20260811011830`; Toolkit 1.1.2 remains active and Composer-pinned; GHN runtime remains 0.1.1 disabled/Test.
+- Classic Cart + Classic Checkout remain the V1 contract; Checkout Blocks are deferred.
+- Current payment drift captured safely: BACS is enabled with one account configured; Toolkit VietQR remains disabled. Account values were not read into documentation.
+
+Exact evidence and resume choices are recorded in [`VIETNAM-TOOLKIT-DECOUPLING.md`](VIETNAM-TOOLKIT-DECOUPLING.md).
+
 ## Toolkit + brand/mobile rollout (2026-08-10)
 
 | Workstream | Trạng thái |
