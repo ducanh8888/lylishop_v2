@@ -27,6 +27,8 @@ Lyli-Shop-90-Day-Project-Management-Workbook.xlsx
 !/web/app/plugins/lyli-vietnam-address/**
 !/web/app/plugins/lyli-vietqr-bacs/
 !/web/app/plugins/lyli-vietqr-bacs/**
+!/web/app/plugins/lyli-shipping-policy/
+!/web/app/plugins/lyli-shipping-policy/**
 /web/app/themes/botiga/
 /web/app/themes/storefront/
 /vendor/

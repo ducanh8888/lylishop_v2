@@ -102,6 +102,7 @@ $approved_exempt = [
     'lyli-ghn-connector' => true,
     'lyli-vietnam-address' => true,
     'lyli-vietqr-bacs' => true,
+    'lyli-shipping-policy' => true,
 ];
 $unapproved = [];
 foreach (glob("$root/web/app/plugins/*", GLOB_ONLYDIR) as $dir) {

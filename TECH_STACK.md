@@ -14,6 +14,8 @@
 
 > **Amendment 2026-08-11 — reuse đã chọn, cutover bị chặn trước deploy:** Source hiện có GHN connector 0.2.1, `lyli-vietnam-address` dùng dataset `thanglequoc` v4.0.0, và `lyli-vietqr-bacs` dùng `liopay/vietqr` + `chillerlan/php-qrcode`. Production vẫn ở GHN 0.1.1 disabled/Test + Toolkit 1.1.2 active. Runtime inventory xác nhận shipping rule Toolkit đang được dùng và có trần `1 kg` + `100.000.000` VND mà Flat Rate/Free Shipping thuần Woo không biểu diễn chính xác; vì vậy không có release/cutover runtime. Classic Cart/Checkout là contract V1, Blocks deferred. BACS hiện enabled với một account; Toolkit VietQR disabled. Xem `docs/VIETNAM-TOOLKIT-DECOUPLING.md`.
 
+> **Amendment 2026-08-11 — shipping gate đã có source fix:** Founder chọn plugin nội bộ tối thiểu `lyli-shipping-policy`. Native WooCommerce vẫn sở hữu zone, Flat Rate và phí; guard chỉ lọc đúng rate `flat_rate` tên `Vận chuyển` khi `contents_cost` sau discount/chưa tax vượt `100.000.000` VND hoặc tổng product weight theo store unit vượt `1 kg`. Không có shipping engine, settings UI, DB table, AJAX hay REST mới. Free threshold `500.000` không cần method thứ hai vì fee hiện tại đã bằng `0` ở cả hai phía threshold. Runtime cutover vẫn phải qua backup/Release A/equivalence trước khi Toolkit được deactivate.
+
 > **Amendment 2026-08-10 — deployment gate và commerce/UI plan:** Workflow hiện hành là **LOCAL/WSL VALIDATE → BUILD → BACKUP IF PRODUCTION WILL CHANGE → DEPLOY → SMOKE → KEEP OR ROLLBACK**. GitHub Actions informational only. Vietnam Store Toolkit 1.1.2 đã pre-flight xong nhưng chưa deployed; VietQR/BACS là transfer UI thủ công V1, SePay **DEFERRED / OPTIONAL**. Sáu màu founder-approved và mobile-first remediation đang **PLANNED**; xem hai pre-flight plan trong `docs/`.
 
 ---

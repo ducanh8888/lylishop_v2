@@ -94,10 +94,16 @@ Native WooCommerce Flat Rate and Free Shipping can reproduce a zero fee and a mi
 
 The task explicitly prohibited silent approximation and a new custom shipping engine. The cutover therefore stopped before Release A, maintenance mode, database mutation, plugin activation/deactivation, or symlink changes. No rollback execution or new production backup was necessary because production state did not change.
 
-The smallest decision needed to resume is one of:
+Founder resolved this gate by authorizing option 3: the narrowly scoped `lyli-shipping-policy` plugin. It filters already-calculated Woo rates and removes only a native `flat_rate` labelled `Vận chuyển` when the legacy ceiling is exceeded. It does not register a shipping method, calculate a fee, own a zone, or affect Local Pickup/GHN/unrelated rates.
 
-1. retain Toolkit for this shipping availability rule;
-2. explicitly retire/change the `1 kg` and `100,000,000` VND ceilings so native Woo methods become equivalent; or
-3. separately authorize a narrowly scoped Woo shipping-method availability integration for those two conditions.
+Source inspection of Toolkit 1.1.2 establishes the exact compatibility contract:
+
+- amount is `package['contents_cost']`: Woo cart line totals after discounts, excluding tax and shipping;
+- weight is the sum of each shipping product's stored weight multiplied by quantity, in the configured Woo store weight unit; missing weight contributes zero;
+- `1.000` kg and `100,000,000` VND are inclusive; only values above either ceiling hide the rate;
+- when no rule matches and default fee is blank, Toolkit adds no rate;
+- the `500,000` VND threshold sets the matched rule cost to zero, but the configured fee is already zero below the threshold. A second native Free Shipping rate would therefore change the visible method set without changing cost and is not equivalent.
+
+Production uses `kg`, so the guard's centralized `MAX_WEIGHT = 1.0` exactly matches the active Toolkit rule. `MAX_AMOUNT = 100000000.0` uses the same `contents_cost` basis. Native Woo owns the zone and zero-cost Flat Rate; the guard owns only these two missing maximum-eligibility predicates.
 
 Additional runtime truth captured without merchant data disclosure: BACS is currently enabled and has one configured account; Toolkit VietQR remains disabled. Production remains on release `20260811011830`, GHN connector 0.1.1 disabled/Test, and Toolkit 1.1.2 active.
