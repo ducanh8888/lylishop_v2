@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Lyli GHN Connector
- * Description: Repo-controlled GHN shipment connector for WooCommerce with optional integration adapters.
+ * Description: Repo-controlled standalone GHN shipment connector for WooCommerce.
  * Version: 0.2.1
  * Requires at least: 7.0
  * Requires PHP: 8.3
@@ -33,14 +33,12 @@ require_once __DIR__ . '/includes/infrastructure/woocommerce/class-lyli-legacy-s
 require_once __DIR__ . '/includes/woocommerce/class-woo-address-resolver.php';
 require_once __DIR__ . '/includes/woocommerce/class-composite-address-resolver.php';
 require_once __DIR__ . '/includes/integrations/vietnam-address/class-vietnam-address-resolver.php';
-require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-address-resolver.php';
 require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-legacy-shipment-reader.php';
 require_once __DIR__ . '/includes/woocommerce/class-shipment-repository.php';
 require_once __DIR__ . '/includes/class-order-mapper.php';
 require_once __DIR__ . '/includes/application/class-shipment-application.php';
 require_once __DIR__ . '/includes/admin/class-create-summary.php';
 require_once __DIR__ . '/includes/class-print-controller.php';
-require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-adapter.php';
 require_once __DIR__ . '/includes/woocommerce/class-standalone-admin.php';
 require_once __DIR__ . '/includes/woocommerce/class-customer-tracking.php';
 require_once __DIR__ . '/includes/class-plugin.php';

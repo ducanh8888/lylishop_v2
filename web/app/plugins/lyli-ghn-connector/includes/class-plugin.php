@@ -6,8 +6,6 @@ use Lyli\GHN\Application\Shipment_Application;
 use Lyli\GHN\Infrastructure\WooCommerce\Lyli_Legacy_Shipment_Reader;
 use Lyli\GHN\Infrastructure\WooCommerce\Settings_Repository;
 use Lyli\GHN\Integrations\VietnamAddress\Vietnam_Address_Resolver;
-use Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Address_Resolver;
-use Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Adapter;
 use Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Legacy_Shipment_Reader;
 use Lyli\GHN\WooCommerce\Composite_Address_Resolver;
 use Lyli\GHN\WooCommerce\Customer_Tracking;
@@ -29,15 +27,10 @@ final class Plugin
         }
 
         $application = self::application();
-        $toolkit_supported = Toolkit_Adapter::is_supported();
-        if (null !== $application && $toolkit_supported) {
-            (new Toolkit_Adapter($application))->init();
-        } elseif (null !== $application) {
+        if (null !== $application) {
             (new Standalone_Admin($application, self::shipments()))->init();
         }
-        if (! $toolkit_supported) {
-            (new Customer_Tracking(self::shipments()))->init();
-        }
+        (new Customer_Tracking(self::shipments()))->init();
     }
 
     public static function application(): ?Shipment_Application
@@ -51,9 +44,6 @@ final class Plugin
             $resolvers = [];
             if (Vietnam_Address_Resolver::is_supported()) {
                 $resolvers[] = new Vietnam_Address_Resolver();
-            }
-            if (Toolkit_Address_Resolver::is_supported()) {
-                $resolvers[] = new Toolkit_Address_Resolver();
             }
             $resolvers[] = new Woo_Address_Resolver();
             self::$application = new Shipment_Application(

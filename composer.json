@@ -24,7 +24,6 @@
         "roots/wp-config": "^1.0",
 
         "wpackagist-plugin/woocommerce": "10.9.4",
-        "wpackagist-plugin/yoohw-vietnam-store-tools": "1.1.2",
         "wpackagist-plugin/ai-engine": "3.7.0",
         "wpackagist-theme/botiga": "2.4.7",
         "wpackagist-theme/storefront": "4.6.2",

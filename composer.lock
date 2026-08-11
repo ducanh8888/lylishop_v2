@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "943b99a9fcecfec4459fb91808e9b635",
+    "content-hash": "391b053e37b79222ae1279e701fc581f",
     "packages": [
         {
             "name": "chillerlan/php-qrcode",
@@ -1353,24 +1353,6 @@
             },
             "type": "wordpress-plugin",
             "homepage": "https://wordpress.org/plugins/wp-super-cache/"
-        },
-        {
-            "name": "wpackagist-plugin/yoohw-vietnam-store-tools",
-            "version": "1.1.2",
-            "source": {
-                "type": "svn",
-                "url": "https://plugins.svn.wordpress.org/yoohw-vietnam-store-tools/",
-                "reference": "tags/1.1.2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/yoohw-vietnam-store-tools.1.1.2.zip"
-            },
-            "require": {
-                "composer/installers": "^1.0 || ^2.0"
-            },
-            "type": "wordpress-plugin",
-            "homepage": "https://wordpress.org/plugins/yoohw-vietnam-store-tools/"
         },
         {
             "name": "wpackagist-theme/botiga",

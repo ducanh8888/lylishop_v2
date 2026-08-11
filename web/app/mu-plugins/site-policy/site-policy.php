@@ -44,7 +44,6 @@ require_once __DIR__ . '/inc/roles.php';
 require_once __DIR__ . '/inc/menu.php';
 require_once __DIR__ . '/inc/lockdown.php';
 require_once __DIR__ . '/inc/dashboard.php';
-require_once __DIR__ . '/inc/vietnam-toolkit.php';
 
 add_action('init', __NAMESPACE__ . '\\Roles\\register_roles');
 add_action('admin_menu', __NAMESPACE__ . '\\Menu\\filter_admin_menu', PHP_INT_MAX);

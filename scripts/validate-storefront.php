@@ -60,7 +60,6 @@ $required_theme_files = [
     'web/app/mu-plugins/lyli-editorial-import/lyli-editorial-import.php',
     'web/app/mu-plugins/lyli-editorial-import/inc/command.php',
     'web/app/mu-plugins/lyli-editorial-import/data/editorial-content.json',
-    'web/app/mu-plugins/site-policy/inc/vietnam-toolkit.php',
     'web/app/mu-plugins/bedrock-autoloader.php',
 ];
 foreach ($required_theme_files as $rel) {
@@ -98,7 +97,6 @@ $approved_exempt = [
     'ai-engine' => true,
     'woocommerce' => true, 'fluent-smtp' => true, 'simple-history' => true,
     'updraftplus' => true, 'wp-2fa' => true, 'wp-seopress' => true, 'wp-super-cache' => true,
-    'yoohw-vietnam-store-tools' => true,
     'lyli-ghn-connector' => true,
     'lyli-vietnam-address' => true,
     'lyli-vietqr-bacs' => true,
@@ -345,17 +343,11 @@ check('Mobile header composition is one-time and versioned', str_contains($mobil
 check('Mobile header keeps only cart beside logo and hamburger', str_contains($mobile_header_php, "['mobile_woocommerce_icons']"));
 check('Mobile drawer contains search and account controls', str_contains($mobile_header_php, "'search', 'mobile_offcanvas_woocommerce_icons'"));
 
-/* Vietnam toolkit dependency and least-privilege migration guard. */
-check(
-    'Composer pins Vietnam Store Toolkit exactly',
-    ($composer['require']['wpackagist-plugin/yoohw-vietnam-store-tools'] ?? '') === '1.1.2'
-);
-$toolkit_policy_php = (string) file_get_contents("$root/web/app/mu-plugins/site-policy/inc/vietnam-toolkit.php");
-check('Toolkit migration guard names both DevVN tools', str_contains($toolkit_policy_php, 'yoohw_vietnam_store_tools_devvn_migration_dry_run') && str_contains($toolkit_policy_php, 'yoohw_vietnam_store_tools_devvn_migration'));
-check('Toolkit migration guard removes owner tool entries', str_contains($toolkit_policy_php, "add_filter('woocommerce_debug_tools'"));
-check('Toolkit migration AJAX is denied server-side for shop_owner', str_contains($toolkit_policy_php, "const DEVVN_AJAX_ACTION = 'wp_ajax_yoohw_vietnam_store_tools_devvn_migration_step'") && str_contains($toolkit_policy_php, 'add_action(DEVVN_AJAX_ACTION') && str_contains($toolkit_policy_php, 'wp_send_json_error'));
-check('Toolkit migration card is hidden from normal owner navigation', str_contains($toolkit_policy_php, "admin_head-toplevel_page_yoohw-vietnam-store") && str_contains($toolkit_policy_php, 'yoohw-vietnam-store__card:last-child'));
-check('Toolkit policy does not grant manage_options', ! str_contains($toolkit_policy_php, 'manage_options'));
+/* Toolkit-free runtime; only read-only historical shipment metadata remains. */
+check('Composer no longer requires Vietnam Store Toolkit', ! isset($composer['require']['wpackagist-plugin/yoohw-vietnam-store-tools']));
+check('Toolkit active provider adapter is absent', ! file_exists("$root/web/app/plugins/lyli-ghn-connector/includes/integrations/vietnam-store-toolkit/class-toolkit-adapter.php"));
+check('Toolkit active address resolver is absent', ! file_exists("$root/web/app/plugins/lyli-ghn-connector/includes/integrations/vietnam-store-toolkit/class-toolkit-address-resolver.php"));
+check('Toolkit site-policy hooks are absent', ! file_exists("$root/web/app/mu-plugins/site-policy/inc/vietnam-toolkit.php") && ! str_contains((string) file_get_contents("$root/web/app/mu-plugins/site-policy/site-policy.php"), 'vietnam-toolkit.php'));
 
 /* Repo-controlled GHN connector: manual shipment lifecycle only, disabled until owner configures it. */
 $ghn_dir = "$root/web/app/plugins/lyli-ghn-connector";
@@ -367,13 +359,13 @@ $ghn_mapper_php = (string) file_get_contents("$ghn_dir/includes/class-order-mapp
 $ghn_address_php = (string) file_get_contents("$ghn_dir/includes/domain/class-address.php");
 $ghn_application_php = (string) file_get_contents("$ghn_dir/includes/application/class-shipment-application.php");
 $ghn_meta_keys_php = (string) file_get_contents("$ghn_dir/includes/infrastructure/woocommerce/class-shipment-meta-keys.php");
-$ghn_toolkit_adapter_php = (string) file_get_contents("$ghn_dir/includes/integrations/vietnam-store-toolkit/class-toolkit-adapter.php");
+$ghn_toolkit_legacy_php = (string) file_get_contents("$ghn_dir/includes/integrations/vietnam-store-toolkit/class-toolkit-legacy-shipment-reader.php");
 $ghn_repository_php = (string) file_get_contents("$ghn_dir/includes/woocommerce/class-shipment-repository.php");
 $ghn_standalone_admin_php = (string) file_get_contents("$ghn_dir/includes/woocommerce/class-standalone-admin.php");
-$ghn_owned_php = $ghn_main_php . $ghn_plugin_php . $ghn_settings_php . $ghn_client_php . $ghn_mapper_php . $ghn_application_php . $ghn_toolkit_adapter_php . $ghn_repository_php . $ghn_standalone_admin_php;
+$ghn_owned_php = $ghn_main_php . $ghn_plugin_php . $ghn_settings_php . $ghn_client_php . $ghn_mapper_php . $ghn_application_php . $ghn_toolkit_legacy_php . $ghn_repository_php . $ghn_standalone_admin_php;
 check('Lyli GHN connector is repo-controlled', str_contains($ghn_main_php, 'Plugin Name: Lyli GHN Connector'));
 check('GHN requires WooCommerce but not Toolkit', str_contains($ghn_main_php, 'Requires Plugins: woocommerce') && ! str_contains($ghn_main_php, 'Requires Plugins: woocommerce, yoohw'));
-check('GHN Toolkit provider framework is isolated in adapter', str_contains($ghn_toolkit_adapter_php, 'yoohw_vietnam_store_tools_shipping_providers') && ! str_contains($ghn_mapper_php . $ghn_application_php . $ghn_client_php, 'Yoohw_'));
+check('GHN keeps only read-only Toolkit metadata compatibility', str_contains($ghn_toolkit_legacy_php, '_vck_shipping_tracking_code') && ! str_contains($ghn_toolkit_legacy_php, 'add_action') && ! str_contains($ghn_toolkit_legacy_php, 'add_filter'));
 check('GHN owner settings use manage_woocommerce', str_contains($ghn_settings_php, "current_user_can('manage_woocommerce')") && ! str_contains($ghn_settings_php, 'manage_options'));
 check('GHN token is never rendered back', str_contains($ghn_settings_php, 'name="lyli_ghn[token]" value=""'));
 check('GHN client allowlists official gateways', str_contains($ghn_client_php, 'dev-online-gateway.ghn.vn') && str_contains($ghn_client_php, 'online-gateway.ghn.vn'));
@@ -381,7 +373,7 @@ check('GHN connector uses two-level name-mode address', str_contains($ghn_addres
 check('GHN mutations have defense-in-depth capability check', str_contains($ghn_application_php, "current_user_can('manage_woocommerce')"));
 check('GHN owns HPOS-compatible shipment persistence', str_contains($ghn_repository_php, 'update_meta_data') && str_contains($ghn_repository_php, 'save_meta_data') && ! str_contains($ghn_repository_php, '$wpdb'));
 check('GHN canonical shipment keys are neutral and centralized', str_contains($ghn_meta_keys_php, '_openship_ghn_order_code') && ! str_contains($ghn_repository_php, "'_openship_ghn_"));
-check('GHN panels share one application lifecycle', str_contains($ghn_toolkit_adapter_php, '$this->application->create(') && str_contains($ghn_standalone_admin_php, '$this->application->{$operation}('));
+check('GHN standalone panel uses the application lifecycle', str_contains($ghn_standalone_admin_php, '$this->application->{$operation}('));
 check('GHN has standalone Woo order admin fallback', str_contains($ghn_standalone_admin_php, 'add_meta_box') && str_contains($ghn_standalone_admin_php, 'admin_post_'));
 check('GHN V1 exposes no unauthenticated webhook/AJAX', ! str_contains($ghn_owned_php, 'register_rest_route') && ! str_contains($ghn_owned_php, 'wp_ajax_nopriv'));
 check('GHN V1 does not inject live checkout rates', ! str_contains($ghn_owned_php, 'WC_Shipping_Method'));
