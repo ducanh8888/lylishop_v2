@@ -11,7 +11,7 @@ final class Woo_Adapter
     public function init(): void
     {
         add_filter('woocommerce_states', [$this, 'states']);
-        add_filter('woocommerce_country_locale', [$this, 'country_locale']);
+        add_filter('woocommerce_get_country_locale', [$this, 'country_locale']);
         add_filter('woocommerce_checkout_fields', [$this, 'checkout_fields']);
         add_filter('woocommerce_billing_fields', [$this, 'billing_fields'], 20, 2);
         add_filter('woocommerce_shipping_fields', [$this, 'shipping_fields'], 20, 2);
@@ -33,8 +33,13 @@ final class Woo_Adapter
     public function country_locale(array $locale): array
     {
         $locale['VN']['state']['label'] = __('Tỉnh/Thành phố', 'lyli-vietnam-address');
+        $locale['VN']['state']['required'] = true;
+        $locale['VN']['state']['hidden'] = false;
+        $locale['VN']['state']['priority'] = 70;
         $locale['VN']['city']['label'] = __('Phường/Xã', 'lyli-vietnam-address');
         $locale['VN']['city']['required'] = true;
+        $locale['VN']['city']['hidden'] = false;
+        $locale['VN']['city']['priority'] = 80;
         return $locale;
     }
 
