@@ -12,6 +12,8 @@
 
 > **Amendment 2026-08-04 — quyết định theme V1:** Theme cha chốt là **Botiga Free** (không phải Storefront). Kiến trúc classic/hybrid, `shop-child` làm child theme, Classic Cart/Checkout giữ nguyên, không dùng Full Site Editing làm kiến trúc chính cho V1. Botiga Pro **không được phép mua/dùng**. Fallback: Blocksy Free rồi tới Storefront, chỉ khi có FAIL không thể khắc phục bằng cấu hình/hook nhỏ/CSS/patch tương thích — xem `docs/THEME-DECISION.md`, `docs/THEME-IMPLEMENTATION-PLAN.md`, `docs/THEME-COMPATIBILITY-GATE.md`. §3.1 bên dưới đã cập nhật theo quyết định này; nội dung Storefront cũ được giữ lại có đánh dấu để biết lý do thay đổi.
 
+> **Amendment 2026-08-11 — Toolkit-free production cutover hoàn tất:** Release B `20260811151035` chạy WooCommerce native shipping zone/Flat Rate + guard tối thiểu `lyli-shipping-policy`, `lyli-vietnam-address`, GHN 0.2.1 standalone và `lyli-vietqr-bacs` disabled. Vietnam Store Toolkit inactive, đã gỡ khỏi Composer/artifact; chỉ giữ read-only `_vck_shipping_*` reader cho order lịch sử. Classic Checkout/address, shipping equivalence, GHN Test lifecycle và public/security gate PASS. BACS giữ nguyên enabled với một account; không có merchant data trong docs. Rollback là `20260811145842`, backup `20260811144446`. Xem `docs/VIETNAM-TOOLKIT-DECOUPLING.md`.
+
 > **Amendment 2026-08-11 — reuse đã chọn, cutover bị chặn trước deploy:** Source hiện có GHN connector 0.2.1, `lyli-vietnam-address` dùng dataset `thanglequoc` v4.0.0, và `lyli-vietqr-bacs` dùng `liopay/vietqr` + `chillerlan/php-qrcode`. Production vẫn ở GHN 0.1.1 disabled/Test + Toolkit 1.1.2 active. Runtime inventory xác nhận shipping rule Toolkit đang được dùng và có trần `1 kg` + `100.000.000` VND mà Flat Rate/Free Shipping thuần Woo không biểu diễn chính xác; vì vậy không có release/cutover runtime. Classic Cart/Checkout là contract V1, Blocks deferred. BACS hiện enabled với một account; Toolkit VietQR disabled. Xem `docs/VIETNAM-TOOLKIT-DECOUPLING.md`.
 
 > **Amendment 2026-08-11 — shipping gate đã có source fix:** Founder chọn plugin nội bộ tối thiểu `lyli-shipping-policy`. Native WooCommerce vẫn sở hữu zone, Flat Rate và phí; guard chỉ lọc đúng rate `flat_rate` tên `Vận chuyển` khi `contents_cost` sau discount/chưa tax vượt `100.000.000` VND hoặc tổng product weight theo store unit vượt `1 kg`. Không có shipping engine, settings UI, DB table, AJAX hay REST mới. Free threshold `500.000` không cần method thứ hai vì fee hiện tại đã bằng `0` ở cả hai phía threshold. Runtime cutover vẫn phải qua backup/Release A/equivalence trước khi Toolkit được deactivate.
@@ -224,7 +226,7 @@ Các plugin thanh toán và địa chỉ Việt Nam chưa đồng đều về tu
 
 Classic checkout giúp:
 
-* Vietnam Store Toolkit 1.1.2 có luồng địa chỉ/BACS rõ để regression-test.
+* `lyli-vietnam-address` và native BACS có contract nhỏ, rõ để regression-test.
 * Plugin địa chỉ Việt Nam ít lỗi hơn.
 * Dễ tùy chỉnh validation.
 * Dễ debug.
@@ -256,7 +258,10 @@ HPOS chỉ được bật khi:
 | Plugin                  | Phiên bản baseline | Chức năng                       | Trạng thái            |
 | ----------------------- | -----------------: | ------------------------------- | --------------------- |
 | WooCommerce             |             10.9.4 | Commerce core                   | Bắt buộc              |
-| Vietnam Store Toolkit   |              1.1.2 | Địa chỉ, vận hành và VietQR trên BACS | PLANNED / PREFLIGHT COMPLETE; chưa deployed |
+| `lyli-vietnam-address`  |               0.1.0 | Địa chỉ Việt Nam hai cấp cho Classic Checkout/Account | DEPLOYED / ACTIVE |
+| `lyli-shipping-policy`  |               0.1.0 | Guard hai eligibility ceiling trên native Woo Flat Rate | DEPLOYED / ACTIVE |
+| `lyli-ghn-connector`    |               0.2.1 | GHN shipment lifecycle standalone | DEPLOYED / ACTIVE CODE / DISABLED TEST |
+| `lyli-vietqr-bacs`      |               0.1.0 | VietQR local presentation cho native BACS | DEPLOYED / INTEGRATION DISABLED |
 | SePay Gateway           |             1.1.23 | Đối soát tự động nếu cần sau này | DEFERRED / OPTIONAL |
 | SEOPress Free           |               10.1 | SEO                             | Bắt buộc              |
 | FluentSMTP              |             2.2.95 | Gửi và log email                | Bắt buộc, phải test   |
@@ -292,39 +297,16 @@ Affiliate được đưa vào manifest nhưng mặc định **không kích hoạ
 
 # 6. Địa chỉ và phí vận chuyển Việt Nam
 
-## 6.1. Plugin được chọn
+## 6.1. Thành phần được chọn và đang chạy
 
-### Vietnam Store Toolkit for WooCommerce 1.1.2
+- `lyli-vietnam-address` 0.1.0 là sole owner của address UI/data: dataset `thanglequoc` v4.0.0 pinned, 34 tỉnh/thành, 3.321 phường/xã, không district, lưu Woo `state` + `city`.
+- Native Woo Shipping Zone + Flat Rate instance `3` (`Vận chuyển`, cost `0`) sở hữu phí và method.
+- `lyli-shipping-policy` 0.1.0 không tạo shipping engine; chỉ loại đúng rate trên nếu cart line total sau discount/chưa tax vượt `100.000.000` VND hoặc package weight theo unit `kg` vượt `1`.
+- `lyli-ghn-connector` 0.2.1 sở hữu lifecycle standalone; checkout live rate vẫn deferred. Connector trở về disabled/Test sau full GHN Test lifecycle.
 
-Plugin được chọn vì hỗ trợ:
+Classic Checkout/address compatibility, shipping matrix và existing address resolution đã PASS trong cutover 2026-08-11. Vietnam Store Toolkit 1.1.2 chỉ còn là historical dependency record; package không còn trong Composer/runtime.
 
-* Dữ liệu hành chính Việt Nam theo mô hình hai cấp.
-* 34 tỉnh, thành phố.
-* 3.321 xã, phường.
-* Classic checkout.
-* Checkout Blocks.
-* Validation số điện thoại.
-* Shipping rule theo địa phương.
-* Shipping rule theo giá trị giỏ hàng.
-* Shipping rule theo trọng lượng.
-* Shipping class.
-* Miễn phí vận chuyển.
-* COD.
-* Tracking.
-* Yêu cầu xuất hóa đơn VAT.
-* HPOS.
-* CSV.
-* Theo dõi đơn thủ công.
-
-Stable 1.1.2 phát hành ngày 30/07/2026; archive ghi WordPress `>=6.3`, tested line 7.0, PHP `>=7.4`, WooCommerce `>=8.9` và tested line 10.9. WordPress.org hiện quảng bá tested through 7.0.3. Lyli 7.0.2/10.9.4 nằm trong các nhánh đó, nhưng mức độ sử dụng thực tế còn rất thấp nên runtime regression vẫn bắt buộc.
-
-## 6.2. Điều kiện bắt buộc trước production — PREFLIGHT COMPLETE 2026-08-10
-
-Source/Composer pre-flight đã PASS cho capability, nonce, escaping, sanitization, AJAX, query/storage, assets, bundled administrative data, BACS/VietQR, invoice upload/email, tracking, HPOS/legacy và uninstall behavior. Báo cáo/risk matrix: `docs/VIETNAM-STORE-TOOLKIT-PREFLIGHT.md`.
-
-Các gate còn **PLANNED / NOT RUN** vì task này không đổi runtime: artifact/Bedrock load, activation defaults, `shop_owner` access, Classic Checkout/address regression, order/email behavior và performance trên production host. Product Bundles/Smart Coupons chỉ kiểm tra khi chúng thực sự được đưa vào runtime; SePay deferred. Nếu gate functional/security fail, rollback và đánh giá fallback.
-
-## 6.3. Fallback
+## 6.2. Fallback
 
 ### Vietnam Checkout for WooCommerce 2.1.6 + bản Pro shipping
 
@@ -361,9 +343,9 @@ Dùng WooCommerce Direct Bank Transfer core làm phương án dự phòng.
 
 ## 7.3. VietQR V1 và đối soát tự động về sau
 
-### CURRENT V1: Vietnam Store Toolkit 1.1.2 trên BACS
+### CURRENT V1: native BACS + `lyli-vietqr-bacs`
 
-Toolkit mở rộng WooCommerce Direct Bank Transfer, không tạo gateway mới. Nó hiển thị transfer information/VietQR nhưng không xác nhận giao dịch, không tự đánh dấu paid. Owner nhập merchant data và bật sau deploy; developer không nhập thay.
+WooCommerce Direct Bank Transfer vẫn là gateway và chủ sở hữu trạng thái đơn. BACS hiện enabled với một account do owner cấu hình từ trước. `lyli-vietqr-bacs` chỉ tạo/present VietQR nội bộ, không tạo gateway mới, không đối soát ngân hàng, không xác nhận tiền và không tự đánh dấu paid; integration đang disabled cho tới khi owner hoàn tất merchant settings và chủ động bật.
 
 ### DEFERRED / OPTIONAL: SePay Gateway 1.1.23
 
@@ -380,8 +362,8 @@ SePay công bố hỗ trợ kết nối hơn 30 ngân hàng, xác nhận giao d�
 
 ## 7.4. Quy tắc triển khai
 
-* Không bật COD, BACS, VietQR hoặc SePay trong implementation kế tiếp; owner cấu hình merchant policy riêng sau.
-* Giữ BACS/VietQR disabled/unconfigured cho tới khi owner tự nhập merchant data và privacy disclosure sẵn sàng.
+* Không thay đổi trạng thái merchant-approved của BACS/COD trong code deploy.
+* Giữ `lyli-vietqr-bacs` disabled cho tới khi owner tự xác nhận merchant data và chủ động bật.
 * Chỉ xem lại SePay nếu automatic bank reconciliation thực sự trở thành yêu cầu.
 * Không có hai QR implementation cùng lúc.
 * Webhook SePay phải có secret.
@@ -893,7 +875,7 @@ Không dùng trong baseline:
 
 ## Phase 2: Plugin audit
 
-1. Vietnam Store Toolkit audit — PREFLIGHT COMPLETE; implementation/deploy vẫn pending.
+1. Vietnam Store Toolkit historical audit — COMPLETE; dependency/runtime đã gỡ sau controlled cutover.
 2. SePay — DEFERRED / OPTIONAL.
 3. Test Product Bundles.
 4. Test Smart Coupons.
@@ -908,7 +890,7 @@ Không dùng trong baseline:
 3. Cấu hình Việt Nam.
 4. Cấu hình COD.
 5. Cấu hình BACS.
-6. Owner cấu hình BACS/VietQR sau deploy và privacy disclosure; SePay deferred.
+6. BACS giữ merchant-approved state; owner cấu hình/bật `lyli-vietqr-bacs` khi sẵn sàng; SePay deferred.
 7. Cấu hình shipping.
 8. Cấu hình coupon.
 9. Cấu hình bundle.
@@ -1004,7 +986,11 @@ CORE
 └── Botiga Free + shop-child (Storefront = fallback cấp 2, xem docs/THEME-DECISION.md)
 
 VIETNAM COMMERCE
-├── Vietnam Store Toolkit 1.1.2 [PREFLIGHT COMPLETE / PLANNED]
+├── lyli-vietnam-address 0.1.0 [ACTIVE]
+├── Native Woo Shipping Zone / Flat Rate [ACTIVE]
+├── lyli-shipping-policy 0.1.0 [ACTIVE]
+├── lyli-ghn-connector 0.2.1 [ACTIVE CODE / DISABLED TEST]
+├── lyli-vietqr-bacs 0.1.0 [INTEGRATION DISABLED]
 ├── SePay Gateway 1.1.23 [DEFERRED / OPTIONAL]
 ├── WooCommerce COD
 ├── WooCommerce BACS

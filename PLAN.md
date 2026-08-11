@@ -549,6 +549,8 @@ WooCommerce đã có Direct Bank Transfer trong core; đơn sử dụng phương
 
 **Source direction cập nhật 2026-08-11 — chưa deploy:** GHN 0.2.0 có một application lifecycle first-party, Toolkit chỉ là optional adapter. Prototype VietQR custom chưa deploy đã bị gỡ; address và VietQR đều **REUSE-FIRST / chưa chọn nguồn**. Toolkit vẫn nằm trong Composer/runtime cho address fields/data và shipping rules tới controlled cutover. Xem `docs/VIETNAM-TOOLKIT-DECOUPLING.md`.
 
+**Trạng thái supersede 2026-08-11 — đã cutover:** production dùng GHN 0.2.1 standalone, `lyli-vietnam-address` với dataset pinned v4.0.0, native Woo Shipping Zone/Flat Rate + `lyli-shipping-policy`, và native BACS + `lyli-vietqr-bacs` (integration disabled). Vietnam Store Toolkit đã deactivate và gỡ khỏi Composer/artifact sau khi Classic Checkout, address, shipping equivalence và GHN Test lifecycle PASS. BACS giữ trạng thái owner-approved; SePay vẫn **DEFERRED / OPTIONAL**. Xem `docs/VIETNAM-TOOLKIT-DECOUPLING.md`.
+
 Dùng plugin có sẵn cho:
 
 * Tạo QR theo tổng tiền.

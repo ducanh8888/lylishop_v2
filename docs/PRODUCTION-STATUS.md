@@ -21,39 +21,41 @@ Hệ thống dùng các mốc sau (thứ tự tăng dần):
 
 | Mục | Kết quả |
 |---|---|
-| Deployed source commit | `e4a7ac9aeed9a3c0aefa000b8a7ceeff7cb0cb42` (GHN safe print redirect; original connector `1d7bb7b93a241eaf4448e8f1e70f5ccc2d0853c6`) |
+| Deployed source commit | `2b8d14e470fa3a74be3933c7e4ae822866591b2e` (Toolkit-free Release B); shipping guard `0d03e8e16b97627ee3793547b599272ffc106d15`; address contract fix `b68a874db59abb76c7d7a4ee23a976fa9cabda8d` |
 | Deployment gate | WSL/local validators; GitHub Actions chỉ cung cấp thông tin, không chặn deploy |
 | Domain/DNS | `lylishop.online` → `103.75.184.20` — đúng hosting |
 | SSL/public routes | HTTPS hợp lệ; Home, Shop, Cart, My Account và trang đăng nhập admin trả HTTP 200; Checkout có session sản phẩm trả 200, còn giỏ trống chuyển về Cart đúng hành vi WooCommerce |
 | Web PHP | `8.3.30` (LiteSpeed) |
 | WordPress/storefront | WordPress 7.0.2 đã cài; `shop-child` active trên Botiga 2.4.7; WooCommerce 10.9.4 active |
-| Plugin runtime | AI Engine 3.7.0, WooCommerce 10.9.4, Vietnam Store Toolkit 1.1.2 và `lyli-ghn-connector` 0.1.1 active; saved GHN Test credential có mặt nhưng connector disabled/Test sau E2E PASS; aThemes Starter Sites đã gỡ khỏi Composer/artifact |
+| Plugin runtime | AI Engine 3.7.0, WooCommerce 10.9.4, `lyli-ghn-connector` 0.2.1, `lyli-shipping-policy` 0.1.0, `lyli-vietnam-address` 0.1.0 và `lyli-vietqr-bacs` 0.1.0 active. Toolkit không active và không còn trong artifact/Composer. GHN connector disabled/Test; VietQR integration disabled |
 | MU plugin / CLI | Bedrock autoloader active; Lyli settings hook có mặt; `wp lyli bootstrap` và `wp lyli editorial` khả dụng |
 | Code policy | `DISALLOW_FILE_MODS=true`, `DISALLOW_FILE_EDIT=true`; nội dung/cấu hình cửa hàng vẫn chỉnh trong WP Admin |
 | WP-CLI path trên host | `--path=apps/lylishop/current/web/wp` |
 | `public_html` | Symlink → `apps/lylishop/current/web`; bản provider cũ giữ tại `shared/rollback/provider-public_html-20260807135123` |
 | Theme integration | `shop-child` 1.3.1; sáu brand token chính thức từ `theme.json`; Fraunces/Be Vietnam Pro giữ weight `600/400/500`; Botiga runtime palette/CSS generated được reconcile một lần; mobile header là logo + cart + hamburger, search/account trong offcanvas; Gutenberg content không bị overwrite |
 | Admin locale | Site và tài khoản vận hành dùng `vi`; WordPress core + WooCommerce language packs nằm tại `shared/languages` và được dùng lại qua release |
-| `apps/lylishop/current` | → `releases/20260811011830` |
-| Artifact | `release-20260811143000.tar.gz`; SHA-256 `438378301173bde79d419d27e94a163377dc1c0d46e72f3922fe80d7fcc32f5e` |
-| Release rollback | `releases/20260810210244`; full pre-editorial rollback `releases/20260807205828` |
-| Backup gần nhất | `shared/backups/20260811011721/{database.sql.gz,uploads.tar.gz}` (`gzip -t`/`tar -tzf` PASS); full backup trước đó `shared/backups/20260810210321/{database.sql.gz,uploads.tar.gz}` |
+| `apps/lylishop/current` | → `releases/20260811151035` (Release B, Toolkit-free) |
+| Artifact | `release-20260811151035.tar.gz`; SHA-256 `96b4514d11e1c97510540047a2a5150327ba67a4251bb8cf6b88b0355d476d11` |
+| Release rollback | `releases/20260811145842` (healthy corrected Release A, Toolkit package still present but inactive); older rollback `releases/20260811011830` |
+| Backup gần nhất | `shared/backups/20260811144446/{database.sql.gz,uploads.tar.gz}`; `gzip -t` và `tar -tzf` PASS |
 | `.env` | `shared/.env` mode 600, ngoài `public_html`, owner đúng |
 | Baseline content | 5 blog, 25 ảnh nguồn, 9 trang editorial/policy publish và 2 sản phẩm thật đã có trước rollout này; không tạo test product/order; promotion tắt |
 | Mốc đạt được | 1–5; chưa đạt commerce launch readiness |
 
-## Toolkit removal gate (2026-08-11)
+## Toolkit removal cutover (2026-08-11)
 
-Cutover was **stopped before deployment**. Runtime inspection proved that the active Toolkit shipping rule is used by existing orders and includes both a maximum package weight of `1 kg` and a maximum cart total of `100,000,000` VND. Native WooCommerce Flat Rate/Free Shipping cannot express those two rate-availability ceilings exactly. Replacing it would therefore change checkout behavior for boundary cases, contrary to the no-approximation requirement.
+Cutover đã hoàn tất và supersede blocker trước đó. Native Woo zone `Vietnam` dùng Flat Rate instance `3`, title `Vận chuyển`, cost `0`; Free Shipping instance `1` giữ disabled. Plugin tối thiểu `lyli-shipping-policy` chỉ loại đúng rate này khi `contents_cost > 100.000.000` VND hoặc tổng product weight `> 1 kg`, nên giữ nguyên hai ceiling mà native Woo không tự biểu diễn được. Ma trận runtime 8/8 và 23 test network-free PASS.
 
-- Source validation passed; the narrow ward-AJAX race fix was committed as `7c36070db7fc9cc95091f1119e83b220785a28da`.
-- No Release A was built or deployed after the blocker became known.
-- No production DB/options/plugins/symlinks were changed, so no rollback execution or new backup was required.
-- `current` remains `releases/20260811011830`; Toolkit 1.1.2 remains active and Composer-pinned; GHN runtime remains 0.1.1 disabled/Test.
-- Classic Cart + Classic Checkout remain the V1 contract; Checkout Blocks are deferred.
-- Current payment drift captured safely: BACS is enabled with one account configured; Toolkit VietQR remains disabled. Account values were not read into documentation.
+- Release A corrected `20260811145842` triển khai GHN 0.2.1, address/VietQR/shipping adapters trong khi Toolkit còn trong artifact; backup ngay trước thay đổi là `20260811144446`.
+- `lyli-vietnam-address` active với dataset pinned v4.0.0: 34 tỉnh/thành, 3.321 phường/xã, checksum PASS, không có district. Classic Checkout render Province required priority 70 trước Ward required priority 80; 6/6 address order và 2/2 address customer hiện hữu resolve đúng.
+- Toolkit address đã tắt trước cutover; Toolkit sau đó deactivate. BACS vẫn enabled với đúng một account có sẵn; chi tiết merchant không được đọc vào tài liệu. `lyli-vietqr-bacs` có code active nhưng integration vẫn disabled.
+- GHN 0.2.1 chạy standalone qua Test: Preview → Create → idempotent Create → detail-by-client-code → Sync → Print → Cancel → Sync cancelled đều PASS. Chỉ canonical `_openship_ghn_*` được ghi; không có write mới `_lyli_ghn_*`/`_vck_shipping_*`; test shipment đã cancel và order/product tạm đã xóa. Connector trở về disabled/Test.
+- Sau runtime gate, commit `2b8d14e470fa3a74be3933c7e4ae822866591b2e` gỡ package Toolkit, provider/address adapters và site-policy wiring; chỉ giữ legacy reader read-only cho order lịch sử. Release B `20260811151035` không chứa thư mục/package Toolkit và không có active source gọi Toolkit.
+- Public/security smoke PASS: Home/Shop/Product/Cart/Account/login 200; Checkout session sản phẩm 200, checkout rỗng redirect về Cart đúng Woo; SSL verify 0; `.env`/`.git` 403, SQL/backup 404, plugin directory 403; không lộ PHP warning/fatal.
+- Browser backend không khả dụng, nên chưa có screenshot viewport mới. Responsive source gate và public HTML route checks PASS; cutover không thay đổi CSS. Visual 375/768/1440 pixel sign-off vẫn là kiểm tra thủ công, không phải functional/security blocker.
+- Production chưa có user thật role `shop_owner`. Disposable role gate đã PASS (`manage_woocommerce=true`, `manage_options`/`activate_plugins`/`edit_users=false`) và user tạm đã xóa.
 
-Exact evidence and resume choices are recorded in [`VIETNAM-TOOLKIT-DECOUPLING.md`](VIETNAM-TOOLKIT-DECOUPLING.md).
+Chi tiết trách nhiệm và bằng chứng: [`VIETNAM-TOOLKIT-DECOUPLING.md`](VIETNAM-TOOLKIT-DECOUPLING.md).
 
 ## Toolkit + brand/mobile rollout (2026-08-10)
 

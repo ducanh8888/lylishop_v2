@@ -4,11 +4,12 @@ Updated: 2026-08-11
 
 ## Current truth
 
-- **CURRENT RUNTIME:** production remains on `lyli-ghn-connector` 0.1.1 plus Vietnam Store Toolkit 1.1.2. This source cleanup does not deploy, activate, deactivate, migrate data, or call GHN.
-- **CURRENT SOURCE:** GHN connector 0.2.1 has one first-party application workflow for Create/Sync/Cancel/Print. WooCommerce admin and optional address/Toolkit adapters dispatch that same workflow. Commit `7c36070db7fc9cc95091f1119e83b220785a28da` also prevents a late ward AJAX response from replacing the current province selection.
-- **TRANSITIONAL DEPENDENCY:** keep `wpackagist-plugin/yoohw-vietnam-store-tools:1.1.2` because production still uses its Vietnamese two-level address UI/data and checkout shipping rules.
-- **ADDRESS:** **SELECTED / SOURCE-INTEGRATED / NOT ACTIVE IN PRODUCTION.** `lyli-vietnam-address` uses the pinned MIT-licensed `thanglequoc/vietnamese-provinces-database` `v4.0.0` asset (34 provinces, 3,321 wards) behind a thin Woo adapter and canonical DTO. The storage contract remains compatible with current Toolkit two-level codes.
-- **VIETQR:** **SELECTED / SOURCE-INTEGRATED / NOT ACTIVE IN PRODUCTION.** `lyli-vietqr-bacs` uses `liopay/vietqr` `1.0.0` plus `chillerlan/php-qrcode` `6.0.1`. It presents a locally generated QR for native BACS only; it adds no gateway, SaaS, webhook or paid-status mutation.
+- **CURRENT RUNTIME:** Release B `20260811151035`, source `2b8d14e470fa3a74be3933c7e4ae822866591b2e`. Vietnam Store Toolkit is inactive and absent from Composer/artifact.
+- **GHN:** `lyli-ghn-connector` 0.2.1 is active code but disabled/Test after a complete standalone GHN Test lifecycle. New writes use only canonical `_openship_ghn_*`; legacy Toolkit `_vck_shipping_*` support is read-only.
+- **ADDRESS:** `lyli-vietnam-address` is active and owns Classic Checkout/Account address behavior. The pinned MIT `thanglequoc` v4.0.0 dataset has 34 provinces and 3,321 wards; checksum and existing-address compatibility pass.
+- **SHIPPING:** Woo zone/methods own the rate. Flat Rate instance `3` (`Vận chuyển`, cost `0`) is active; `lyli-shipping-policy` only preserves the former inclusive `100,000,000` VND / `1 kg` eligibility ceilings.
+- **PAYMENT:** Native BACS remains enabled with one owner-configured account. `lyli-vietqr-bacs` code is active but its integration is disabled; it adds no gateway, SaaS, webhook or paid-status mutation.
+- **ROLLBACK:** corrected Release A `20260811145842` and backup `shared/backups/20260811144446` are retained.
 - **DECISION EVIDENCE:** see [`REUSE-DEPENDENCY-DECISIONS.md`](REUSE-DEPENDENCY-DECISIONS.md).
 
 ## Source boundaries
@@ -16,7 +17,7 @@ Updated: 2026-08-11
 ```text
 Woo order panel ─┐
                  ├─ Shipment_Application ─ GHN Client
-Toolkit adapter ─┘          │
+Woo standalone admin ───────┘
                             ├─ Order Mapper / canonical Address
                             ├─ Settings Repository
                             └─ Shipment Repository
@@ -24,9 +25,7 @@ Toolkit adapter ─┘          │
 
 `Shipment_Application` is the only implementation of the lifecycle. Admin surfaces own capability/nonce checks and presentation; application also performs defense-in-depth order/capability validation. API endpoint selection, transport parsing, print allowlists and redaction remain in the GHN client. COD and package validation are domain policies.
 
-Toolkit-specific provider hooks, address lookup and `_vck_*` compatibility live only under `includes/integrations/vietnam-store-toolkit/`, apart from the composition-root detection/registration needed to load the optional adapter. GHN core continues when Toolkit support is absent and falls back to the standalone Woo panel/customer tracking.
-
-The source composition root now prefers `includes/integrations/vietnam-address/` when the selected address plugin is active, then uses the Toolkit address resolver only as a transitional compatibility fallback. It still emits the same canonical GHN `Address`; carrier code has no Woo field or dataset dependency.
+Toolkit provider/address hooks and active integration files have been removed. The source composition root uses `includes/integrations/vietnam-address/` and falls back only to ordinary Woo address values. The isolated Toolkit legacy shipment reader can read historical `_vck_shipping_*` metadata but cannot write it or call Toolkit code.
 
 Payment is no longer a reason to retain Toolkit. Native Woo BACS remains the gateway/order-status owner; the reusable VietQR adapter is presentation only.
 
@@ -34,13 +33,13 @@ Payment is no longer a reason to retain Toolkit. Native Woo BACS remains the gat
 
 | Responsibility | Current production | Prepared replacement | Toolkit still required now? |
 |---|---|---|---|
-| Two-level Vietnam address UI/data | Toolkit 1.1.2 | `lyli-vietnam-address` + pinned upstream `v4.0.0` | Yes, until controlled activation/cutover |
-| Checkout shipping rules | Toolkit 1.1.2 | Native Woo Shipping Zones / Flat Rate / Free Shipping | Yes, until rules are migrated and totals verified |
-| VietQR/BACS presentation | Toolkit may provide it but BACS/VietQR is currently not the runtime cutover target | `lyli-vietqr-bacs` + reusable payload/renderer libraries | No source-level reason to retain Toolkit |
-| GHN shipment lifecycle | First-party GHN connector | Already first-party and standalone | No |
-| Legacy Toolkit shipment reads | `_vck_*` compatibility reader | Read-only compatibility path | Keep through migration window |
+| Two-level Vietnam address UI/data | `lyli-vietnam-address` + pinned upstream `v4.0.0` | Active | No |
+| Checkout shipping rules | Native Woo Shipping Zone + Flat Rate + minimal policy guard | Active; equivalence PASS | No |
+| VietQR/BACS presentation | Native BACS + disabled `lyli-vietqr-bacs` integration | Owner enables later | No |
+| GHN shipment lifecycle | First-party GHN connector 0.2.1 | Active code, disabled/Test | No |
+| Legacy Toolkit shipment reads | Isolated `_vck_*` read-only compatibility reader | Historical orders only | No runtime package required |
 
-`TOOLKIT SOURCE RESPONSIBILITY ZERO` is **NO** in this commit: the optional Toolkit provider/address adapters and legacy reader remain, and production still owns active shipping/address behavior through Toolkit. The selected replacements make zero responsibility achievable after the runtime cutover; this task intentionally does not remove the package or compatibility code.
+`TOOLKIT SOURCE RESPONSIBILITY ZERO` is **YES**. No active hook, provider, address resolver or Composer package requires Toolkit; the read-only historical metadata reader is data compatibility, not a runtime dependency.
 
 ## Persistence and naming
 
@@ -57,7 +56,7 @@ New writes use one centralized canonical schema in `Shipment_Meta_Keys`:
 
 Read priority is canonical, legacy `_lyli_ghn_*`, then legacy Toolkit `_vck_shipping_*`. Each legacy schema is isolated in a reader; application, admin and GHN client know none of those keys. There is no multi-write and no credential/print token in order metadata.
 
-The physical plugin slug, PHP namespace, text domain, action/nonces, settings option `lyli_ghn_settings`, private non-autoload Token option `lyli_ghn_token`, and GHN `LYLI-WC-{order_id}` client code remain stable deliberately. They were already part of deployed 0.1.1 settings/idempotency behavior; renaming them would create credential loss, broken admin requests, or duplicate-shipment risk without improving the carrier boundary. New shipment storage is neutral because 0.2.1 has not been deployed.
+The physical plugin slug, PHP namespace, text domain, action/nonces, settings option `lyli_ghn_settings`, private non-autoload Token option `lyli_ghn_token`, and GHN `LYLI-WC-{order_id}` client code remain stable deliberately. They preserve credentials, admin requests and idempotency across the 0.1.1 → 0.2.1 cutover. New 0.2.1 shipments write only neutral canonical metadata.
 
 ## Runtime cutover gate
 
@@ -69,7 +68,7 @@ The physical plugin slug, PHP namespace, text domain, action/nonces, settings op
 6. Confirm Toolkit VAT/e-invoice/migrations/tracking surfaces are unused, then deactivate Toolkit in a controlled cutover and smoke Home/Shop/Cart/Checkout/Account/order admin.
 7. Remove optional Toolkit provider/address wiring and the Composer package only in a later source task after the runtime gate remains healthy; retain read-only legacy metadata compatibility only as long as needed.
 
-Until every gate passes, Toolkit remains a transitional runtime dependency. This document does not authorize production cutover.
+All listed Classic Checkout runtime gates passed on 2026-08-11. The numbered list above is retained as the executed cutover record, not a pending authorization.
 
 ## Controlled cutover attempt — blocked before deployment (2026-08-11)
 
@@ -106,4 +105,27 @@ Source inspection of Toolkit 1.1.2 establishes the exact compatibility contract:
 
 Production uses `kg`, so the guard's centralized `MAX_WEIGHT = 1.0` exactly matches the active Toolkit rule. `MAX_AMOUNT = 100000000.0` uses the same `contents_cost` basis. Native Woo owns the zone and zero-cost Flat Rate; the guard owns only these two missing maximum-eligibility predicates.
 
-Additional runtime truth captured without merchant data disclosure: BACS is currently enabled and has one configured account; Toolkit VietQR remains disabled. Production remains on release `20260811011830`, GHN connector 0.1.1 disabled/Test, and Toolkit 1.1.2 active.
+Additional pre-cutover truth captured without merchant data disclosure: BACS was enabled with one configured account and Toolkit VietQR was disabled. That snapshot is historical and is superseded by the final result below.
+
+## Final controlled cutover result (2026-08-11)
+
+| Gate | Evidence | Result |
+|---|---|---|
+| Shipping source equivalence | 23 deterministic assertions against Toolkit amount/weight/boundary semantics | PASS |
+| Shipping runtime equivalence | 8 representative packages, including exact and over-limit boundaries | PASS |
+| Classic Checkout | Product session HTTP 200; Province required/priority 70 before Ward required/priority 80; address JS loaded | PASS |
+| Address compatibility | Dataset 34/3,321/checksum; 6 order and 2 customer addresses resolve; AJAX late-response guard retained | PASS |
+| Payment preservation | BACS enabled, one pre-existing account; Lyli VietQR disabled; no merchant fields documented or changed | PASS |
+| GHN 0.2.1 standalone | Preview/Create/idempotency/detail/sync/print/cancel/post-cancel sync on Test; canonical writes only; cleanup complete | PASS |
+| Toolkit removal | Inactive, Composer package absent, artifact directory absent, active adapters removed | PASS |
+| Public/security | Public routes and session checkout healthy; SSL valid; sensitive paths denied; no exposed PHP errors | PASS |
+
+Release sequence:
+
+1. Shipping policy source: `0d03e8e16b97627ee3793547b599272ffc106d15`.
+2. Corrected Release A source: `b68a874db59abb76c7d7a4ee23a976fa9cabda8d`; release `20260811145842`; retained rollback.
+3. Pre-cutover backup: `shared/backups/20260811144446` (`database.sql.gz` and `uploads.tar.gz`, integrity PASS).
+4. Toolkit removal source: `2b8d14e470fa3a74be3933c7e4ae822866591b2e`.
+5. Final Release B: `20260811151035`, SHA-256 `96b4514d11e1c97510540047a2a5150327ba67a4251bb8cf6b88b0355d476d11`.
+
+No real `shop_owner` user exists yet. A disposable role test proved `manage_woocommerce` while denying `manage_options`, plugin activation and user administration; it was deleted. Provisioning the named owner account remains an owner/developer handoff action.

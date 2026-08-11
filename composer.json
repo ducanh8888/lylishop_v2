@@ -56,10 +56,15 @@
         "pending-commercial-plugins": {
             "note": "Not resolvable via public Packagist/wpackagist. See docs/PLUGIN-MANIFEST.md before adding — each needs a private repository entry or manual artifact under web/app/plugins/, plus the Phase-2 plugin audit in TECH_STACK.md section 6.2 before production use.",
             "plugins": [
-                "SePay Gateway 1.1.23",
                 "WooCommerce Product Bundles 8.5.10 (WooCommerce.com Marketplace)",
                 "WooCommerce Smart Coupons 9.80.0 (WooCommerce.com Marketplace)",
                 "Affiliate for WooCommerce 9.10.0 (feature-flagged, not installed by default)"
+            ]
+        },
+        "deferred-optional-commercial-plugins": {
+            "note": "Research history only; not a pending or required dependency. Reconsider only through a separately authorized audit if automatic bank reconciliation becomes necessary.",
+            "plugins": [
+                "SePay Gateway 1.1.23"
             ]
         }
     },
