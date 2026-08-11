@@ -100,6 +100,8 @@ $approved_exempt = [
     'updraftplus' => true, 'wp-2fa' => true, 'wp-seopress' => true, 'wp-super-cache' => true,
     'yoohw-vietnam-store-tools' => true,
     'lyli-ghn-connector' => true,
+    'lyli-vietnam-address' => true,
+    'lyli-vietqr-bacs' => true,
 ];
 $unapproved = [];
 foreach (glob("$root/web/app/plugins/*", GLOB_ONLYDIR) as $dir) {

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Lyli GHN Connector
  * Description: Repo-controlled GHN shipment connector for WooCommerce with optional integration adapters.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Requires at least: 7.0
  * Requires PHP: 8.3
  * Requires Plugins: woocommerce
@@ -17,7 +17,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-const VERSION = '0.2.0';
+const VERSION = '0.2.1';
 
 require_once __DIR__ . '/includes/infrastructure/woocommerce/class-settings-repository.php';
 require_once __DIR__ . '/includes/class-settings.php';
@@ -32,6 +32,7 @@ require_once __DIR__ . '/includes/infrastructure/woocommerce/class-shipment-meta
 require_once __DIR__ . '/includes/infrastructure/woocommerce/class-lyli-legacy-shipment-reader.php';
 require_once __DIR__ . '/includes/woocommerce/class-woo-address-resolver.php';
 require_once __DIR__ . '/includes/woocommerce/class-composite-address-resolver.php';
+require_once __DIR__ . '/includes/integrations/vietnam-address/class-vietnam-address-resolver.php';
 require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-address-resolver.php';
 require_once __DIR__ . '/includes/integrations/vietnam-store-toolkit/class-toolkit-legacy-shipment-reader.php';
 require_once __DIR__ . '/includes/woocommerce/class-shipment-repository.php';

@@ -5,6 +5,7 @@ namespace Lyli\GHN;
 use Lyli\GHN\Application\Shipment_Application;
 use Lyli\GHN\Infrastructure\WooCommerce\Lyli_Legacy_Shipment_Reader;
 use Lyli\GHN\Infrastructure\WooCommerce\Settings_Repository;
+use Lyli\GHN\Integrations\VietnamAddress\Vietnam_Address_Resolver;
 use Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Address_Resolver;
 use Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Adapter;
 use Lyli\GHN\Integrations\VietnamStoreToolkit\Toolkit_Legacy_Shipment_Reader;
@@ -48,6 +49,9 @@ final class Plugin
         }
         if (null === self::$application) {
             $resolvers = [];
+            if (Vietnam_Address_Resolver::is_supported()) {
+                $resolvers[] = new Vietnam_Address_Resolver();
+            }
             if (Toolkit_Address_Resolver::is_supported()) {
                 $resolvers[] = new Toolkit_Address_Resolver();
             }
