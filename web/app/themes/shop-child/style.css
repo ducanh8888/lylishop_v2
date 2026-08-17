@@ -43,7 +43,14 @@ Text, muted, border and WooCommerce state colors are functional/accessibility ne
     --lyli-radius-lg: 14px;
     --lyli-shadow-card: 0 1px 3px rgba(45, 42, 38, 0.08), 0 4px 14px rgba(45, 42, 38, 0.05);
     --lyli-shadow-card-hover: 0 4px 12px rgba(45, 42, 38, 0.12), 0 10px 28px rgba(45, 42, 38, 0.10);
-    --lyli-transition: 200ms ease;
+    --lyli-motion-fast: 120ms;
+    --lyli-motion-base: 200ms;
+    --lyli-motion-slow: 320ms;
+    --lyli-ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --lyli-ease-out: cubic-bezier(0.32, 0.08, 0.24, 1);
+    --lyli-lift-sm: -1px;
+    --lyli-lift-md: -2px;
+    --lyli-transition: var(--lyli-motion-base) var(--lyli-ease-standard);
     --lyli-content-width: 1140px;
     --lyli-gutter: clamp(14px, 4vw, 40px);
 }
