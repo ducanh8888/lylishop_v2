@@ -118,6 +118,23 @@ textarea {
     }
 }
 
+/*
+ * The blanket rule above only compresses duration to near-zero; it does not
+ * neutralize the end state, so a reduced-motion user would still see these
+ * transforms jump instantly instead of not moving at all. Target only the
+ * decorative transforms (never :active, focus, or state-carrying rules).
+ */
+@media (prefers-reduced-motion: reduce) {
+    .wp-block-button__link:hover,
+    .woocommerce a.button:hover,
+    .woocommerce button.button:hover,
+    .woocommerce input.button:hover,
+    .lyli-category-card:hover,
+    .woocommerce ul.products li.product:hover img {
+        transform: none;
+    }
+}
+
 /* ===========================================================================
    Product-ready V1 visual system
    ========================================================================== */
@@ -248,8 +265,10 @@ form {
     border-radius: 999px;
     transition: color var(--lyli-transition), background var(--lyli-transition);
 }
-.bhfb-header .header-item:hover,
-.bhfb-header .menu-toggle:hover { color: var(--lyli-color-primary); background: var(--lyli-color-surface-soft); }
+@media (hover: hover) and (pointer: fine) {
+    .bhfb-header .header-item:hover,
+    .bhfb-header .menu-toggle:hover { color: var(--lyli-color-primary); background: var(--lyli-color-surface-soft); }
+}
 
 /* Global section rhythm */
 .lyli-pattern {
@@ -298,8 +317,15 @@ form {
     background: var(--lyli-color-action-hover);
     border-color: var(--lyli-color-action-hover);
     color: var(--lyli-color-warm-white);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(122, 59, 23, 0.16);
+}
+@media (hover: hover) and (pointer: fine) {
+    .wp-block-button__link:hover,
+    .woocommerce a.button:hover,
+    .woocommerce button.button:hover,
+    .woocommerce input.button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(122, 59, 23, 0.16);
+    }
 }
 .wp-block-button.is-style-outline > .wp-block-button__link:not(.has-background):not(.has-text-color) {
     background: transparent;
@@ -413,7 +439,10 @@ form {
     transition: transform var(--lyli-transition), box-shadow var(--lyli-transition), border var(--lyli-transition);
 }
 .lyli-category-card:nth-child(even) { background: var(--lyli-color-cream); }
-.lyli-category-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--lyli-color-primary) 36%, transparent); box-shadow: var(--lyli-shadow-card-hover); }
+.lyli-category-card:hover { border-color: color-mix(in srgb, var(--lyli-color-primary) 36%, transparent); box-shadow: var(--lyli-shadow-card-hover); }
+@media (hover: hover) and (pointer: fine) {
+    .lyli-category-card:hover { transform: translateY(-3px); }
+}
 .lyli-category-index { margin: 0 0 auto; color: color-mix(in srgb, var(--lyli-color-primary) 42%, transparent); font-family: var(--lyli-font-heading); font-size: clamp(1.75rem, 7vw, 2.6rem); line-height: 1; }
 .lyli-category-card h3 { font-size: clamp(1rem, calc(0.9rem + 0.6vw), 1.35rem); margin: 20px 0 6px; overflow-wrap: anywhere; }
 .lyli-category-card h3 a { color: var(--lyli-color-primary); text-decoration: none; }
@@ -484,7 +513,9 @@ form {
     background: var(--lyli-color-surface-soft);
     transition: transform 350ms ease;
 }
-.woocommerce ul.products li.product:hover img { transform: scale(1.025); }
+@media (hover: hover) and (pointer: fine) {
+    .woocommerce ul.products li.product:hover img { transform: scale(1.025); }
+}
 .woocommerce ul.products li.product .woocommerce-loop-product__title,
 .woocommerce ul.products li.product .price,
 .woocommerce ul.products li.product .star-rating { margin-inline: clamp(10px, 2vw, 18px); }
