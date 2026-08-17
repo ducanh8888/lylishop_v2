@@ -129,6 +129,7 @@ textarea {
     .woocommerce a.button:hover,
     .woocommerce button.button:hover,
     .woocommerce input.button:hover,
+    .wc-block-components-button:hover,
     .lyli-category-card:hover,
     .woocommerce ul.products li.product:hover img {
         transform: none;
