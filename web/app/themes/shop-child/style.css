@@ -194,7 +194,6 @@ form {
     background: color-mix(in srgb, var(--lyli-color-warm-white) 96%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--lyli-color-primary) 12%, transparent);
     box-shadow: 0 8px 28px rgba(45, 42, 38, 0.045);
-    backdrop-filter: blur(14px);
 }
 
 .admin-bar .bhfb-header { top: 32px; }
@@ -723,6 +722,15 @@ form {
 }
 
 @media (min-width: 783px) {
+    /*
+     * backdrop-filter forces the browser to resample everything behind this
+     * element on every scroll frame — real compositing cost. Below this
+     * breakpoint .bhfb-header switches to position: relative (see the
+     * max-width: 782px block), so it never overlaps scrolling content and
+     * the blur has nothing to show; it was pure cost with zero visible
+     * effect on mobile.
+     */
+    .bhfb-header { backdrop-filter: blur(14px); }
     .lyli-pattern { margin-block: clamp(52px, 7vw, 86px); }
     .lyli-hero-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); align-items: center; }
     .lyli-hero-visual { min-height: clamp(400px, 42vw, 520px) !important; }
