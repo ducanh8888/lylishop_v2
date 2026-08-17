@@ -444,7 +444,41 @@ form {
     border-radius: 12px;
     background: var(--lyli-color-warm-white);
 }
-.lyli-editorial-faq summary { cursor: pointer; font-weight: 500; }
+/*
+ * CSS-only disclosure indicator. Native <details>/<summary> already handles
+ * Enter/Space, screen-reader expanded/collapsed state and the open/closed
+ * toggle; this only replaces the browser's default triangle with a chevron
+ * and widens the touch target. No JS, no panel-height animation — only the
+ * chevron rotates, which is exactly what web.dev/CSS current practice
+ * supports without an experimental Chromium-only calc-size()/interpolate-size
+ * dependency for animating an intrinsic (auto) height.
+ */
+.lyli-editorial-faq summary {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block: 10px;
+    margin-block: -10px;
+    cursor: pointer;
+    font-weight: 500;
+    list-style: none;
+    transition: color var(--lyli-transition);
+}
+.lyli-editorial-faq summary::-webkit-details-marker { display: none; }
+.lyli-editorial-faq summary::after {
+    content: "";
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    transition: transform var(--lyli-motion-slow) var(--lyli-ease-out);
+}
+.lyli-editorial-faq details[open] summary::after { transform: rotate(-135deg); }
+.lyli-editorial-faq summary:hover { color: var(--lyli-color-action-hover); }
 .lyli-editorial-contact { padding: clamp(28px, 5vw, 58px); border-radius: 24px; background: var(--lyli-color-blush); }
 
 .blog .posts-archive.layout3 article {
