@@ -534,15 +534,33 @@ form {
     object-fit: cover;
     margin: 0 0 18px !important;
     background: var(--lyli-color-surface-soft);
-    transition: transform 350ms ease;
+    transition: transform var(--lyli-motion-slow) var(--lyli-ease-out);
 }
+/*
+ * Botiga's own woocommerce.css dims this image to opacity 0.7 on
+ * .loop-image-wrap:hover (ease opacity 0.3s). This theme's higher-specificity
+ * selector below used to strip that transition without cancelling the dim
+ * itself, so the two effects fought: an instant opacity snap plus a smooth
+ * scale. Neutralize the dim so scale is the only thing that happens.
+ */
+.woocommerce ul.products li.product .loop-image-wrap:hover img { opacity: 1; }
 @media (hover: hover) and (pointer: fine) {
-    .woocommerce ul.products li.product:hover img { transform: scale(1.025); }
+    .woocommerce ul.products li.product:hover img { transform: scale(1.02); }
 }
 .woocommerce ul.products li.product .woocommerce-loop-product__title,
 .woocommerce ul.products li.product .price,
 .woocommerce ul.products li.product .star-rating { margin-inline: clamp(10px, 2vw, 18px); }
-.woocommerce ul.products li.product .woocommerce-loop-product__title { font-size: clamp(0.95rem, calc(0.85rem + 0.5vw), 1.18rem); overflow-wrap: anywhere; }
+/*
+ * Botiga renders the title as plain text after the product-link anchor
+ * closes (woocommerce_before_shop_loop_item_title priority 12), not inside
+ * it — only the image/button area is actually clickable. Respond to the
+ * real link's hover via the sibling combinator instead of the card, so the
+ * title confirms interactivity without implying the whole card is a button.
+ */
+.woocommerce ul.products li.product > a:first-child:hover ~ .woocommerce-loop-product__title {
+    color: var(--lyli-color-action-hover);
+}
+.woocommerce ul.products li.product .woocommerce-loop-product__title { font-size: clamp(0.95rem, calc(0.85rem + 0.5vw), 1.18rem); overflow-wrap: anywhere; transition: color var(--lyli-transition); }
 .woocommerce ul.products li.product .price { min-height: 24px; font-size: clamp(0.9rem, calc(0.82rem + 0.3vw), 1rem); }
 .woocommerce ul.products li.product .button { margin: 12px clamp(10px, 2vw, 18px) 0; align-self: flex-start; min-height: 44px; padding: 9px 14px; font-size: 0.82rem; }
 .woocommerce .woocommerce-result-count { color: var(--lyli-color-muted); }
