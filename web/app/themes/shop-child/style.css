@@ -458,13 +458,19 @@ form {
     border: 1px solid var(--lyli-color-border);
     border-radius: 18px;
     background: var(--lyli-color-warm-white);
-    box-shadow: 0 6px 24px rgba(45, 42, 38, 0.045);
-    transition: transform var(--lyli-transition), box-shadow var(--lyli-transition), border var(--lyli-transition);
+    /*
+     * Same two-layer geometry as --lyli-shadow-card-hover, alpha 0 on the
+     * first layer, so box-shadow interpolates alpha only. A single-layer
+     * resting shadow transitioning to the two-layer hover value has a
+     * mismatched shadow count, which browsers cannot interpolate smoothly.
+     */
+    box-shadow: 0 4px 12px rgba(45, 42, 38, 0), 0 10px 28px rgba(45, 42, 38, 0.045);
+    transition: transform var(--lyli-transition), box-shadow var(--lyli-transition), border-color var(--lyli-transition);
 }
 .lyli-category-card:nth-child(even) { background: var(--lyli-color-cream); }
 .lyli-category-card:hover { border-color: color-mix(in srgb, var(--lyli-color-primary) 36%, transparent); box-shadow: var(--lyli-shadow-card-hover); }
 @media (hover: hover) and (pointer: fine) {
-    .lyli-category-card:hover { transform: translateY(-3px); }
+    .lyli-category-card:hover { transform: translateY(var(--lyli-lift-md)); }
 }
 .lyli-category-index { margin: 0 0 auto; color: color-mix(in srgb, var(--lyli-color-primary) 42%, transparent); font-family: var(--lyli-font-heading); font-size: clamp(1.75rem, 7vw, 2.6rem); line-height: 1; }
 .lyli-category-card h3 { font-size: clamp(1rem, calc(0.9rem + 0.6vw), 1.35rem); margin: 20px 0 6px; overflow-wrap: anywhere; }
