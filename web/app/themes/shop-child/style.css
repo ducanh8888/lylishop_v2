@@ -210,6 +210,22 @@ form {
     font-weight: 500;
     letter-spacing: 0.01em;
     padding-block: 12px;
+    /*
+     * Botiga's generated color rules for this link never declare a
+     * transition, so duration otherwise falls back to whichever `a`
+     * base rule wins the cascade tie. Declare it explicitly here instead
+     * of depending on stylesheet load order.
+     */
+    transition: color var(--lyli-transition);
+}
+/*
+ * The current-page indicator must not depend on hover: it is the only
+ * thing that tells a keyboard or touch user which nav item they are on.
+ * wp_nav_menu() adds both the class and the aria attribute by default.
+ */
+.bhfb-header .main-navigation .current-menu-item > a.botiga-dropdown-link,
+.bhfb-header .main-navigation a[aria-current="page"] {
+    color: var(--lyli-color-primary);
 }
 
 .mobile-header .row,
