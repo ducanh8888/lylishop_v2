@@ -308,12 +308,19 @@ form {
     text-decoration: none;
     font-weight: 500;
     line-height: 1.2;
-    transition: transform var(--lyli-transition), background var(--lyli-transition), box-shadow var(--lyli-transition);
+    box-shadow: 0 8px 18px rgba(122, 59, 23, 0);
+    transition: transform var(--lyli-transition), background var(--lyli-transition), border-color var(--lyli-transition), box-shadow var(--lyli-transition);
 }
 .wp-block-button__link:hover,
 .woocommerce a.button:hover,
 .woocommerce button.button:hover,
-.woocommerce input.button:hover {
+.woocommerce input.button:hover,
+.wc-block-components-button:hover,
+.wp-block-button__link:active,
+.woocommerce a.button:active,
+.woocommerce button.button:active,
+.woocommerce input.button:active,
+.wc-block-components-button:active {
     background: var(--lyli-color-action-hover);
     border-color: var(--lyli-color-action-hover);
     color: var(--lyli-color-warm-white);
@@ -322,17 +329,33 @@ form {
     .wp-block-button__link:hover,
     .woocommerce a.button:hover,
     .woocommerce button.button:hover,
-    .woocommerce input.button:hover {
-        transform: translateY(-1px);
+    .woocommerce input.button:hover,
+    .wc-block-components-button:hover {
+        transform: translateY(var(--lyli-lift-sm));
         box-shadow: 0 8px 18px rgba(122, 59, 23, 0.16);
     }
+}
+/*
+ * :active must give real feedback on its own — touch devices fire :active
+ * without ever matching :hover, so reversing the hover lift back to 0 would
+ * be invisible there. Press slightly past the resting position instead, on
+ * every pointer type, and speed the transition up so it reads as immediate.
+ */
+.wp-block-button__link:active,
+.woocommerce a.button:active,
+.woocommerce button.button:active,
+.woocommerce input.button:active,
+.wc-block-components-button:active {
+    transform: translateY(1px);
+    transition-duration: var(--lyli-motion-fast);
 }
 .wp-block-button.is-style-outline > .wp-block-button__link:not(.has-background):not(.has-text-color) {
     background: transparent;
     color: var(--lyli-color-primary);
     border-color: var(--lyli-color-primary);
 }
-.wp-block-button.is-style-outline:hover > .wp-block-button__link:not(.has-background):not(.has-text-color) {
+.wp-block-button.is-style-outline > .wp-block-button__link:hover:not(.has-background):not(.has-text-color),
+.wp-block-button.is-style-outline > .wp-block-button__link:active:not(.has-background):not(.has-text-color) {
     background: var(--lyli-color-cream);
     color: var(--lyli-color-primary);
     border-color: var(--lyli-color-primary);
