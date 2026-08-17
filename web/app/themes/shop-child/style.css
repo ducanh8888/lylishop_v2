@@ -145,8 +145,8 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--lyli-color-primary); }
-a:hover { color: var(--lyli-color-primary); text-decoration-thickness: 2px; }
+a { color: var(--lyli-color-primary); transition: color var(--lyli-transition); }
+a:hover { color: var(--lyli-color-action-hover); text-decoration-thickness: 2px; }
 
 .container,
 .site-main,
@@ -580,8 +580,7 @@ form {
 .bhfb-footer .bhfb-rows { display: none; }
 .lyli-footer-content { width: 100%; }
 .lyli-footer-inner { width: min(calc(100% - (var(--lyli-gutter) * 2)), 1140px); margin: auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; padding: clamp(38px, 8vw, 90px) 0; }
-.lyli-footer-logo { display: inline-block; margin-bottom: 14px; color: var(--lyli-color-primary); font-family: var(--lyli-font-heading); font-size: 2rem; font-weight: 600; text-decoration: none; }
-.lyli-footer-logo:hover { color: var(--lyli-color-primary); }
+.lyli-footer-logo { display: inline-block; margin-bottom: 14px; color: var(--lyli-color-primary); font-family: var(--lyli-font-heading); font-size: 2rem; font-weight: 600; text-decoration: none; transition: color var(--lyli-transition); }
 .bhfb-footer .lyli-footer-content h2 { margin: 4px 0 14px; color: var(--lyli-color-primary); font-size: 1rem; font-family: var(--lyli-font-body); text-transform: uppercase; letter-spacing: .12em; }
 .lyli-footer-intro { max-width: 38ch; color: var(--lyli-color-muted); }
 .lyli-footer-menu,
@@ -589,7 +588,7 @@ form {
 .lyli-footer-social { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
 .lyli-footer-menu a,
 .lyli-footer-contact a,
-.lyli-footer-social a { min-height: 44px; display: inline-flex; align-items: center; color: var(--lyli-color-text); text-decoration: none; }
+.lyli-footer-social a { min-height: 44px; display: inline-flex; align-items: center; color: var(--lyli-color-text); text-decoration: none; transition: color var(--lyli-transition); }
 .lyli-footer-menu a:hover,
 .lyli-footer-contact a:hover,
 .lyli-footer-social a:hover { color: var(--lyli-color-primary); }
