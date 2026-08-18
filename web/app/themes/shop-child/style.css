@@ -837,7 +837,43 @@ form {
 }
 .woocommerce ul.products li.product .woocommerce-loop-product__title { font-size: clamp(0.95rem, calc(0.85rem + 0.5vw), 1.18rem); overflow-wrap: anywhere; transition: color var(--lyli-transition); }
 .woocommerce ul.products li.product .price { min-height: 24px; font-size: clamp(0.9rem, calc(0.82rem + 0.3vw), 1rem); }
-.woocommerce ul.products li.product .button { margin: 12px clamp(10px, 2vw, 18px) 0; align-self: flex-start; min-height: 44px; padding: 9px 14px; font-size: 0.82rem; }
+.woocommerce ul.products li.product .button { margin: 12px clamp(10px, 2vw, 18px) 0; align-self: flex-start; min-height: 44px; padding: 9px 14px; font-size: 0.82rem; position: relative; }
+/*
+ * Add-to-cart inline success feedback (assets/js/cart-badge.js). An overlay
+ * rather than swapping the button's own text — it covers the button
+ * without changing its box size, so nothing in the card reflows. Only
+ * added/removed by JS on WooCommerce's own added_to_cart event, so this
+ * never appears for a redirect/non-AJAX add-to-cart submit (that flow
+ * doesn't fire the event at all).
+ */
+.woocommerce ul.products li.product .button.lyli-added-confirm::after {
+    content: "✓ Đã thêm vào giỏ";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+    background: var(--lyli-color-sage);
+    color: var(--lyli-color-primary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    opacity: 0;
+    /*
+     * 1800ms is a deliberate read-time duration for a short Vietnamese
+     * confirmation message, not a section-tier entrance — the token tiers
+     * (fast/base/slow/section) describe transform/opacity motion length,
+     * not how long text needs to stay legible, so this stays a literal
+     * value rather than being forced onto an unrelated token.
+     */
+    animation: lyli-add-confirm-fade 1800ms var(--lyli-ease-out) forwards;
+}
+@keyframes lyli-add-confirm-fade {
+    0% { opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+}
 .woocommerce .woocommerce-result-count { color: var(--lyli-color-muted); }
 .woocommerce .woocommerce-ordering { max-width: 100%; }
 .woocommerce .woocommerce-ordering select { width: 100%; min-width: 0; max-width: 260px; background: var(--lyli-color-warm-white); }
