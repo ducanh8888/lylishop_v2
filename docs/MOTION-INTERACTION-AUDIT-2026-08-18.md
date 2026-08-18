@@ -2,26 +2,31 @@
 
 Audit trực quan trên production thật (`https://lylishop.online`), không phải source local. Đây là ghi chép kết quả — **không sửa source, không deploy trong phạm vi audit này** (xem `SOURCE CHANGES: NONE` cuối file).
 
-## Fixes đã triển khai (2026-08-18, sau audit)
+## Fixes đã triển khai và deploy (2026-08-18, sau audit)
 
-Toàn bộ finding actionable của cả round 1 (text/CSS audit) và round 2 (browser-verified, tài liệu này) đã được implement trên `main`, mỗi fix một commit độc lập, validate riêng (script CSS replica của `scripts/validate-storefront.php` + `php -l` qua WSL cho 2 file PHP mới). **Chưa deploy** tại thời điểm ghi — xem trạng thái deploy ở cuối mục này.
+Toàn bộ finding actionable của cả round 1 (text/CSS audit) và round 2 (browser-verified, tài liệu này) đã được implement, deploy lên production, và **verify lại bằng browser thật sau khi live** (Playwright MCP — không chỉ tin vào code, đã thực sự nhìn lại từng fix trên `https://lylishop.online`).
 
 | Commit | Nội dung | Finding tương ứng |
 |---|---|---|
-| `3ebd3f9` | Bỏ `height:100%` gây lộ nền lavender dưới ảnh hero; thu hẹp ring trang trí chỉ còn áp dụng cho `.wp-block-cover` (biến mất khi có ảnh thật) | P0-1 |
+| `3ebd3f9` | Bỏ `height:100%` trên ảnh hero | P0-1 (bước 1, **chưa đủ** — xem `333b3e8`) |
 | `899afff` | Thu nhỏ `.lyli-hero::before` trên mobile (≤420px) để không đè lên headline | P0-1 (mobile) |
 | `5d06621` | Style block `wp:latest-posts` trên trang chủ thành card grid | P0-0 |
 | `658e1f7` | Loại trừ menu item dạng anchor-fragment khỏi current-page highlight | P0-2 |
 | `890b52e` | Brand hóa + giảm padding banner `.woocommerce-page-header` (Shop + Category archive) | P0-3 |
-| `2000311` | Clamp title category card về 2 dòng để card đều hàng | P1-1 |
+| `2000311` | Clamp title category card về 2 dòng | P1-1 (bước 1, **sai** — xem `eb3bd90`) |
 | `79aba68` | Hero entrance choreography (pure CSS `@keyframes`, không JS) | Round 1 — hero motion spec |
 | `85c7c71` | Section-level scroll reveal (category/USP/story/final-CTA) — JS đầu tiên trong theme, `assets/js/reveal.js` | Round 1 — reveal system |
 | `b832261` | Hover card + `.entry-meta` styling cho blog archive | Round 1 — P2-1 |
 | `1872511` | Cart badge pulse khi `added_to_cart` fire — `assets/js/cart-badge.js` | Round 1 — P2-2 (optional) |
+| `333b3e8` | **Sửa lại** hero fill: `3ebd3f9` không đủ — container 520px cao nhưng ảnh chỉ 231px theo aspect-ratio (đo thật qua `getBoundingClientRect`). Chuyển ảnh sang `position:absolute; inset:0` để lấp đúng container bất kể `min-height` | P0-1 (bản sửa đúng) |
+| `eb3bd90` | **Revert** `2000311`: `line-clamp:2` cắt cụt tiêu đề thật ("Đặt mẫu theo yêu cầu" → "Đặt mẫu...") — chủ shop báo trực tiếp qua screenshot | P1-1 (phát hiện regression) |
+| `419074f` | Fix đúng cho P1-1: `align-items:stretch` trên grid + `height:100%` trên card — card đều hàng (385.475px cả 5 card, đo thật) **và** chữ đầy đủ, không cắt | P1-1 (bản sửa đúng) |
+
+**Bài học ghi nhận:** 2 trong số các fix ban đầu (`3ebd3f9` cho hero, `2000311` cho category card) trông hợp lý trên giấy/qua đọc CSS nhưng **sai khi kiểm tra thật trên browser** — một cái không giải quyết được vấn đề (hero vẫn hở nền lavender), một cái tạo ra vấn đề mới nghiêm trọng hơn (cắt chữ, do chủ shop trực tiếp phát hiện và báo lại). Cả hai đã được phát hiện và sửa **trong cùng phiên deploy** nhờ verify bằng Playwright MCP thật ngay sau khi lên production, không phải chỉ dựa vào suy luận CSS tĩnh.
 
 Không xử lý trong đợt này (ghi nhận, ngoài phạm vi CSS-only): add-to-cart button lồng trong product-link anchor ở shop-loop (P1-2 round 2) — cần đổi PHP hook/theme_mod của Botiga, không phải CSS.
 
-**Trạng thái deploy tại thời điểm ghi:** chưa deploy. Local HEAD đã vượt xa release đang live (`releases/20260818003724`, tương ứng commit `aa879bc`). Cần build artifact mới (qua WSL, đã biết quy trình né bug CRLF) + deploy theo quy trình incremental-batch đã dùng ở lần trước trước khi các fix này lên production thật.
+**Trạng thái deploy:** đã deploy và verify xong. `SOURCE HEAD` = `419074fcd0cf00806b00aea2625dde0567f39d04`, release production `releases/20260818125524`, `current` symlink xác nhận khớp qua SSH. Backup DB trước khi deploy: `shared/backups/pre-deploy/20260818124252/database.sql.gz`.
 
 ## Nguồn xác nhận
 
