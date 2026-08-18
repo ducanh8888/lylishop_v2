@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.6.1
+Version: 1.6.2
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -962,10 +962,20 @@ form {
  * (a single-choice chip row isn't real navigation), so this CSS only
  * needs to handle the "2+ choices" case — no single-chip layout to
  * special-case here.
+ *
+ * The .woocommerce-page-header prefix on the flex/justify rule matches
+ * Botiga's own `.woocommerce-page-header .categories-wrapper {
+ * justify-content: center }` (styles.css) at equal specificity so this
+ * theme's load-order still wins — a bare `.categories-wrapper` rule
+ * (one class) loses to Botiga's two-class one outright. Live-verified:
+ * dropping this back to flex-start is what keeps the chip row on the
+ * same left edge as the H1 above it instead of snapping back to
+ * Botiga's centered default.
  */
-.categories-wrapper {
+.woocommerce-page-header .categories-wrapper {
     display: flex;
     flex-wrap: nowrap;
+    justify-content: flex-start;
     gap: 8px;
     overflow-x: auto;
     padding-bottom: 4px;
