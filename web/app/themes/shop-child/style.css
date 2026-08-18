@@ -571,10 +571,19 @@ form {
     border-radius: 18px;
     background: var(--lyli-color-warm-white);
     box-shadow: var(--lyli-shadow-card);
+    transition: border-color var(--lyli-transition), box-shadow var(--lyli-transition);
+}
+@media (hover: hover) and (pointer: fine) {
+    /* Border/shadow only, no lift — category cards already own that language elsewhere on the site. */
+    .blog .posts-archive.layout3 article:hover {
+        border-color: color-mix(in srgb, var(--lyli-color-primary) 30%, transparent);
+        box-shadow: var(--lyli-shadow-card-hover);
+    }
 }
 .blog .posts-archive .post-thumbnail { overflow: hidden; border-radius: 12px; }
 .blog .posts-archive .post-thumbnail img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
 .blog .posts-archive .entry-title { font-size: clamp(1.25rem, 2vw, 1.6rem); }
+.blog .posts-archive .entry-meta { color: var(--lyli-color-muted); font-size: 0.85rem; }
 
 /* Categories */
 .lyli-category-grid {
