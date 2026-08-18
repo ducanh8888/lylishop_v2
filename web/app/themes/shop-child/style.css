@@ -766,7 +766,25 @@ form {
         transform: translateY(16px);
         transition: opacity var(--lyli-motion-section) var(--lyli-ease-out), transform var(--lyli-motion-section) var(--lyli-ease-out);
     }
-    .has-js-reveal .is-revealed { opacity: 1; transform: translateY(0); }
+    /*
+     * Each revealed-state selector below repeats its hidden-state selector
+     * plus .is-revealed, instead of a single low-specificity
+     * `.has-js-reveal .is-revealed` catch-all. That catch-all (0,2,0) lost
+     * to the blog-archive and latest-posts hidden selectors above, which
+     * both carry more classes/an element than that (0,4,1) and (0,3,1) —
+     * so their content was added to the DOM as .is-revealed but stayed at
+     * opacity: 0 forever. Live-verified broken on both blog archive and
+     * homepage latest-posts before this fix.
+     */
+    .has-js-reveal .lyli-category-card.is-revealed,
+    .has-js-reveal .lyli-info-card.is-revealed,
+    .has-js-reveal .lyli-story-visual.is-revealed,
+    .has-js-reveal .lyli-final-cta.is-revealed,
+    .has-js-reveal .lyli-editorial-news .wp-block-latest-posts li.is-revealed,
+    .has-js-reveal .blog .posts-archive.layout3 article.is-revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
     .has-js-reveal .lyli-category-card:nth-child(2) { transition-delay: 60ms; }
     .has-js-reveal .lyli-category-card:nth-child(3) { transition-delay: 120ms; }
     .has-js-reveal .lyli-category-card:nth-child(4) { transition-delay: 180ms; }
