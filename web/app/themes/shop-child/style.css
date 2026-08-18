@@ -419,6 +419,25 @@ form {
 .lyli-hero-grid > .wp-block-column { min-width: 0; }
 .lyli-hero h1 { font-size: clamp(1.9rem, calc(1.4rem + 2.4vw), 3.75rem); max-width: 15ch; margin: 10px 0 16px; word-break: normal; overflow-wrap: normal; }
 .lyli-hero-copy { max-width: 45ch; color: var(--lyli-color-muted); margin-bottom: 22px; }
+/*
+ * Load-triggered entrance for the hero text only — never the hero image.
+ * The image is a likely LCP (Largest Contentful Paint) candidate
+ * (fetchpriority="high" in the markup); fading it in would push back the
+ * moment it's painted opaque, working against the Core Web Vitals
+ * constraint. Pure CSS, no JS: the existing blanket
+ * `prefers-reduced-motion` rule already collapses animation-duration to
+ * near-zero, so reduced-motion users see the end state almost immediately
+ * — exactly the "show content immediately" behavior required, with no
+ * extra rule needed here.
+ */
+@keyframes lyli-fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.lyli-hero .lyli-eyebrow { animation: lyli-fade-up 500ms var(--lyli-ease-out) both; }
+.lyli-hero h1 { animation: lyli-fade-up 600ms var(--lyli-ease-out) 80ms both; }
+.lyli-hero-copy { animation: lyli-fade-up 600ms var(--lyli-ease-out) 160ms both; }
+.lyli-hero .wp-block-buttons { animation: lyli-fade-up 600ms var(--lyli-ease-out) 160ms both; }
 .lyli-hero-visual {
     overflow: hidden;
     min-height: clamp(240px, 68vw, 280px) !important;
