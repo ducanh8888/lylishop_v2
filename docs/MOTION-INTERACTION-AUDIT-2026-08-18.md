@@ -2,6 +2,27 @@
 
 Audit trực quan trên production thật (`https://lylishop.online`), không phải source local. Đây là ghi chép kết quả — **không sửa source, không deploy trong phạm vi audit này** (xem `SOURCE CHANGES: NONE` cuối file).
 
+## Fixes đã triển khai (2026-08-18, sau audit)
+
+Toàn bộ finding actionable của cả round 1 (text/CSS audit) và round 2 (browser-verified, tài liệu này) đã được implement trên `main`, mỗi fix một commit độc lập, validate riêng (script CSS replica của `scripts/validate-storefront.php` + `php -l` qua WSL cho 2 file PHP mới). **Chưa deploy** tại thời điểm ghi — xem trạng thái deploy ở cuối mục này.
+
+| Commit | Nội dung | Finding tương ứng |
+|---|---|---|
+| `3ebd3f9` | Bỏ `height:100%` gây lộ nền lavender dưới ảnh hero; thu hẹp ring trang trí chỉ còn áp dụng cho `.wp-block-cover` (biến mất khi có ảnh thật) | P0-1 |
+| `899afff` | Thu nhỏ `.lyli-hero::before` trên mobile (≤420px) để không đè lên headline | P0-1 (mobile) |
+| `5d06621` | Style block `wp:latest-posts` trên trang chủ thành card grid | P0-0 |
+| `658e1f7` | Loại trừ menu item dạng anchor-fragment khỏi current-page highlight | P0-2 |
+| `890b52e` | Brand hóa + giảm padding banner `.woocommerce-page-header` (Shop + Category archive) | P0-3 |
+| `2000311` | Clamp title category card về 2 dòng để card đều hàng | P1-1 |
+| `79aba68` | Hero entrance choreography (pure CSS `@keyframes`, không JS) | Round 1 — hero motion spec |
+| `85c7c71` | Section-level scroll reveal (category/USP/story/final-CTA) — JS đầu tiên trong theme, `assets/js/reveal.js` | Round 1 — reveal system |
+| `b832261` | Hover card + `.entry-meta` styling cho blog archive | Round 1 — P2-1 |
+| `1872511` | Cart badge pulse khi `added_to_cart` fire — `assets/js/cart-badge.js` | Round 1 — P2-2 (optional) |
+
+Không xử lý trong đợt này (ghi nhận, ngoài phạm vi CSS-only): add-to-cart button lồng trong product-link anchor ở shop-loop (P1-2 round 2) — cần đổi PHP hook/theme_mod của Botiga, không phải CSS.
+
+**Trạng thái deploy tại thời điểm ghi:** chưa deploy. Local HEAD đã vượt xa release đang live (`releases/20260818003724`, tương ứng commit `aa879bc`). Cần build artifact mới (qua WSL, đã biết quy trình né bug CRLF) + deploy theo quy trình incremental-batch đã dùng ở lần trước trước khi các fix này lên production thật.
+
 ## Nguồn xác nhận
 
 - Source HEAD lúc audit: `aa879bc5ade35e622239589c52bd0acf6a30014e`.
