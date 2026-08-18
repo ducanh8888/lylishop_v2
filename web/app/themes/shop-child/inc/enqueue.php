@@ -60,3 +60,26 @@ function font_preconnect(array $urls, string $relation_type): array
     }
     return $urls;
 }
+
+/**
+ * Section-level scroll reveal (category/USP/story/final-CTA). Vanilla JS,
+ * no dependency, deferred. The script itself is solely responsible for
+ * gating content on prefers-reduced-motion / IntersectionObserver support
+ * and for adding the class that hides content before revealing it — if
+ * this file fails to load or execute for any reason, nothing ever gets
+ * hidden, so the page stays fully usable without it.
+ */
+add_action('wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_reveal_script', 14);
+function enqueue_reveal_script(): void
+{
+    $path = get_stylesheet_directory() . '/assets/js/reveal.js';
+    $modified = file_exists($path) ? filemtime($path) : false;
+
+    wp_enqueue_script(
+        'lyli-reveal',
+        get_stylesheet_directory_uri() . '/assets/js/reveal.js',
+        [],
+        $modified !== false ? (string) $modified : null,
+        ['strategy' => 'defer']
+    );
+}

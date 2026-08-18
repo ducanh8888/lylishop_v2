@@ -658,6 +658,34 @@ form {
 .lyli-final-cta h2 { max-width: 19ch; margin-inline: auto; font-size: clamp(1.9rem, calc(1.45rem + 2vw), 3.6rem); }
 .lyli-final-cta p { max-width: 48ch; margin-inline: auto; color: var(--lyli-color-muted); }
 
+/*
+ * Section-level scroll reveal (assets/js/reveal.js). The `.has-js-reveal`
+ * gate class is only added by that script — if it fails to load or
+ * execute, none of this ever applies and every element below stays at its
+ * normal, fully visible state. Also wrapped in
+ * `prefers-reduced-motion: no-preference` as a second, CSS-only guarantee:
+ * even if the script somehow added the class for a reduced-motion user,
+ * this media query alone keeps content visible without relying on the
+ * script's own (already-present) reduced-motion check.
+ */
+@media (prefers-reduced-motion: no-preference) {
+    .has-js-reveal .lyli-category-card,
+    .has-js-reveal .lyli-info-card,
+    .has-js-reveal .lyli-story-visual,
+    .has-js-reveal .lyli-final-cta {
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 600ms var(--lyli-ease-out), transform 600ms var(--lyli-ease-out);
+    }
+    .has-js-reveal .is-revealed { opacity: 1; transform: translateY(0); }
+    .has-js-reveal .lyli-category-card:nth-child(2) { transition-delay: 60ms; }
+    .has-js-reveal .lyli-category-card:nth-child(3) { transition-delay: 120ms; }
+    .has-js-reveal .lyli-category-card:nth-child(4) { transition-delay: 180ms; }
+    .has-js-reveal .lyli-category-card:nth-child(5) { transition-delay: 240ms; }
+    .has-js-reveal .lyli-info-card:nth-child(2) { transition-delay: 80ms; }
+    .has-js-reveal .lyli-info-card:nth-child(3) { transition-delay: 160ms; }
+}
+
 /* Product loops */
 .woocommerce .products ul,
 .woocommerce ul.products {
