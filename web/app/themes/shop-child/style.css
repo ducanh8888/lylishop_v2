@@ -404,6 +404,24 @@ form {
     color: var(--lyli-color-primary);
     border-color: var(--lyli-color-primary);
 }
+/*
+ * Motion Language v1, item 2 (arrow-nudge). Scoped to outline buttons only
+ * — the solid/primary button already carries lift + shadow feedback, and
+ * stacking a third moving element on top would be busier, not clearer.
+ * Outline buttons currently only get a background swap on hover, so the
+ * nudge adds affordance without competing with anything else.
+ */
+.wp-block-button.is-style-outline > .wp-block-button__link:not(.has-background):not(.has-text-color)::after {
+    content: "→";
+    display: inline-block;
+    margin-left: 8px;
+    transition: transform var(--lyli-motion-base) var(--lyli-ease-standard);
+}
+@media (hover: hover) and (pointer: fine) {
+    .wp-block-button.is-style-outline > .wp-block-button__link:hover:not(.has-background):not(.has-text-color)::after {
+        transform: translateX(4px);
+    }
+}
 
 /* Hero */
 .lyli-hero {
