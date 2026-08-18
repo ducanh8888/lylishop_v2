@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.5.1
+Version: 1.5.2
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -937,6 +937,20 @@ form {
 .woocommerce-page-header .container {
     display: flex;
     flex-direction: column;
+}
+/*
+ * Live-verified difference between the two Botiga chip functions: on the
+ * main shop, botiga_shop_page_header_category_links() closes the H1's
+ * container early (Botiga's own header-builder-conditional markup) and
+ * opens a fresh sibling .container for the chips, so order doesn't matter
+ * there. On category/tag archives, botiga_shop_page_header_sub_category_links()
+ * has no such early-close, so its .container nests INSIDE the H1's still-open
+ * one — making it a flex item of that same H1 flex context, defaulting to
+ * order:0 and rendering above the H1. order:4 pins it after H1(2)/intro(3)
+ * without affecting the main-shop case (nothing to match there).
+ */
+.woocommerce-page-header .container .container {
+    order: 4;
 }
 .lyli-shop-intro-eyebrow {
     order: 1;
