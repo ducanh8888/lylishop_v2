@@ -68,37 +68,128 @@ function maybe_render_custom_order_hint(): void
 }
 
 /**
- * Storefront V2 Batch A.1 corrective pass — main-shop editorial eyebrow +
- * one-line intro. Main shop only (is_shop()); category/tag archives use
- * their own product_cat term description via WooCommerce's existing
- * woocommerce_archive_description hook instead, per the frozen contract
- * (docs/STOREFRONT-V2-IMPLEMENTATION.md §4.2) — no duplicate intro there.
+ * Storefront V2 Batch A.2 UX correction — main-shop eyebrow only.
  *
- * Originally hooked to woocommerce_before_shop_loop (priority 15), which
- * live-verified to render in a completely different DOM branch than the
- * archive header (.woocommerce-page-header is a child of #page.site; the
- * shop loop lives inside .row.main-row > .site-main, a structural sibling
- * several levels over) — producing a disconnected ~150px gap between the
- * header and the intro on production. Botiga exposes exactly one
- * do_action inside the header itself, right before the H1:
+ * A.1 also hook-inserted a one-line intro paragraph here and used CSS flex
+ * `order` to visually place it after the H1 (this hook only fires before
+ * the title). Live audit for A.2 flagged that whole mechanism as a warning
+ * sign — the flex-order rules already needed a follow-up fix once
+ * (category archives nest their sub-category container differently than
+ * the main shop nests its top-level one) and were pure structural
+ * overhead for one paragraph. WooCommerce already has a native, hook-free
+ * slot for exactly this: the "Shop" page's own post content, rendered
+ * automatically after the H1 by Botiga's own
+ * botiga_woocommerce_product_archive_description() — unconditionally, no
+ * flex-order needed, and it's the same mechanism category archives already
+ * use for their own product_cat term description (contract §4.2 keeps that
+ * separation). The intro copy itself now lives as WooCommerce Shop page
+ * (post ID from wc_get_page_id('shop')) content, a content change, not a
+ * template/hook one — see docs/STOREFRONT-V2-IMPLEMENTATION.md's A.2
+ * amendment.
+ *
+ * The eyebrow alone has no such native slot, so it stays hooked to
  * botiga_before_shop_archive_title (inc/plugins/woocommerce/features/
- * wc-page-header.php). Hooking there instead keeps eyebrow+intro+H1+chips
- * inside the same header block. Visual order (eyebrow, H1, intro) is
- * achieved with CSS flex `order` in style.css, since the hook only fires
- * before the H1 — see the matching comment there.
+ * wc-page-header.php) — its natural position, immediately before the H1,
+ * needs no reordering at all.
  */
-add_action('botiga_before_shop_archive_title', __NAMESPACE__ . '\\render_shop_archive_intro');
-function render_shop_archive_intro(): void
+add_action('botiga_before_shop_archive_title', __NAMESPACE__ . '\\render_shop_archive_eyebrow');
+function render_shop_archive_eyebrow(): void
 {
     if (! is_shop()) {
         return;
     }
 
     printf(
-        '<p class="lyli-shop-intro-eyebrow">%1$s</p><p class="lyli-shop-intro-copy">%2$s</p>',
-        esc_html__('Quà tặng handmade', 'shop-child'),
-        esc_html__('Móc khóa len thủ công, làm theo yêu cầu, giao trong 1–3 ngày.', 'shop-child')
+        '<p class="lyli-shop-intro-eyebrow">%s</p>',
+        esc_html__('Quà tặng handmade', 'shop-child')
     );
+}
+
+/**
+ * Storefront V2 Batch A.2 — suppress category-navigation chips wherever
+ * they wouldn't give the shopper an actual choice. Botiga's own
+ * shop_archive_header_style_show_categories / _show_sub_categories theme
+ * mods are boolean on/off switches with no count-awareness; filtering the
+ * stored value through WordPress's own `theme_mod_{name}` core filter
+ * (fired by every get_theme_mod() call, including Botiga's) lets a chip
+ * row still render whenever it has 2+ real choices, and disappear
+ * whenever it wouldn't — without touching Botiga's rendering code, and
+ * without hardcoding any category name. Both counts intentionally reuse
+ * the same hide_empty:true semantics Botiga's own query args use, so an
+ * empty category never counts as a choice.
+ */
+add_filter('theme_mod_shop_archive_header_style_show_categories', __NAMESPACE__ . '\\suppress_single_category_nav');
+function suppress_single_category_nav($value)
+{
+    if (! $value || ! is_shop()) {
+        return $value;
+    }
+
+    $count = wp_count_terms('product_cat', ['parent' => 0, 'hide_empty' => true]);
+
+    return (! is_wp_error($count) && $count >= 2) ? $value : false;
+}
+
+add_filter('theme_mod_shop_archive_header_style_show_sub_categories', __NAMESPACE__ . '\\suppress_single_subcategory_nav');
+function suppress_single_subcategory_nav($value)
+{
+    if (! $value || ! (is_product_category() || is_product_tag() || is_product_taxonomy())) {
+        return $value;
+    }
+
+    $term = get_queried_object();
+    if (! $term instanceof \WP_Term) {
+        return $value;
+    }
+
+    $count = wp_count_terms('product_cat', ['parent' => $term->term_id, 'hide_empty' => true]);
+
+    return (! is_wp_error($count) && $count >= 2) ? $value : false;
+}
+
+/**
+ * Storefront V2 Batch A.2 — concise Vietnamese result-count copy.
+ * WooCommerce's loop/result-count.php template (a core template, not
+ * overridden here) has no apply_filters() around its final string, only
+ * _e()/_n()/_nx() calls — so the smallest scoped mechanism is a gettext
+ * filter matched on exact domain + source string(s), the same technique
+ * already used and documented for the cart "Shipment" string (contract
+ * §12.1). Each filter below only ever matches its own exact source
+ * string in the 'woocommerce' domain; nothing else can match.
+ */
+add_filter('gettext', __NAMESPACE__ . '\\simplify_single_result_count_text', 10, 3);
+function simplify_single_result_count_text($translated, $text, $domain)
+{
+    if ($domain === 'woocommerce' && $text === 'Showing the single result') {
+        return __('1 sản phẩm', 'shop-child');
+    }
+
+    return $translated;
+}
+
+add_filter('ngettext', __NAMESPACE__ . '\\simplify_all_results_count_text', 10, 5);
+function simplify_all_results_count_text($translated, $single, $plural, $number, $domain)
+{
+    if ($domain === 'woocommerce' && $single === 'Showing all %1$d result' && $plural === 'Showing all %1$d results') {
+        return __('%1$d sản phẩm', 'shop-child');
+    }
+
+    return $translated;
+}
+
+add_filter('ngettext_with_context', __NAMESPACE__ . '\\simplify_paginated_result_count_text', 10, 6);
+function simplify_paginated_result_count_text($translated, $single, $plural, $number, $context, $domain)
+{
+    if (
+        $domain === 'woocommerce'
+        && $context === 'with first and last result'
+        && $single === 'Showing %1$d&ndash;%2$d of %3$d result'
+        && $plural === 'Showing %1$d&ndash;%2$d of %3$d results'
+    ) {
+        return __('%1$d&ndash;%2$d trong %3$d sản phẩm', 'shop-child');
+    }
+
+    return $translated;
 }
 
 /**

@@ -169,6 +169,16 @@ Batch B recomposes the existing "Mô tả" tab content into visually distinct bl
 
 If a genuine structured-content schema is wanted later (e.g. distinct "materials", "dimensions", "care" fields per product), that is explicitly a **separate content migration task**, out of scope for Batch B, requiring its own preflight.
 
+### 4.5 Batch A.2 amendment — archive is catalog-first, not hero-first
+
+A.1 shipped a *technically* correct composition (right hook, right DOM position, right spacing math) that was still wrong: live-measured, the header/eyebrow/H1/intro/chip/toolbar stack consumed **68% of a 1440×900 first viewport** before any product row appeared — a shopper who clicked "Sản phẩm" landed on what read as a campaign hero, not a catalog. Corrected in Batch A.2 with durable rules for any future archive/composition work in this project:
+
+- **The archive is a product-browsing interface first, an editorial/branded surface second.** A meaningful part of the first product row must be visible in a normal desktop first viewport without scrolling. This is an explicit acceptance constraint, not a nice-to-have.
+- **Category/sub-category navigation renders only when it gives the shopper an actual choice** — 2 or more real (non-empty) sibling terms. A single chip is not navigation, it's a dead-end that repeats what the intro copy already said. Gated generically by `wp_count_terms()` through WordPress's own `theme_mod_{name}` filter (see `inc/woocommerce.php`), never by hardcoding a category name — if the catalog grows past one real category, the chips reappear on their own.
+- **Prefer a native, hook-free composition over reordering CSS.** A.1's flex `order` trick (needed because a hook only fires *before* the H1, and the intro copy was wanted *after* it) required a follow-up fix once already, because Botiga's two chip-rendering functions nest their markup differently between the main shop and category archives. A.2 removed the need for `order` entirely by moving the intro copy into WooCommerce's own native shop-page-description slot (`wc_get_page_id('shop')` post content, rendered automatically by Botiga's existing `botiga_woocommerce_product_archive_description()` — the exact mechanism category archives already used for their own term description). When a DOM-order workaround needs a second workaround, that's the signal to find the native slot instead of patching the hack.
+- **Visual acceptance is reviewed as whole-screen composition, not element-by-element hook correctness.** A.1 passed every functional/DOM check and was still a UX regression. The standing acceptance question for any future archive change: *if this were a shopper's first visit, would this page help them start browsing immediately?*
+- **Centered "hero" alignment was reversed to left-aligned**, matching the product grid's own reading axis — a centered block directly above a left/right commerce toolbar (result count / sort) created a jarring realignment shoppers had to visually re-parse.
+
 ---
 
 ## 5. Scope matrix

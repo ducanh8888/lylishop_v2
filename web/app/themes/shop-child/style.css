@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.5.2
+Version: 1.6.0
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -923,75 +923,63 @@ form {
     100% { opacity: 0; }
 }
 /*
- * Storefront V2 Batch A.1 corrective pass — eyebrow + intro now hook to
- * botiga_before_shop_archive_title (inc/woocommerce.php), which fires
- * inside .woocommerce-page-header's own H1 container, right before the
- * H1 — not before, since Botiga exposes no "after title" action. Visual
- * order (eyebrow, H1, intro) is reconstructed with flex `order` on that
- * container rather than fighting DOM position with margins. This
- * container also holds nothing but the H1 by default and the breadcrumb/
- * chip containers each hold a single child, so making all of
- * .woocommerce-page-header's .container children flex columns is safe —
- * a single flex item behaves like a block one.
+ * Storefront V2 Batch A.2 UX correction — the archive header is a
+ * catalog-browsing entry point, not a landing-page hero. A.1's flex
+ * `order` reordering machinery is gone: the intro paragraph moved to the
+ * native page-description slot (inc/woocommerce.php), which already
+ * renders in the right DOM position with no reordering, and the eyebrow's
+ * hook already fires in its natural position (before the H1) — nothing
+ * left to reorder. Left-aligned instead of centered: a centered block
+ * read as a marketing hero and created a jarring realignment into the
+ * left/right result-count/sort toolbar immediately below it; left
+ * alignment keeps one continuous reading axis into the product grid.
  */
-.woocommerce-page-header .container {
-    display: flex;
-    flex-direction: column;
-}
-/*
- * Live-verified difference between the two Botiga chip functions: on the
- * main shop, botiga_shop_page_header_category_links() closes the H1's
- * container early (Botiga's own header-builder-conditional markup) and
- * opens a fresh sibling .container for the chips, so order doesn't matter
- * there. On category/tag archives, botiga_shop_page_header_sub_category_links()
- * has no such early-close, so its .container nests INSIDE the H1's still-open
- * one — making it a flex item of that same H1 flex context, defaulting to
- * order:0 and rendering above the H1. order:4 pins it after H1(2)/intro(3)
- * without affecting the main-shop case (nothing to match there).
- */
-.woocommerce-page-header .container .container {
-    order: 4;
-}
+.woocommerce-page-header,
+.woocommerce-page-header .container { text-align: left; }
 .lyli-shop-intro-eyebrow {
-    order: 1;
-    margin: 0 0 8px;
+    margin: 0 0 6px;
     color: var(--lyli-color-primary);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
-.lyli-shop-intro-copy {
-    order: 3;
-    margin: 0 0 clamp(18px, 2.4vw, 26px);
-    max-width: 52ch;
-    margin-inline: auto;
+.woocommerce-page-header .page-description,
+.woocommerce-page-header .term-description {
+    margin: 8px 0 0;
+    max-width: 60ch;
     color: var(--lyli-color-muted);
 }
+.woocommerce-page-header .page-description p,
+.woocommerce-page-header .term-description p { margin: 0; }
 /*
  * Storefront V2 Batch A — Botiga's native category chips (theme mod
  * shop_archive_header_style_show_categories / _show_sub_categories,
  * inc/plugins/woocommerce/features/wc-page-header.php). Restyled only —
  * markup/behavior stays Botiga's own .categories-wrapper/.category-button
  * output, per the frozen contract's "native primitive first" rule.
+ * Batch A.2: the theme mods driving these are now count-gated in PHP
+ * (a single-choice chip row isn't real navigation), so this CSS only
+ * needs to handle the "2+ choices" case — no single-chip layout to
+ * special-case here.
  */
 .categories-wrapper {
     display: flex;
     flex-wrap: nowrap;
-    justify-content: center;
     gap: 8px;
     overflow-x: auto;
     padding-bottom: 4px;
+    margin-top: 14px;
     -webkit-overflow-scrolling: touch;
 }
 .category-button {
     flex: 0 0 auto;
-    padding: 8px 16px;
+    padding: 7px 14px;
     border-radius: 999px;
     border: 1px solid var(--lyli-color-border);
     background: var(--lyli-color-warm-white);
     color: var(--lyli-color-text);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     white-space: nowrap;
     text-decoration: none;
     transition: color var(--lyli-transition), border-color var(--lyli-transition), background var(--lyli-transition);
@@ -1003,9 +991,34 @@ form {
         background: var(--lyli-color-cream);
     }
 }
-.woocommerce .woocommerce-result-count { color: var(--lyli-color-muted); }
+.woocommerce .woocommerce-result-count { margin: 0; color: var(--lyli-color-muted); }
 .woocommerce .woocommerce-ordering { max-width: 100%; }
-.woocommerce .woocommerce-ordering select { width: 100%; min-width: 0; max-width: 260px; background: var(--lyli-color-warm-white); }
+/*
+ * Storefront V2 Batch A.2 — the sort <select> had appearance:none and no
+ * border from Botiga's own CSS (verified live via getComputedStyle:
+ * border 0px none, no background-image) — it read as plain text, not a
+ * control. Restores a visible affordance without reintroducing native
+ * appearance (which renders inconsistently across browsers/OS): a border,
+ * background contrast, and a CSS-drawn chevron via background-image so it
+ * still visually says "this opens options" while staying the real native
+ * <select>, no JS.
+ */
+.woocommerce .woocommerce-ordering select {
+    width: 100%;
+    min-width: 0;
+    max-width: 260px;
+    padding: 9px 34px 9px 14px;
+    border: 1px solid var(--lyli-color-border);
+    border-radius: var(--lyli-radius-md);
+    background-color: var(--lyli-color-warm-white);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%237A3B17' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+.woocommerce .woocommerce-ordering select:focus-visible {
+    outline: 3px solid var(--lyli-color-primary);
+    outline-offset: 2px;
+}
 /*
  * Storefront V2 Batch A — fixes the result-count/sort row clipping the
  * sort <select>'s own text at narrow widths. Root cause: Botiga wraps both
@@ -1033,29 +1046,30 @@ form {
  * specificity as Botiga's own rules (single class each); this wins because
  * shop-child's stylesheet loads after both botiga-custom-styles and
  * botiga-style-min.
+ *
+ * Batch A.2: padding tightened further — live audit measured the archive
+ * header + toolbar consuming 68% of a 1440x900 first viewport before any
+ * product row appeared, the core reported UX problem. This is a catalog
+ * entry point, not a campaign hero.
  */
 .woocommerce-page-header {
     background: var(--lyli-color-warm-white);
-    padding-top: clamp(28px, 4vw, 40px);
-    padding-bottom: clamp(20px, 3vw, 28px);
+    padding-top: clamp(22px, 3vw, 32px);
+    padding-bottom: clamp(18px, 2.4vw, 24px);
 }
 .woocommerce-page-header h1 { color: var(--lyli-color-primary); }
 /*
- * Storefront V2 Batch A.1 corrective pass — the shared .page-title rule
- * above (used by every WooCommerce page-header context) sized the shop
- * archive H1 at ~58px live at 1440px, with 54px margin-bottom — oversized
- * for a compact archive header now that it sits directly above an
- * eyebrow/intro/chip stack rather than alone. Scoped to
- * .woocommerce-page-header specifically (the wrapper Botiga only ever
- * renders for shop/category/tag archives — never cart/checkout/account/
- * single-product), so PDP and other page-title contexts are untouched.
- * order:2 places the H1 between the eyebrow (order:1) and intro
- * (order:3) — see the flex-order comment above.
+ * Storefront V2 Batch A.1/A.2 — the shared .page-title rule above (used
+ * by every WooCommerce page-header context) sized the shop archive H1 at
+ * ~58px live at 1440px, with 54px margin-bottom — oversized for a compact
+ * archive header. Scoped to .woocommerce-page-header specifically (the
+ * wrapper Botiga only ever renders for shop/category/tag archives — never
+ * cart/checkout/account/single-product), so PDP and other page-title
+ * contexts are untouched.
  */
 .woocommerce-page-header .page-title {
-    order: 2;
-    font-size: clamp(1.7rem, calc(1.3rem + 1.6vw), 2.75rem);
-    margin-bottom: 12px;
+    margin: 4px 0 0;
+    font-size: clamp(1.6rem, calc(1.25rem + 1.4vw), 2.5rem);
 }
 /*
  * Browser-measured live: .content-wrapper's actual previous sibling is
