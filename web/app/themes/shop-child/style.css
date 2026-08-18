@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.6.0
+Version: 1.6.1
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -1072,13 +1072,22 @@ form {
     font-size: clamp(1.6rem, calc(1.25rem + 1.4vw), 2.5rem);
 }
 /*
- * Browser-measured live: .content-wrapper's actual previous sibling is
- * .site (the wrapper containing .woocommerce-page-header), not the header
- * itself — .woocommerce-page-header + .content-wrapper never matched in
- * this theme's real DOM, so the intended override below was dead code.
- * Corrected to the selector that actually matches.
+ * Storefront V2 Batch A.2 — this relationship turned out to be
+ * content-dependent, not fixed: with category chips rendering (A.1's
+ * state), .content-wrapper's previous sibling is .site (the wrapper
+ * containing .woocommerce-page-header), because Botiga's chip function
+ * closes and reopens a container div along the way. With chips suppressed
+ * (A.2's default, single-category case), that dance never happens and
+ * </header> lands directly before .content-wrapper instead — reviving
+ * Botiga's own dormant `.woocommerce-page-header + .content-wrapper {
+ * margin-top: 100px }` rule (styles.css), live-verified to reintroduce
+ * the oversized gap this override exists to prevent. Covering both
+ * selectors keeps this correct regardless of which structural case is
+ * live, including if the catalog grows past one category later and
+ * chips reappear.
  */
-.site + .content-wrapper {
+.site + .content-wrapper,
+.woocommerce-page-header + .content-wrapper {
     margin-top: clamp(20px, 4vw, 32px);
 }
 .woocommerce-no-products-found { max-width: 760px; margin: 60px auto; text-align: center; }
