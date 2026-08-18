@@ -412,24 +412,38 @@ form {
     border-radius: 22px;
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lyli-color-primary) 10%, transparent), 0 16px 45px rgba(73, 42, 25, 0.12);
 }
-.lyli-hero-visual::before,
-.lyli-hero-visual::after {
+/*
+ * Scoped to .wp-block-cover only: these rings decorate the abstract
+ * placeholder background of the original cover-block hero. Once an owner
+ * replaces it with a real photo (wp:image, class wp-block-image instead of
+ * wp-block-cover), the rings must not carry over — they would paint on top
+ * of the photo instead of behind an empty color field.
+ */
+.lyli-hero-visual.wp-block-cover::before,
+.lyli-hero-visual.wp-block-cover::after {
     content: "";
     position: absolute;
     border-radius: 50%;
     border: 28px solid color-mix(in srgb, var(--lyli-color-primary) 18%, transparent);
 }
-.lyli-hero-visual::before { width: 240px; height: 240px; top: 15%; right: -65px; }
-.lyli-hero-visual::after { width: 145px; height: 145px; bottom: 8%; left: -35px; border-color: color-mix(in srgb, var(--lyli-color-warm-white) 48%, transparent); }
+.lyli-hero-visual.wp-block-cover::before { width: 240px; height: 240px; top: 15%; right: -65px; }
+.lyli-hero-visual.wp-block-cover::after { width: 145px; height: 145px; bottom: 8%; left: -35px; border-color: color-mix(in srgb, var(--lyli-color-warm-white) 48%, transparent); }
 .lyli-hero-visual .wp-block-cover__inner-container { position: relative; z-index: 2; max-width: 25ch; }
 .lyli-yarn-mark { font-family: var(--lyli-font-heading); color: var(--lyli-color-primary); font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 600; letter-spacing: 0.05em; margin: 0; }
 
-/* Editorial content remains native Gutenberg content editable in WP Admin. */
+/*
+ * Editorial content remains native Gutenberg content editable in WP Admin.
+ * No `height: 100%` here on purpose: each of these three containers only
+ * ever declares `min-height`, and percentage heights don't resolve against
+ * a min-height-only parent — the image would fall back to its intrinsic
+ * height, shorter than the container, exposing raw background color below
+ * it. `width: 100%` + the aspect-ratio declared per selector below is
+ * enough on its own to size the image correctly.
+ */
 .lyli-hero-visual img,
 .lyli-story-image img,
 .lyli-source-gallery img {
     width: 100%;
-    height: 100%;
     object-fit: cover;
 }
 .lyli-hero-visual img { aspect-ratio: 5 / 4; }
