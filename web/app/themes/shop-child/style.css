@@ -642,19 +642,20 @@ form {
 }
 .lyli-category-index { margin: 0 0 auto; color: color-mix(in srgb, var(--lyli-color-primary) 42%, transparent); font-family: var(--lyli-font-heading); font-size: clamp(1.75rem, 7vw, 2.6rem); line-height: 1; }
 /*
- * DOM-measured: card height varied 361px vs 385px in the same grid row
- * because owner-edited titles wrap to 2 vs 3 lines ("Móc khóa len" vs
- * "Gấu bông len đặt riêng"). Clamp to 2 lines so every card in a row
- * reaches the same height regardless of how long the shop owner's text is.
+ * Deployed and immediately reverted: line-clamp: 2 (previous version of
+ * this rule) truncated real titles mid-word ("Đặt mẫu...", "Hộp quà đ...")
+ * — screenshot-reported on production. Losing part of the category name
+ * is worse than a few pixels of height difference between cards, so this
+ * card's height is left to CSS Grid's default `align-items: stretch`
+ * (every card in the grid still stretches to match the tallest sibling in
+ * its row; only the *distribution* of the extra space inside a shorter
+ * card differs, handled by this card's own `justify-content: space-between`
+ * further up).
  */
 .lyli-category-card h3 {
     font-size: clamp(1rem, calc(0.9rem + 0.6vw), 1.35rem);
     margin: 20px 0 6px;
     overflow-wrap: anywhere;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
 }
 .lyli-category-card h3 a { color: var(--lyli-color-primary); text-decoration: none; }
 .lyli-category-card p:last-child { margin: 0; color: var(--lyli-color-muted); font-size: 0.9rem; line-height: 1.55; }
