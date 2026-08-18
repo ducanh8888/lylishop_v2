@@ -227,6 +227,20 @@ form {
 .bhfb-header .main-navigation a[aria-current="page"] {
     color: var(--lyli-color-primary);
 }
+/*
+ * Browser-verified: this menu's items are custom links, several of which
+ * point at in-page anchors on the homepage (#categories, #about, #contact).
+ * WordPress marks every menu item whose URL resolves to the current page
+ * as current — including anchor-only links — so on the homepage 4 of 6
+ * nav items lit up as "active" simultaneously (getComputedStyle confirmed
+ * all four resolved to the same color). Only a link to a distinct page
+ * (or the bare homepage link itself) should carry the current-page color;
+ * exclude anything whose href contains a fragment.
+ */
+.bhfb-header .main-navigation .current-menu-item > a.botiga-dropdown-link[href*="#"],
+.bhfb-header .main-navigation a.botiga-dropdown-link[aria-current="page"][href*="#"] {
+    color: var(--lyli-color-text);
+}
 
 .mobile-header .row,
 .mobile-header .header-elements,
