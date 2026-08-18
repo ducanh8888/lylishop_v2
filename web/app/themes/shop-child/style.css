@@ -495,6 +495,43 @@ form {
 .lyli-editorial-faq summary:hover { color: var(--lyli-color-action-hover); }
 .lyli-editorial-contact { padding: clamp(28px, 5vw, 58px); border-radius: 24px; background: var(--lyli-color-blush); }
 
+/*
+ * Core Gutenberg `wp:latest-posts` block, added directly by the shop owner
+ * (not one of the 8 controlled patterns). wp-block-library core CSS is not
+ * enqueued on the frontend, so this block had zero styling — its declared
+ * 150x150 thumbnail fell back to the theme's generic `img{max-width:100%}`
+ * and rendered at nearly the full section width. Style it in the same card
+ * language already used for the blog archive (.posts-archive.layout3)
+ * below, instead of inventing a new visual pattern.
+ */
+.lyli-editorial-news .wp-block-latest-posts {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.lyli-editorial-news .wp-block-latest-posts li {
+    padding: 18px;
+    border: 1px solid var(--lyli-color-border);
+    border-radius: 18px;
+    background: var(--lyli-color-warm-white);
+    box-shadow: var(--lyli-shadow-card);
+}
+.lyli-editorial-news .wp-block-latest-posts__featured-image { float: none; margin: 0 0 14px; overflow: hidden; border-radius: 12px; }
+.lyli-editorial-news .wp-block-latest-posts__featured-image img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform var(--lyli-motion-slow) var(--lyli-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+    .lyli-editorial-news .wp-block-latest-posts li:hover .wp-block-latest-posts__featured-image img { transform: scale(1.02); }
+}
+.lyli-editorial-news .wp-block-latest-posts__post-title { display: block; font-family: var(--lyli-font-heading); font-weight: 600; color: var(--lyli-color-primary); font-size: clamp(1.1rem, 2vw, 1.35rem); text-decoration: none; margin-bottom: 6px; }
+.lyli-editorial-news .wp-block-latest-posts__post-date { color: var(--lyli-color-muted); font-size: 0.85rem; }
+
 .blog .posts-archive.layout3 article {
     padding: 18px;
     border: 1px solid var(--lyli-color-border);
@@ -734,6 +771,7 @@ form {
     .lyli-category-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
     .woocommerce .products ul,
     .woocommerce ul.products { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .lyli-editorial-news .wp-block-latest-posts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (min-width: 783px) {
@@ -797,6 +835,7 @@ form {
     .woocommerce .products ul,
     .woocommerce ul.products { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .lyli-story-visual { min-height: 430px; }
+    .lyli-editorial-news .wp-block-latest-posts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .lyli-footer-inner { grid-template-columns: minmax(260px, 1.7fr) minmax(0, 1fr) minmax(0, 1fr); }
     .lyli-footer-brand { grid-column: auto; }
 }
