@@ -46,6 +46,10 @@ Text, muted, border and WooCommerce state colors are functional/accessibility ne
     --lyli-motion-fast: 120ms;
     --lyli-motion-base: 200ms;
     --lyli-motion-slow: 320ms;
+    /* Section tier (450-750ms): hero entrance, section reveal. Formalizes a
+       duration hero-entrance and reveal.js's CSS already used as a magic
+       number (600ms), so nothing outside the token system floats free. */
+    --lyli-motion-section: 600ms;
     --lyli-ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
     --lyli-ease-out: cubic-bezier(0.32, 0.08, 0.24, 1);
     --lyli-lift-sm: -1px;
@@ -308,7 +312,7 @@ form {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.25); }
 }
-.cart-count.lyli-cart-pulse { animation: lyli-cart-pulse 300ms var(--lyli-ease-out); }
+.cart-count.lyli-cart-pulse { animation: lyli-cart-pulse var(--lyli-motion-slow) var(--lyli-ease-out); }
 
 /* Global section rhythm */
 .lyli-pattern {
@@ -471,10 +475,11 @@ form {
     from { opacity: 0; transform: translateY(14px); }
     to { opacity: 1; transform: translateY(0); }
 }
+/* Eyebrow stays a deliberate 500ms (slightly faster, first to animate) rather than the 600ms section token — an intentional stagger variation, not a stray magic number. */
 .lyli-hero .lyli-eyebrow { animation: lyli-fade-up 500ms var(--lyli-ease-out) both; }
-.lyli-hero h1 { animation: lyli-fade-up 600ms var(--lyli-ease-out) 80ms both; }
-.lyli-hero-copy { animation: lyli-fade-up 600ms var(--lyli-ease-out) 160ms both; }
-.lyli-hero .wp-block-buttons { animation: lyli-fade-up 600ms var(--lyli-ease-out) 160ms both; }
+.lyli-hero h1 { animation: lyli-fade-up var(--lyli-motion-section) var(--lyli-ease-out) 80ms both; }
+.lyli-hero-copy { animation: lyli-fade-up var(--lyli-motion-section) var(--lyli-ease-out) 160ms both; }
+.lyli-hero .wp-block-buttons { animation: lyli-fade-up var(--lyli-motion-section) var(--lyli-ease-out) 160ms both; }
 .lyli-hero-visual {
     position: relative;
     overflow: hidden;
@@ -739,7 +744,7 @@ form {
     .has-js-reveal .lyli-final-cta {
         opacity: 0;
         transform: translateY(16px);
-        transition: opacity 600ms var(--lyli-ease-out), transform 600ms var(--lyli-ease-out);
+        transition: opacity var(--lyli-motion-section) var(--lyli-ease-out), transform var(--lyli-motion-section) var(--lyli-ease-out);
     }
     .has-js-reveal .is-revealed { opacity: 1; transform: translateY(0); }
     .has-js-reveal .lyli-category-card:nth-child(2) { transition-delay: 60ms; }
