@@ -690,6 +690,22 @@ form {
 .woocommerce-products-header,
 .woocommerce .page-title { margin-bottom: clamp(28px, 5vw, 54px); }
 .woocommerce .page-title { font-size: clamp(2rem, calc(1.45rem + 2.4vw), 4.3rem); }
+/*
+ * Screenshot-verified: this banner still used Botiga's unbranded default
+ * (background:#FFF, h1 color:#212121) — a stark white band against the
+ * warm cream site background above and below it, on both the shop archive
+ * and every product-category archive (both use this same wrapper). Same
+ * specificity as Botiga's own rules (single class each); this wins because
+ * shop-child's stylesheet loads after both botiga-custom-styles and
+ * botiga-style-min. Padding is reduced, not removed — it also compounds
+ * with .content-wrapper's Botiga-driven margin-top on the next element.
+ */
+.woocommerce-page-header {
+    background: var(--lyli-color-warm-white);
+    padding-top: clamp(32px, 6vw, 48px);
+    padding-bottom: clamp(32px, 6vw, 48px);
+}
+.woocommerce-page-header h1 { color: var(--lyli-color-primary); }
 .woocommerce-no-products-found { max-width: 760px; margin: 60px auto; text-align: center; }
 .woocommerce-no-products-found .woocommerce-info { padding: 32px; border: 1px solid var(--lyli-color-border); border-radius: 16px; background: var(--lyli-color-surface-soft); }
 
