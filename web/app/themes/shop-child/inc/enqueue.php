@@ -83,3 +83,24 @@ function enqueue_reveal_script(): void
         ['strategy' => 'defer']
     );
 }
+
+/**
+ * Cart badge pulse. Depends on jQuery only because WooCommerce's own
+ * add-to-cart script dispatches `added_to_cart` as a jQuery event on
+ * document.body — jQuery is already loaded by WooCommerce on every page
+ * with a cart icon, so this adds no new dependency.
+ */
+add_action('wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_cart_badge_script', 14);
+function enqueue_cart_badge_script(): void
+{
+    $path = get_stylesheet_directory() . '/assets/js/cart-badge.js';
+    $modified = file_exists($path) ? filemtime($path) : false;
+
+    wp_enqueue_script(
+        'lyli-cart-badge',
+        get_stylesheet_directory_uri() . '/assets/js/cart-badge.js',
+        ['jquery'],
+        $modified !== false ? (string) $modified : null,
+        ['strategy' => 'defer']
+    );
+}

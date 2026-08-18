@@ -299,6 +299,16 @@ form {
     .bhfb-header .header-item:hover,
     .bhfb-header .menu-toggle:hover { color: var(--lyli-color-primary); background: var(--lyli-color-surface-soft); }
 }
+/*
+ * assets/js/cart-badge.js adds this class only on WooCommerce's own
+ * added_to_cart event — never on a plain page load — so it only pulses
+ * when the cart count actually changes.
+ */
+@keyframes lyli-cart-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+}
+.cart-count.lyli-cart-pulse { animation: lyli-cart-pulse 300ms var(--lyli-ease-out); }
 
 /* Global section rhythm */
 .lyli-pattern {
