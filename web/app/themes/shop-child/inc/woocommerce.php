@@ -68,15 +68,26 @@ function maybe_render_custom_order_hint(): void
 }
 
 /**
- * Storefront V2 Batch A — main-shop editorial eyebrow + one-line intro.
- * Main shop only (is_shop()); category/tag archives use their own
- * product_cat term description via WooCommerce's existing
+ * Storefront V2 Batch A.1 corrective pass — main-shop editorial eyebrow +
+ * one-line intro. Main shop only (is_shop()); category/tag archives use
+ * their own product_cat term description via WooCommerce's existing
  * woocommerce_archive_description hook instead, per the frozen contract
  * (docs/STOREFRONT-V2-IMPLEMENTATION.md §4.2) — no duplicate intro there.
- * Priority 15 renders before Botiga's result-count/sort wrapper, which
- * starts at priority 19 (botiga_wrap_products_results_ordering_before).
+ *
+ * Originally hooked to woocommerce_before_shop_loop (priority 15), which
+ * live-verified to render in a completely different DOM branch than the
+ * archive header (.woocommerce-page-header is a child of #page.site; the
+ * shop loop lives inside .row.main-row > .site-main, a structural sibling
+ * several levels over) — producing a disconnected ~150px gap between the
+ * header and the intro on production. Botiga exposes exactly one
+ * do_action inside the header itself, right before the H1:
+ * botiga_before_shop_archive_title (inc/plugins/woocommerce/features/
+ * wc-page-header.php). Hooking there instead keeps eyebrow+intro+H1+chips
+ * inside the same header block. Visual order (eyebrow, H1, intro) is
+ * achieved with CSS flex `order` in style.css, since the hook only fires
+ * before the H1 — see the matching comment there.
  */
-add_action('woocommerce_before_shop_loop', __NAMESPACE__ . '\\render_shop_archive_intro', 15);
+add_action('botiga_before_shop_archive_title', __NAMESPACE__ . '\\render_shop_archive_intro');
 function render_shop_archive_intro(): void
 {
     if (! is_shop()) {
@@ -84,7 +95,7 @@ function render_shop_archive_intro(): void
     }
 
     printf(
-        '<div class="lyli-shop-intro"><p class="lyli-shop-intro-eyebrow">%1$s</p><p class="lyli-shop-intro-copy">%2$s</p></div>',
+        '<p class="lyli-shop-intro-eyebrow">%1$s</p><p class="lyli-shop-intro-copy">%2$s</p>',
         esc_html__('Quà tặng handmade', 'shop-child'),
         esc_html__('Móc khóa len thủ công, làm theo yêu cầu, giao trong 1–3 ngày.', 'shop-child')
     );

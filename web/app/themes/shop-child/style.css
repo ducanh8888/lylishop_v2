@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.5.0
+Version: 1.5.1
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -923,21 +923,37 @@ form {
     100% { opacity: 0; }
 }
 /*
- * Storefront V2 Batch A — main-shop eyebrow + intro (inc/woocommerce.php
- * render_shop_archive_intro(), woocommerce_before_shop_loop priority 15).
- * Category/tag archives don't render this element at all (is_shop() guard
- * in the PHP), so no rule here needs to distinguish the two.
+ * Storefront V2 Batch A.1 corrective pass — eyebrow + intro now hook to
+ * botiga_before_shop_archive_title (inc/woocommerce.php), which fires
+ * inside .woocommerce-page-header's own H1 container, right before the
+ * H1 — not before, since Botiga exposes no "after title" action. Visual
+ * order (eyebrow, H1, intro) is reconstructed with flex `order` on that
+ * container rather than fighting DOM position with margins. This
+ * container also holds nothing but the H1 by default and the breadcrumb/
+ * chip containers each hold a single child, so making all of
+ * .woocommerce-page-header's .container children flex columns is safe —
+ * a single flex item behaves like a block one.
  */
-.lyli-shop-intro { margin: 0 0 clamp(20px, 3vw, 32px); text-align: center; }
+.woocommerce-page-header .container {
+    display: flex;
+    flex-direction: column;
+}
 .lyli-shop-intro-eyebrow {
-    margin: 0 0 6px;
+    order: 1;
+    margin: 0 0 8px;
     color: var(--lyli-color-primary);
     font-size: 0.8rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
-.lyli-shop-intro-copy { margin: 0; max-width: 52ch; margin-inline: auto; color: var(--lyli-color-muted); }
+.lyli-shop-intro-copy {
+    order: 3;
+    margin: 0 0 clamp(18px, 2.4vw, 26px);
+    max-width: 52ch;
+    margin-inline: auto;
+    color: var(--lyli-color-muted);
+}
 /*
  * Storefront V2 Batch A — Botiga's native category chips (theme mod
  * shop_archive_header_style_show_categories / _show_sub_categories,
@@ -948,10 +964,10 @@ form {
 .categories-wrapper {
     display: flex;
     flex-wrap: nowrap;
+    justify-content: center;
     gap: 8px;
     overflow-x: auto;
     padding-bottom: 4px;
-    margin: 0 0 clamp(20px, 3vw, 32px);
     -webkit-overflow-scrolling: touch;
 }
 .category-button {
@@ -1006,21 +1022,35 @@ form {
  */
 .woocommerce-page-header {
     background: var(--lyli-color-warm-white);
-    padding-top: clamp(32px, 6vw, 48px);
-    padding-bottom: clamp(32px, 6vw, 48px);
+    padding-top: clamp(28px, 4vw, 40px);
+    padding-bottom: clamp(20px, 3vw, 28px);
 }
 .woocommerce-page-header h1 { color: var(--lyli-color-primary); }
 /*
- * Browser-measured after the padding fix above: the real gap between the
- * banner and the product grid was still ~202px. The assumption that
- * Botiga's `.woocommerce-page-header { margin-bottom: -60px }` would
- * collapse against `.woocommerce-page-header + .content-wrapper
- * { margin-top: 100px }` down to a small net value was wrong — measured
- * live, the full 100px applies uncollapsed. Override the adjacent-sibling
- * rule directly (same selector Botiga uses, so this wins purely on load
- * order — shop-child loads after botiga-style-min).
+ * Storefront V2 Batch A.1 corrective pass — the shared .page-title rule
+ * above (used by every WooCommerce page-header context) sized the shop
+ * archive H1 at ~58px live at 1440px, with 54px margin-bottom — oversized
+ * for a compact archive header now that it sits directly above an
+ * eyebrow/intro/chip stack rather than alone. Scoped to
+ * .woocommerce-page-header specifically (the wrapper Botiga only ever
+ * renders for shop/category/tag archives — never cart/checkout/account/
+ * single-product), so PDP and other page-title contexts are untouched.
+ * order:2 places the H1 between the eyebrow (order:1) and intro
+ * (order:3) — see the flex-order comment above.
  */
-.woocommerce-page-header + .content-wrapper {
+.woocommerce-page-header .page-title {
+    order: 2;
+    font-size: clamp(1.7rem, calc(1.3rem + 1.6vw), 2.75rem);
+    margin-bottom: 12px;
+}
+/*
+ * Browser-measured live: .content-wrapper's actual previous sibling is
+ * .site (the wrapper containing .woocommerce-page-header), not the header
+ * itself — .woocommerce-page-header + .content-wrapper never matched in
+ * this theme's real DOM, so the intended override below was dead code.
+ * Corrected to the selector that actually matches.
+ */
+.site + .content-wrapper {
     margin-top: clamp(20px, 4vw, 32px);
 }
 .woocommerce-no-products-found { max-width: 760px; margin: 60px auto; text-align: center; }
