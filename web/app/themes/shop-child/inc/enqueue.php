@@ -104,3 +104,24 @@ function enqueue_cart_badge_script(): void
         ['strategy' => 'defer']
     );
 }
+
+/**
+ * Sticky header hide-on-scroll-down / reveal-on-scroll-up. Vanilla JS, no
+ * dependency, deferred. Only has a visible effect at >=783px, where the
+ * header is actually position: sticky (see style.css) — see the script
+ * file for the scroll-direction/focus/near-top logic.
+ */
+add_action('wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_sticky_header_script', 14);
+function enqueue_sticky_header_script(): void
+{
+    $path = get_stylesheet_directory() . '/assets/js/sticky-header.js';
+    $modified = file_exists($path) ? filemtime($path) : false;
+
+    wp_enqueue_script(
+        'lyli-sticky-header',
+        get_stylesheet_directory_uri() . '/assets/js/sticky-header.js',
+        [],
+        $modified !== false ? (string) $modified : null,
+        ['strategy' => 'defer']
+    );
+}

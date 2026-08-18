@@ -980,6 +980,17 @@ form {
      * effect on mobile.
      */
     .bhfb-header { backdrop-filter: blur(14px); }
+    /*
+     * Hide-on-scroll-down / reveal-on-scroll-up (assets/js/sticky-header.js).
+     * Scoped to this breakpoint because it's the one where .bhfb-header is
+     * actually position: sticky — below it the header is position: relative
+     * and this transform has no sticky context to detach from. The blanket
+     * prefers-reduced-motion rule already collapses this transition to near
+     * zero duration; the class still toggles, so functionality (space
+     * reclaimed on scroll) is preserved and only the animation is removed.
+     */
+    .bhfb-header { transition: transform var(--lyli-motion-base) var(--lyli-ease-standard); }
+    .bhfb-header.lyli-header-hidden { transform: translateY(-100%); }
     .lyli-pattern { margin-block: clamp(52px, 7vw, 86px); }
     /* Same .lyli-hero .lyli-hero-grid specificity as the base rule — a media query doesn't grant extra priority, so a lower-specificity override here would lose to the base rule's grid-template-columns at every width. */
     .lyli-hero .lyli-hero-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); align-items: center; }
