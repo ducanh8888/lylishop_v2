@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.4.0
+Version: 1.5.0
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -853,10 +853,35 @@ form {
 .woocommerce ul.products li.product > a:first-child:hover ~ .woocommerce-loop-product__title {
     color: var(--lyli-color-action-hover);
 }
-.woocommerce ul.products li.product .woocommerce-loop-product__title { font-size: clamp(0.95rem, calc(0.85rem + 0.5vw), 1.18rem); overflow-wrap: anywhere; transition: color var(--lyli-transition); }
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+    font-family: var(--lyli-font-heading);
+    font-weight: 600;
+    font-size: clamp(0.95rem, calc(0.85rem + 0.5vw), 1.18rem);
+    overflow-wrap: anywhere;
+    transition: color var(--lyli-transition);
+}
 .woocommerce ul.products li.product .price { min-height: 24px; font-size: clamp(0.9rem, calc(0.82rem + 0.3vw), 1rem); }
+/*
+ * Storefront V2 Batch A — stock-derived metadata line (inc/woocommerce.php
+ * render_card_stock_metadata()). Deliberately quiet: smaller and muted
+ * relative to title/price, which stay the card's commerce-priority
+ * elements per the frozen card contract.
+ */
+.woocommerce ul.products li.product .lyli-card-metadata {
+    margin: 4px clamp(10px, 2vw, 18px) 0;
+    color: var(--lyli-color-muted);
+    font-size: 0.78rem;
+}
 .woocommerce ul.products li.product { position: relative; }
-.woocommerce ul.products li.product .button { margin: 12px clamp(10px, 2vw, 18px) 0; align-self: flex-start; min-height: 44px; padding: 9px 14px; font-size: 0.82rem; }
+/*
+ * Storefront V2 Batch A — with shop_product_add_to_cart_layout=layout2
+ * (see docs/STOREFRONT-V2-IMPLEMENTATION.md §4.1/§8), Botiga's own CSS no
+ * longer hides this button until hover (that behavior is scoped to the
+ * .button-layout3 class only, confirmed in Botiga's woocommerce.css) — it
+ * renders in normal flow below price already. This rule only restyles it,
+ * it does not need to un-hide anything.
+ */
+.woocommerce ul.products li.product .button { margin: 14px clamp(10px, 2vw, 18px) 0; align-self: flex-start; min-height: 44px; padding: 9px 14px; font-size: 0.82rem; }
 /*
  * Add-to-cart inline success feedback (assets/js/cart-badge.js). Anchored
  * to the stable li.product wrapper, not the add_to_cart_button itself —
@@ -897,9 +922,76 @@ form {
     85% { opacity: 1; }
     100% { opacity: 0; }
 }
+/*
+ * Storefront V2 Batch A — main-shop eyebrow + intro (inc/woocommerce.php
+ * render_shop_archive_intro(), woocommerce_before_shop_loop priority 15).
+ * Category/tag archives don't render this element at all (is_shop() guard
+ * in the PHP), so no rule here needs to distinguish the two.
+ */
+.lyli-shop-intro { margin: 0 0 clamp(20px, 3vw, 32px); text-align: center; }
+.lyli-shop-intro-eyebrow {
+    margin: 0 0 6px;
+    color: var(--lyli-color-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.lyli-shop-intro-copy { margin: 0; max-width: 52ch; margin-inline: auto; color: var(--lyli-color-muted); }
+/*
+ * Storefront V2 Batch A — Botiga's native category chips (theme mod
+ * shop_archive_header_style_show_categories / _show_sub_categories,
+ * inc/plugins/woocommerce/features/wc-page-header.php). Restyled only —
+ * markup/behavior stays Botiga's own .categories-wrapper/.category-button
+ * output, per the frozen contract's "native primitive first" rule.
+ */
+.categories-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin: 0 0 clamp(20px, 3vw, 32px);
+    -webkit-overflow-scrolling: touch;
+}
+.category-button {
+    flex: 0 0 auto;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--lyli-color-border);
+    background: var(--lyli-color-warm-white);
+    color: var(--lyli-color-text);
+    font-size: 0.85rem;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color var(--lyli-transition), border-color var(--lyli-transition), background var(--lyli-transition);
+}
+@media (hover: hover) and (pointer: fine) {
+    .category-button:hover {
+        color: var(--lyli-color-primary);
+        border-color: var(--lyli-color-primary);
+        background: var(--lyli-color-cream);
+    }
+}
 .woocommerce .woocommerce-result-count { color: var(--lyli-color-muted); }
 .woocommerce .woocommerce-ordering { max-width: 100%; }
 .woocommerce .woocommerce-ordering select { width: 100%; min-width: 0; max-width: 260px; background: var(--lyli-color-warm-white); }
+/*
+ * Storefront V2 Batch A — fixes the result-count/sort row clipping the
+ * sort <select>'s own text at narrow widths. Root cause: Botiga wraps both
+ * in a Bootstrap-style .row > .col-6 pair (confirmed in styles.css,
+ * flex: 0 0 50%), squeezing the sort control into ~50% of the viewport —
+ * not enough room for "Sắp xếp mặc định" as one line. Below the existing
+ * 600px breakpoint (the same boundary already used elsewhere in this
+ * file), stack the two columns instead of splitting them.
+ */
+@media (max-width: 599px) {
+    .woocommerce-sorting-wrapper .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .woocommerce-sorting-wrapper .botiga-sorting-right { margin-top: 10px; }
+}
 .woocommerce-products-header,
 .woocommerce .page-title { margin-bottom: clamp(28px, 5vw, 54px); }
 .woocommerce .page-title { font-size: clamp(2rem, calc(1.45rem + 2.4vw), 4.3rem); }
