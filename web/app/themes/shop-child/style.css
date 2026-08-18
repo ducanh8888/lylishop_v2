@@ -759,7 +759,9 @@ form {
     .has-js-reveal .lyli-category-card,
     .has-js-reveal .lyli-info-card,
     .has-js-reveal .lyli-story-visual,
-    .has-js-reveal .lyli-final-cta {
+    .has-js-reveal .lyli-final-cta,
+    .has-js-reveal .lyli-editorial-news .wp-block-latest-posts li,
+    .has-js-reveal .blog .posts-archive.layout3 article {
         opacity: 0;
         transform: translateY(16px);
         transition: opacity var(--lyli-motion-section) var(--lyli-ease-out), transform var(--lyli-motion-section) var(--lyli-ease-out);
@@ -771,6 +773,10 @@ form {
     .has-js-reveal .lyli-category-card:nth-child(5) { transition-delay: 240ms; }
     .has-js-reveal .lyli-info-card:nth-child(2) { transition-delay: 80ms; }
     .has-js-reveal .lyli-info-card:nth-child(3) { transition-delay: 160ms; }
+    .has-js-reveal .lyli-editorial-news .wp-block-latest-posts li:nth-child(2) { transition-delay: 60ms; }
+    .has-js-reveal .lyli-editorial-news .wp-block-latest-posts li:nth-child(3) { transition-delay: 120ms; }
+    .has-js-reveal .blog .posts-archive.layout3 article:nth-child(2) { transition-delay: 60ms; }
+    .has-js-reveal .blog .posts-archive.layout3 article:nth-child(3) { transition-delay: 120ms; }
 }
 
 /* Product loops */

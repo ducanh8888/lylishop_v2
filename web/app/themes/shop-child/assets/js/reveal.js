@@ -16,7 +16,8 @@
     }
 
     var targets = document.querySelectorAll(
-        '.lyli-category-card, .lyli-info-card, .lyli-story-visual, .lyli-final-cta'
+        '.lyli-category-card, .lyli-info-card, .lyli-story-visual, .lyli-final-cta, ' +
+        '.lyli-editorial-news .wp-block-latest-posts li, .blog .posts-archive.layout3 article'
     );
     if (!targets.length) {
         return;
