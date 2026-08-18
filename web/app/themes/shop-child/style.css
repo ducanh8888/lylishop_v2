@@ -421,13 +421,40 @@ form {
     border: 46px solid color-mix(in srgb, var(--lyli-color-blush) 78%, transparent);
     border-radius: 50%;
 }
-.lyli-hero-grid {
+/*
+ * Browser-measured: this block sits directly inside .lyli-hero, which
+ * carries Gutenberg's `is-layout-constrained` class. Two WordPress-core
+ * inline rules (block-supports "layout" feature, printed in <head>, not
+ * part of this theme) were winning over the plain `.lyli-hero-grid`
+ * selector: `body .is-layout-flex { display: flex }` (specificity beats a
+ * single class) forced flex instead of grid — meaning the columns fell
+ * back to their own inline `style="flex-basis:56%/44%"` — and
+ * `.is-layout-constrained > :where(...) { max-width: var(--wp--style--
+ * global--content-size) }` capped this block at theme.json's 730px
+ * *content* width instead of the 1140px *wide* width .lyli-hero itself
+ * gets, making the whole hero text column much narrower than it looked
+ * (368px measured at a 1920px viewport) and forcing the H1 to wrap across
+ * up to 7 lines. `.lyli-hero .lyli-hero-grid` (two classes) reliably
+ * outweighs both — a single class plus a `:where()` (always zero
+ * specificity) or a single class plus one type selector.
+ */
+.lyli-hero .lyli-hero-grid {
     display: grid;
+    max-width: none;
     grid-template-columns: minmax(0, 1fr);
     gap: clamp(22px, 5vw, 72px);
 }
 .lyli-hero-grid > .wp-block-column { min-width: 0; }
-.lyli-hero h1 { font-size: clamp(1.9rem, calc(1.4rem + 2.4vw), 3.75rem); max-width: 15ch; margin: 10px 0 16px; word-break: normal; overflow-wrap: normal; }
+/*
+ * Reported and browser-confirmed: at wide desktop viewports (content is
+ * still capped at --lyli-content-width regardless of screen width, so
+ * this isn't about screen size directly) the 15ch cap was narrow enough,
+ * relative to the clamped font-size reaching 3.75rem, to wrap the
+ * headline across as many as 6 short lines — making the whole hero block
+ * unusually tall. Widen the cap so the same text settles into fewer,
+ * more natural line breaks.
+ */
+.lyli-hero h1 { font-size: clamp(1.9rem, calc(1.4rem + 2.4vw), 3.75rem); max-width: 20ch; margin: 10px 0 16px; word-break: normal; overflow-wrap: normal; }
 .lyli-hero-copy { max-width: 45ch; color: var(--lyli-color-muted); margin-bottom: 22px; }
 /*
  * Load-triggered entrance for the hero text only — never the hero image.
@@ -795,8 +822,7 @@ form {
  * and every product-category archive (both use this same wrapper). Same
  * specificity as Botiga's own rules (single class each); this wins because
  * shop-child's stylesheet loads after both botiga-custom-styles and
- * botiga-style-min. Padding is reduced, not removed — it also compounds
- * with .content-wrapper's Botiga-driven margin-top on the next element.
+ * botiga-style-min.
  */
 .woocommerce-page-header {
     background: var(--lyli-color-warm-white);
@@ -804,6 +830,19 @@ form {
     padding-bottom: clamp(32px, 6vw, 48px);
 }
 .woocommerce-page-header h1 { color: var(--lyli-color-primary); }
+/*
+ * Browser-measured after the padding fix above: the real gap between the
+ * banner and the product grid was still ~202px. The assumption that
+ * Botiga's `.woocommerce-page-header { margin-bottom: -60px }` would
+ * collapse against `.woocommerce-page-header + .content-wrapper
+ * { margin-top: 100px }` down to a small net value was wrong — measured
+ * live, the full 100px applies uncollapsed. Override the adjacent-sibling
+ * rule directly (same selector Botiga uses, so this wins purely on load
+ * order — shop-child loads after botiga-style-min).
+ */
+.woocommerce-page-header + .content-wrapper {
+    margin-top: clamp(20px, 4vw, 32px);
+}
 .woocommerce-no-products-found { max-width: 760px; margin: 60px auto; text-align: center; }
 .woocommerce-no-products-found .woocommerce-info { padding: 32px; border: 1px solid var(--lyli-color-border); border-radius: 16px; background: var(--lyli-color-surface-soft); }
 
@@ -913,7 +952,8 @@ form {
      */
     .bhfb-header { backdrop-filter: blur(14px); }
     .lyli-pattern { margin-block: clamp(52px, 7vw, 86px); }
-    .lyli-hero-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); align-items: center; }
+    /* Same .lyli-hero .lyli-hero-grid specificity as the base rule — a media query doesn't grant extra priority, so a lower-specificity override here would lose to the base rule's grid-template-columns at every width. */
+    .lyli-hero .lyli-hero-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr); align-items: center; }
     .lyli-hero-visual { min-height: clamp(400px, 42vw, 520px) !important; }
     .lyli-story-visual { min-height: 360px; }
     .woocommerce-checkout .col2-set { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
