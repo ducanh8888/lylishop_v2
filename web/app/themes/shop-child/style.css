@@ -769,6 +769,15 @@ form {
 @media (max-width: 420px) {
     body { font-size: 15px; }
     .lyli-pattern { width: min(calc(100% - 28px), var(--lyli-content-width)); }
+    /*
+     * .lyli-hero::before is a fixed-pixel ring, sized for a desktop-width
+     * card. On a narrow phone viewport it's proportionally huge and its
+     * visible corner (clipped by .lyli-hero's own overflow:hidden) lands
+     * directly over the start of the H1 — browser-verified at 390px wide.
+     * Shrink it proportionally so it stays a corner accent, not a smear
+     * across the headline.
+     */
+    .lyli-hero::before { width: 180px; height: 180px; left: -110px; top: -110px; border-width: 26px; }
     .lyli-hero > * { min-width: 0; max-width: 100%; }
     .lyli-hero .wp-block-buttons { display: grid; }
     .lyli-hero .wp-block-button,
