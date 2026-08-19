@@ -39,6 +39,8 @@ if (! defined('ABSPATH')) {
  *   - inc/template-tags.php:636     — 'It looks like nothing was found at
  *                                      this location. Maybe try one of the
  *                                      links below or a search?' (404 body)
+ *   - inc/template-tags.php:646     — 'Most Popular' (404 page's
+ *                                      best-sellers section heading)
  *
  * Each filter matches domain + exact source string simultaneously — cannot
  * match or alter any other string, in Botiga or any other textdomain. Not
@@ -63,6 +65,7 @@ function translate_botiga_chrome_strings(string $translated, string $text, strin
         'Oops! That page can&rsquo;t be found.' => __('Trang này không tồn tại', 'shop-child'),
         'It looks like nothing was found at this location. Maybe try one of the links below or a search?' =>
             __('Có thể trang đã bị xoá hoặc đường dẫn không đúng. Hãy thử tìm kiếm hoặc chọn một liên kết bên dưới.', 'shop-child'),
+        'Most Popular' => __('Sản phẩm nổi bật', 'shop-child'),
     ];
 
     return $map[$text] ?? $translated;
