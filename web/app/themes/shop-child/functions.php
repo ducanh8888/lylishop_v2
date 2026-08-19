@@ -30,7 +30,9 @@ require_once __DIR__ . '/inc/announcement.php';
 require_once __DIR__ . '/inc/footer.php';
 require_once __DIR__ . '/inc/accessibility.php';
 require_once __DIR__ . '/inc/block-patterns.php';
-require_once __DIR__ . '/inc/woocommerce.php';
+require_once __DIR__ . '/inc/woocommerce/archive.php';
+require_once __DIR__ . '/inc/woocommerce/product-card.php';
+require_once __DIR__ . '/inc/woocommerce/single-product.php';
 require_once __DIR__ . '/inc/botiga-admin.php';
 require_once __DIR__ . '/inc/mobile-header.php';
 

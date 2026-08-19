@@ -106,6 +106,31 @@ function enqueue_cart_badge_script(): void
 }
 
 /**
+ * Storefront V2 Batch B — sticky mobile add-to-cart proxy. Vanilla JS, no
+ * dependency, deferred. Only enqueued on single-product pages — it does
+ * nothing anywhere else, and is only visually active at <=782px via CSS
+ * (style.css), the same mobile boundary the sticky header already uses.
+ */
+add_action('wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_pdp_sticky_cta_script', 14);
+function enqueue_pdp_sticky_cta_script(): void
+{
+    if (! function_exists('is_product') || ! is_product()) {
+        return;
+    }
+
+    $path = get_stylesheet_directory() . '/assets/js/pdp-sticky-cta.js';
+    $modified = file_exists($path) ? filemtime($path) : false;
+
+    wp_enqueue_script(
+        'lyli-pdp-sticky-cta',
+        get_stylesheet_directory_uri() . '/assets/js/pdp-sticky-cta.js',
+        [],
+        $modified !== false ? (string) $modified : null,
+        ['strategy' => 'defer']
+    );
+}
+
+/**
  * Sticky header hide-on-scroll-down / reveal-on-scroll-up. Vanilla JS, no
  * dependency, deferred. Only has a visible effect at >=783px, where the
  * header is actually position: sticky (see style.css) — see the script

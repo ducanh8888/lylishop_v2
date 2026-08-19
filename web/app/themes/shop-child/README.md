@@ -10,15 +10,18 @@ Child theme for `lylishop.online` (parent: **Botiga Free 2.4.7**). Presentation 
 | `functions.php` | Loads all `inc/` modules; editor font URL. |
 | `theme.json` | Canonical brand color, typography, spacing and content-width tokens for frontend and editor. |
 | `inc/design-tokens.php` | Protects the child `theme.json` palette from Botiga's Customizer override and provides the Google Fonts URL (runtime; no binaries). |
-| `inc/enqueue.php` | Google Fonts runtime delivery, preconnect, independent child stylesheet cache version, and the two small deferred scripts under `assets/js/`. |
+| `inc/enqueue.php` | Google Fonts runtime delivery, preconnect, independent child stylesheet cache version, and the small deferred scripts under `assets/js/`. |
 | `assets/js/reveal.js` | Section-level scroll reveal (category grid, USP, story, final CTA, blog archive, homepage latest-posts). Vanilla `IntersectionObserver`, no dependency. |
 | `assets/js/cart-badge.js` | Cart badge pulse + inline add-to-cart confirmation, both fired only on WooCommerce's own `added_to_cart` jQuery event. |
 | `assets/js/sticky-header.js` | Hides the sticky header on scroll-down, reveals it on scroll-up. rAF-throttled, focus-aware. |
+| `assets/js/pdp-sticky-cta.js` | Mobile-only (`<=782px`) sticky add-to-cart proxy on single-product pages. Reads/reflects the real `form.cart` button and price via `MutationObserver`; every click either proxies the real button's own click or scrolls/focuses the shopper back to the real variation selector — never a second purchase form, never duplicated commerce state. Only enqueued on `is_product()`. |
 | `inc/announcement.php` | Optional announcement bar from Lyli Site Settings. |
 | `inc/footer.php` | Footer intro/contact/socials/copyright inside Botiga's single semantic footer (values from Lyli Site Settings). |
 | `inc/accessibility.php` | Notes Botiga's existing skip-link/search labels; no duplicates added. |
 | `inc/block-patterns.php` | 8 controlled Gutenberg patterns (Hero, Categories, Brand story, USP, Custom-order CTA, Featured products, Final CTA, Empty shop). |
-| `inc/woocommerce.php` | Narrow presentation hooks: one-image/missing-image classes, custom-order hint on single product (only when configured). |
+| `inc/woocommerce/archive.php` | Shop/category archive presentation: eyebrow hook, count-gated category-chip filters, concise result-count strings. |
+| `inc/woocommerce/product-card.php` | Product-loop card presentation: one-image/missing-image classes, stock-derived metadata line. |
+| `inc/woocommerce/single-product.php` | PDP presentation: custom-order hint, related-products heading, description-tab recomposition (see below). Split out of a single `inc/woocommerce.php` once that file grew past the contract's size/concern-mixing trigger — see `docs/STOREFRONT-V2-IMPLEMENTATION.md` §16. |
 | `inc/botiga-admin.php` | Keeps Botiga Dashboard usable when production file modifications are locked and the optional Starter Sites importer is unavailable. |
 
 ## Decisions
@@ -42,6 +45,8 @@ Child theme for `lylishop.online` (parent: **Botiga Free 2.4.7**). Presentation 
 - **Component notes** — the product-card image scales, not the whole card. The product title responds to hover only through a sibling selector keyed off the real product-link anchor (`li.product > a:first-child:hover ~ .woocommerce-loop-product__title`), because Botiga's grid markup closes that anchor before the title renders — the title itself is plain text, not a link, so it must not visually promise the whole card is clickable. A stretched-link treatment for the category card was evaluated and deliberately not implemented: the block patterns are owner-editable content outside code review, and a full-card `::after` overlay would silently swallow clicks on any interactive element an owner adds inside a card later, with no visible cause.
 - **Hero decorative rings are scoped to `.wp-block-cover`**, not to `.lyli-hero-visual` generally — they decorate the abstract placeholder background of the original hero pattern. Once an owner replaces the placeholder with a real photo (`wp:image`, which carries `wp-block-image` instead of `wp-block-cover`), the rings must not carry over onto it. Confirmed live: the current homepage hero already has a real photo swapped in.
 - **Nav current-page state excludes any link whose `href` contains a fragment** (`#anchor`). This menu is single-page, with several items pointing at in-page sections of the homepage (`#categories`, `#about`, `#contact`); WordPress marks all of them "current" on the homepage, not just the one the visitor is actually near. Only a link to a genuinely distinct page (or the bare homepage link) keeps the current-page color.
+- **PDP sticky add-to-cart** — observes `form.cart`, not `.summary` (live-measured: `.summary` extends well past the real purchase form on a variable product — product meta, brand info, and the custom-order hint all live inside it below the form — so watching it would delay the sticky bar's appearance past the point the real CTA actually left the viewport). Visibility is `IntersectionObserver`-driven (form + footer), state sync is `MutationObserver`-driven (button class/text + price node) — no polling, no cached values from initial page load. See `assets/js/pdp-sticky-cta.js`.
+- **PDP description recomposition** — `inc/woocommerce/single-product.php` splits the description-tab content into "before" / "Thông tin sản phẩm" / "everything else" buckets using `DOMDocument`, matched only on the two heading strings confirmed stable across every published product's content (a live full-catalog census, not a sample) — never regex, never a schema, never reordering or dropping content. A product with neither recognized heading renders identically to the unmodified tab.
 
 ## Owner editing surface
 

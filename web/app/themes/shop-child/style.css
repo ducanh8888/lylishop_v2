@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.6.3
+Version: 1.7.0
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -1121,6 +1121,82 @@ form {
 .woocommerce div.product .woocommerce-tabs ul.tabs li { border: 0; background: transparent; }
 .woocommerce div.product .woocommerce-tabs .panel { max-width: 760px; padding-top: 24px; }
 .lyli-missing-image-product .woocommerce-product-gallery__wrapper { min-height: 440px; display: grid; place-items: center; background: var(--lyli-color-surface-soft); border-radius: 18px; }
+/*
+ * Storefront V2 Batch B — PDP description recomposition
+ * (inc/woocommerce/single-product.php render_recomposed_description_tab()).
+ * Deliberately quiet: a heading + top border reusing the same divider
+ * language form.cart already uses (border-top/bottom above), not a card —
+ * the brief explicitly warns against turning paragraphs into cards/icon
+ * soup. Inherits the tab panel's existing 760px reading width, no new
+ * width system.
+ */
+.lyli-pdp-description-intro { margin-bottom: 20px; }
+.lyli-pdp-section { margin-top: clamp(28px, 4vw, 40px); padding-top: clamp(20px, 3vw, 28px); border-top: 1px solid var(--lyli-color-border); }
+.lyli-pdp-section-title {
+    margin: 0 0 12px;
+    font-family: var(--lyli-font-heading);
+    font-size: 1.15rem;
+    color: var(--lyli-color-primary);
+}
+.lyli-pdp-section-details h2 {
+    margin: 0 0 10px;
+    font-family: var(--lyli-font-heading);
+    font-size: 1.05rem;
+    color: var(--lyli-color-primary);
+}
+.lyli-pdp-section-details h2:not(:first-child) { margin-top: 24px; }
+/*
+ * Storefront V2 Batch B — sticky mobile add-to-cart proxy
+ * (assets/js/pdp-sticky-cta.js). Visually active only at <=782px, the
+ * same "mobile" boundary the sticky header already uses for its own
+ * sticky/relative switch (verified in that script's own comment) — not a
+ * new breakpoint invented for this feature. Hidden by default; JS toggles
+ * .lyli-sticky-cta-visible once the real purchase form scrolls out of
+ * view. Reuses the existing primary-button and motion-token language
+ * rather than a separate visual system.
+ */
+.lyli-sticky-cta {
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 998;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    background: var(--lyli-color-warm-white);
+    border-top: 1px solid var(--lyli-color-border);
+    box-shadow: 0 -8px 24px rgba(45, 42, 38, 0.08);
+    transform: translateY(100%);
+    transition: transform var(--lyli-motion-base) var(--lyli-ease-standard);
+}
+@media (max-width: 782px) {
+    .lyli-sticky-cta { display: flex; }
+    .lyli-sticky-cta.lyli-sticky-cta-visible { transform: translateY(0); }
+}
+.lyli-sticky-cta-info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
+.lyli-sticky-cta-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.82rem;
+    color: var(--lyli-color-muted);
+}
+.lyli-sticky-cta-price { font-family: var(--lyli-font-heading); font-weight: 600; color: var(--lyli-color-primary); }
+.lyli-sticky-cta-button {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: var(--lyli-radius-md);
+    background: var(--lyli-color-primary);
+    color: var(--lyli-color-warm-white);
+    font-weight: 600;
+    cursor: pointer;
+}
+.lyli-sticky-cta.lyli-sticky-cta-unavailable .lyli-sticky-cta-button { opacity: 0.7; }
+.lyli-sticky-cta-button:focus-visible { outline: 3px solid var(--lyli-color-primary); outline-offset: 2px; }
 
 /* Cart, checkout, account */
 .woocommerce-cart .entry-content,
