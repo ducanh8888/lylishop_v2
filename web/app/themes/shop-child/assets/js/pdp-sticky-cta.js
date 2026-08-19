@@ -121,10 +121,22 @@
 
     var formVisible = true;
     var footerVisible = false;
+    var hasScrolled = false;
     var footer = document.querySelector('.site-footer') || document.querySelector('footer');
 
+    // "Scrolled beyond the real purchase block" implies scrolling actually
+    // happened — on a tall mobile gallery, form.cart can start below the
+    // fold before the shopper has scrolled at all (live-verified: a
+    // simple-product PDP at 390px had form.cart at y=1014 with scrollY
+    // still 0 on load). Gating on an actual scroll event, not just
+    // non-intersection, avoids showing the bar before the shopper has
+    // seen anything.
+    window.addEventListener('scroll', function () {
+        hasScrolled = true;
+    }, { passive: true, once: true });
+
     function updateBarVisibility() {
-        bar.classList.toggle('lyli-sticky-cta-visible', !formVisible && !footerVisible);
+        bar.classList.toggle('lyli-sticky-cta-visible', hasScrolled && !formVisible && !footerVisible);
     }
 
     var formObserver = new IntersectionObserver(function (entries) {
