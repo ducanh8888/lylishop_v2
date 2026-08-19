@@ -2,6 +2,16 @@
 
 Status: **FROZEN**. This document is the canonical source of truth for Storefront V2 implementation. It supersedes any composition decision that exists only in chat history or a commit message. Implementation work (Batch A/B/C) must follow this contract exactly; if implementation discovers a need to exceed the intervention ceiling set here, **stop and get founder review** rather than self-authorizing a higher layer.
 
+## Status at a glance (updated by the full-review pass, source `483cdac` → `<see §0>`)
+
+| Batch | Status |
+|---|---|
+| A — Archive + Product Card | **IMPLEMENTED, CLOSED.** Passed a full-review final verdict (see §6a) after two corrective sub-passes (A.1 hierarchy, A.2 catalog-first UX). One latent correctness bug found and fixed in the review pass (§6a). |
+| B — PDP + Related Products | **CURRENT / FROZEN**, detailed design spec in §10 (supersedes the original brief version). Not yet implemented. |
+| C — Cart / Checkout / Account | **CURRENT / FROZEN**, detailed design spec in §12 (supersedes the original brief version). Not yet implemented. |
+
+Sections §4 and §6–§9 document Batch A's implementation history (root causes, amendments, hook choices) and remain as historical/evidentiary record — superseded in *emphasis* by §6a's final verdict where the two disagree, but not rewritten, since the root-cause detail in them is still the reference for *why* the code looks the way it does.
+
 ## 0. State verification (checked live, not from memory)
 
 | Check | Result |
@@ -346,48 +356,158 @@ Must pass at every viewport:
 
 ---
 
-## 10. Batch B — PDP + Related Products (scope frozen, detail lighter than A)
+## 6a. Batch A final review verdict (full-review pass)
 
-### 10.1 Single product
+**PASS WITH FIXES.** Reviewed the actual deployed production state from scratch (not prior PASS reports) across desktop/tablet/mobile, as a shopper, on `/cua-hang/`, `/product-category/moc-khoa-len/`, a tag archive, and every card variant. One correctness bug and one small cross-flow defect were found and fixed in this pass (both below); everything else confirmed working as designed.
 
-**Approved:**
-- Keep the WooCommerce variation form and add-to-cart logic exactly as-is
-- Keep the gallery system (`single-product/product-image.php` flow, unmodified)
-- Trial Botiga's native alternate gallery layouts (`single_product_gallery` theme mod: `gallery-grid`, `gallery-scrolling`, `gallery-showcase` with its bundled "sticky entry summary" option) **before** any custom gallery work — this is an L0 setting, already confirmed to exist in Botiga's own `features/single-product-gallery.php`
-- Editorialize the surrounding composition (recompose the existing "Mô tả" tab content into labeled blocks per §4.4) using content the owner already wrote
-- Reuse existing product copy first — no new copywriting requirement to ship Batch B
+**Shop archive (A.2's catalog-first redesign):** confirmed still holding — left-aligned reading axis, compact header, full first product row visible above the fold at 1440×900 and immediately visible at 390px, sort control reads as a control, result count concise, single dead-end category chip still correctly absent. No remaining awkwardness found.
 
-**Not approved in Batch B:**
-- Content schema migration (structured fields) — see §4.4, separate task
-- Custom variation UI engine
-- Custom gallery library (no new JS dependency)
-- Custom sticky-purchase-state logic (see §13 — separately gated)
+**Category archives:** hierarchy and hierarchy-to-grid transition read as one page, matching the main shop's visual language. The `Lyli Charm` / `Lyli Tiny` sub-category chips on `moc-khoa-len` **do** help — they're real, non-overlapping product groupings (confirmed live: both have their own published products), not an arbitrary taxonomy artifact, so `count >= 2` was the right threshold here, not a shortcut. Empty term description renders no intro, correctly.
 
-### 10.2 Related products
+**Product cards:** image, title, price, stock metadata, and CTA all read clearly at both card densities (4-col desktop, 2-col mobile). Variable-product price and CTA ("Chọn") vs. simple-product CTA ("Thêm vào giỏ hàng") are visually identical in weight but functionally distinct — acceptable, since both are equally "the one thing to click" from a card, and the PDP is where the distinction actually matters. No card redesign warranted.
 
-**Approved:**
-- Curated heading via the verified Botiga filter `botiga_woocommerce_product_related_products_heading` (confirmed present in `inc/plugins/woocommerce/features/related-products.php`, applied in `botiga_woocommerce_output_related_products_slider()` and the standard related-products heading path)
-- Native Botiga carousel via theme mod `shop_single_related_products_slider` (confirmed: when enabled, swaps to `botiga_woocommerce_output_related_products_slider()`, which enqueues the already-bundled `botiga-carousel` script — **zero new JS**)
-- Inherits Batch A's product-card language — no separate card component
-- No new JS library of any kind
+**Correctness bug found and fixed (FIX NOW):** `suppress_single_subcategory_nav()` queried `wp_count_terms('product_cat', ['parent' => $term->term_id])` for *any* of `is_product_category() || is_product_tag() || is_product_taxonomy()`, but term IDs are shared across taxonomies in WordPress — a tag's `term_id` has no relationship to `product_cat`'s parent/child structure. Live-verified on a real, reachable, non-empty tag archive (`/product-tag/capybara-handmade/`, term_id 59): the query returned 0 only because no category happens to have `parent=59` — coincidence, not correctness. As the catalog grows and term IDs increase across taxonomies sharing the same ID space, that coincidence could flip and show unrelated categories as if they were "children" of the current tag. Fixed to only ever evaluate the count when the queried term's own taxonomy is actually `product_cat`; every other taxonomy context now suppresses outright, since "sub-category chips" isn't a coherent concept there regardless of count.
 
-Both hook/setting names above were read directly from the deployed Botiga source (`inc/plugins/woocommerce/features/related-products.php`), not invented.
+**Cross-flow defect found and fixed (FIX NOW):** cart/checkout order-review tables (`table.shop_table`) let price amounts wrap mid-number at 390px ("55.0" / "00 đ" on two lines) — a narrow price column plus default `white-space: normal`. A price splitting across a line break is a defect, not a design choice; fixed with `white-space: nowrap` on `.amount` inside `shop_table`, covering both cart and checkout order-review (same class, same template family).
+
+**Content reproducibility (§4 of the review brief):** A.2 moved the shop-archive intro into the WooCommerce Shop page's own post content (`wc_get_page_id('shop')`, post ID 5). `docs/PRODUCTION-INSTALL-RUNBOOK.md` step 10 already documents that the standard WooCommerce setup wizard creates this page on a fresh install, but did not document that its *content* carries this intro. Documented in `shop-child/README.md`'s "Owner editing surface" section (new bullet), which is the living reference for "what content lives where" — the historical, already-executed install runbook was left untouched per the project's own convention of not rewriting completed historical logs.
 
 ---
 
-## 11. Sticky mobile add-to-cart — gated, not automatic
+## 10. Batch B — PDP + Related Products (CURRENT / FROZEN, detailed by the full-review pass)
 
-**Status: OPTIONAL / REQUIRES POST-BATCH-A UX REVIEW.** Not included in Batch B by default.
+This section supersedes the original brief version. It is grounded in real catalog data pulled live during the review, not Botiga documentation screenshots.
 
-Reason: it affects a high-intent commerce interaction (the final add-to-cart action) and should only be added, if at all, after the redesigned product card and archive (Batch A) have been browser-tested and the PDP redesign (Batch B core) has shipped — evaluating it in isolation, ahead of real user-facing context, risks solving a problem that may not exist once the rest of the PDP composition is in place.
+### 10.1 PDP information hierarchy (frozen)
+
+Reviewed the actual rendered DOM/content for a simple product (Gà Mắt Lồi) and a variable product (Capybara). Both already put decision-critical content above the fold at 1440px: gallery, title, price, short description, variation form (variable) or quantity+CTA (simple). Classification, to guide Batch B recomposition — **do not reshuffle what's already correct**:
+
+| Element | Class | Notes |
+|---|---|---|
+| Breadcrumb | supporting | keep, unchanged |
+| Gallery | decision-critical | see §10.2 |
+| Title | decision-critical | keep, unchanged |
+| Price | decision-critical | keep full prominence — never shrink to "editorial footnote" |
+| Short description | decision-critical | already present, already good, keep in the summary column |
+| Variation selectors (variable only) | decision-critical | native WooCommerce form, untouched |
+| Quantity + primary add-to-cart | decision-critical | must stay unmistakably primary — see §10.3 |
+| Custom-order hint (`lyli-custom-order-hint`) | supporting | already small/quiet below the CTA — confirmed live it does not compete, keep as-is |
+| SKU / category / tags meta | supporting | keep, unchanged |
+| Full description tabs ("Mô tả" / "Thông tin bổ sung" / "Đánh giá") | post-decision detail | recompose per §10.4 |
+| Related products | post-decision detail | see §10.5 |
+
+**Verdict: no purchase-block reordering needed.** The existing hook order (native WooCommerce `woocommerce_single_product_summary` priorities) already produces the right hierarchy. Batch B's PDP work is about the *content tabs* and *gallery choice*, not about moving the purchase block.
+
+### 10.2 Gallery — frozen, based on real catalog data
+
+Live-queried the actual published catalog (11 products) for image counts, not assumed:
+
+```
+1 image:  3 products (27%)
+2 images: 4 products (36%)
+3 images: 3 products (27%)
+4 images: 1 product  (9%)
+6 images: 1 product  (9%)
+```
+
+**Frozen: keep `gallery-default` (Botiga's current setting). Do not switch to `gallery-grid`/`gallery-scrolling`/`gallery-showcase`.** 63% of the catalog has only 2–3 images; more than a quarter has exactly 1. A layout built around a richer gallery (grid/showcase, generally designed for 4+ images) would look sparse or produce empty affordances on the majority of the catalog — exactly the "empty carousel arrows" failure mode the review brief warned against. Live-verified `gallery-default`'s existing behavior already degrades correctly: the 1-image simple product (Gà Mắt Lồi) renders with **no** thumbnail strip at all (WooCommerce's own core gallery template omits it when there's nothing to navigate), and the multi-image variable product (Capybara) renders a normal thumbnail rail. No code change needed here — this is a "confirm and keep" freeze, not an implementation item.
+
+- **One-image fallback:** already correct (native WooCommerce behavior, no thumbnail rail rendered).
+- **Multi-image behavior:** already correct (native thumbnail rail + zoom, Botiga default).
+- **Mobile behavior:** not separately re-verified pixel-by-pixel in this pass beyond confirming no overflow; inherits whatever Botiga's own default gallery does responsively, which is out of scope to modify.
+
+### 10.3 Purchase block — frozen
+
+- Title scale, price prominence, quantity control: **keep as-is**, already correct.
+- Variation form: native, untouched. Live-verified the disabled/dimmed state (`opacity: 0.7`, `.wc-variation-selection-needed`) already communicates "select a variation first" correctly — no restyling needed.
+- Add-to-cart CTA: already the visually dominant element on both simple and variable PDPs (full brand-color fill vs. the custom-order hint's small text link) — **confirmed it does not need defending against `"Đặt mẫu theo yêu cầu"` or the custom-order hint; live review found no competition.**
+- Success/error feedback: reuses the existing add-to-cart confirmation system (contract §14) — no new mechanism.
+
+### 10.4 PDP description content — frozen, evidence-based
+
+Live-sampled 5 real products' description headings (not assumed):
+
+```
+Hoa hướng dương kép len handmade  → Thông tin sản phẩm | Lựa chọn sản phẩm | Lưu ý sản phẩm handmade
+Móc khóa Thỏ Hồng                 → Thông tin sản phẩm | Cá nhân hóa và thời gian chuẩn bị | Lưu ý sản phẩm handmade
+Móc khóa Vịt Dưa Hấu & Hướng Dương → Thông tin sản phẩm | Chọn mẫu | Cá nhân hóa và thời gian chuẩn bị | Lưu ý sản phẩm handmade
+Móc khóa Thú Mỏ Vịt                → Thông tin sản phẩm | Cá nhân hóa và thời gian chuẩn bị | Lưu ý sản phẩm handmade
+Móc khóa Tiểu Cường                → Thông tin sản phẩm | Cá nhân hóa và thời gian chuẩn bị | Lưu ý sản phẩm handmade
+```
+
+**Finding:** "Thông tin sản phẩm" and "Lưu ý sản phẩm handmade" are stable across 5/5 products. A third heading covering personalization/prep-time appears in 4/5, but its exact wording varies ("Cá nhân hóa và thời gian chuẩn bị" vs. absent), and a variant-selection heading appears in some with inconsistent phrasing ("Lựa chọn sản phẩm" vs. "Chọn mẫu").
+
+**Frozen design:** recompose only the two proven-stable headings into their own visual blocks (heading-text match, case-insensitive, on the existing `h2`/`h3` markup already in the content — no new schema, no custom fields). Everything else in the description (the variant-selection guidance, the personalization paragraph, any product-specific content) renders as-is inside a third "more details" block, in original order, **not** individually parsed or guessed at. This works uniformly for:
+- **Complete content** (headings present): 2 recognized blocks + 1 flowing "more details" block.
+- **Partial content** (only some headings present): whichever recognized headings exist get their block; the rest folds into "more details."
+- **Minimal content** (no recognized headings): the entire description renders as one "more details" block — visually equivalent to today, no regression.
+
+This is explicitly **not** a structured-content schema and does not require one — it is presentation-level heading detection on existing prose, degrading gracefully to today's plain-tab behavior at the low end. A genuine structured schema (separate fields for materials/dimensions/care) remains **DEFERRED**, a separate task, per §4.4 — this review found no evidence the catalog is consistent enough to justify it yet (the third/fourth headings' wording variance is exactly the signal that a rigid schema would break).
+
+### 10.5 Related products — frozen
+
+Live-verified on the Capybara PDP: 3 related products render today in a plain grid headed "Sản phẩm tương tự" (Botiga's untouched default string), using the same card markup Batch A already restyled (confirmed: stock metadata and single clean anchor present on related-product cards too, no separate component needed).
+
+**Frozen: native grid, not carousel.** At an 11-product catalog with only 3 related items shown, a carousel has nothing to carousel *through* — Botiga's own carousel is built for scanning past more items than fit in one view, and 3 items fit a 3-column desktop row exactly, with mobile already falling back to the existing 2-column card grid. Enabling `shop_single_related_products_slider` here would add interaction affordance (arrows/dots) with no actual additional content behind it. Revisit this specific freeze if the catalog grows enough that "related products" routinely exceeds one visible row.
+
+- Heading: swap to a curated string ("Có thể bạn cũng thích") via the verified Botiga filter `botiga_woocommerce_product_related_products_heading` (confirmed present in `inc/plugins/woocommerce/features/related-products.php`).
+- Count: keep current (3).
+- No new JS library, no carousel enablement.
+
+### 10.6 Mobile PDP and the sticky-CTA decision
+
+**Decision: APPROVED FOR BATCH B.**
+
+Evidence, live-measured on the Capybara (variable) PDP at 390×844: the primary add-to-cart button sits at `y≈1326px` — roughly 1.6 screens of scroll from page load — and the full page is `5219px` tall, meaning **~74% of the page's scroll depth has zero purchase action available** once a shopper scrolls past the purchase block to read the (real, substantial, owner-written) description content. A shopper who reads the description and decides to buy currently has to scroll back up to find the button again.
+
+This is exactly the failure mode a sticky CTA solves, and — reviewed against the contract's original concerns — none of them block it here:
+- **Variation ambiguity:** solved by design, not by duplicating state — the sticky bar is a *proxy* to the real form, never a second form. If a variation is already selected, tapping it submits via the same native add-to-cart call the real button uses; if not, tapping it scrolls to and focuses the real variation selector. No variation state, price, or stock logic is ever read or written twice.
+- **WooCommerce validation conflict:** none — the sticky bar never intercepts or duplicates WooCommerce's own validation/AJAX; it only ever defers to the real button.
+- **Obscuring content:** frozen to appear only after the real purchase block scrolls out of view, and to hide again when the real block or the footer comes back into view — never permanently docked.
+
+**Frozen behavior for Batch B implementation:**
+- Appears via IntersectionObserver watching the real `.summary` block (same pattern already established by `reveal.js` — no new dependency), showing only once it scrolls out of the top of the viewport.
+- Hides again when the real purchase block re-enters view, or when the footer enters view (never overlaps the footer).
+- Shows: product title (truncated), price, and a single button reflecting the *real* button's current state (label, disabled-until-variation-selected styling) — read from the DOM, not a second source of truth.
+- Tap behavior: if the real button is enabled, triggers the real button's click (proxied, not duplicated); if disabled (variation not yet chosen), smooth-scrolls to and focuses the variation selector instead.
+- Respects `prefers-reduced-motion` (no slide/fade transition if reduced motion is requested — appears/disappears instantly instead).
+- CSS-only visual treatment (fixed position, safe-area padding); the visibility/proxy logic is the one new small vanilla JS file this batch is expected to need — no new library.
+
+### 10.7 Intervention ceiling (Batch B)
+
+L0 (gallery setting confirmed unnecessary — kept at current default) → L1 (CSS for description recomposition, related-products heading via L3 filter, sticky-CTA styling) → L2/L3 (heading-detection presentation logic, `botiga_woocommerce_product_related_products_heading` filter) → **one small new JS file** for the sticky-CTA visibility/proxy logic (IntersectionObserver + click-proxy, same pattern as `reveal.js`/`sticky-header.js`, not a new dependency). **No L4/L5.** No template overrides.
+
+### 10.8 Batch B acceptance criteria (whole-screen, not element-by-element)
+
+**Desktop:**
+- Gallery and purchase block together establish product + price + decision path within the first viewport, for both simple and variable products independently
+- Primary CTA is the unambiguous, unmistakable primary action
+- Variation path is understandable without trial-and-error (native form, native disabled-state)
+- No decorative/editorial section pushes the purchase block down or delays the decision
+
+**Mobile:**
+- Required variation/CTA flow is obvious
+- No horizontal overflow
+- No competing CTAs (custom-order hint stays visually subordinate)
+- Product information remains readable at 390px
+- Sticky CTA behaves exactly per §10.6's frozen spec — proxy only, never a duplicate form, never permanently docked, respects reduced motion
 
 ---
 
-## 12. Batch C — Cart / Checkout / Account
+## 12. Batch C — Cart / Checkout / Account (CURRENT / FROZEN, detailed by the full-review pass)
 
-Freeze principle: **reliability > originality.** No composition rewrite of either page.
+Freeze principle: **reliability > originality.** No composition rewrite of either page. This section supersedes the original brief version.
 
 **Approved:** visual hierarchy, spacing, typography, payment-method card treatment, language cleanup, My Account light polish.
+
+### 12.0 Cart hierarchy — frozen
+
+Live-reviewed at 1440px and 390px with a real item in cart. Desktop table (product / price / quantity / subtotal columns, coupon field, order-summary panel with warm cream background) already reads clearly — primary action ("Tiến hành thanh toán") is the one full-brand-color button, correctly dominant over "Cập nhật giỏ hàng" (muted/secondary, correctly dimmed until quantity actually changes — native WooCommerce disabled-state behavior, not a bug). **Frozen: keep the native table composition, no rewrite.** One real defect was found and already fixed in this same review pass (§6a): price amounts wrapped mid-number at 390px (`white-space: nowrap` added to `table.shop_table .amount`). No further cart layout change is scoped for Batch C beyond what's already shipped.
+
+- Primary action: "Tiến hành thanh toán" (full brand color)
+- Secondary action: "Cập nhật giỏ hàng" (muted, native disabled-until-changed state)
+- Information that matters before checkout: product identity/image, quantity, subtotal, order total — all present, all legible
+- Noise to visually reduce: none found — the table is already lean (no shipping estimator, no extra upsell blocks)
 
 ### 12.1 Fix untranslated "Shipment"
 
@@ -425,19 +545,102 @@ WooCommerce → Settings → Accounts & Privacy → "Checkout privacy policy"
 
 **This task does not invent the Vietnamese legal copy.** The exact wording for that field must be supplied or approved by the owner/legal separately — recorded here as an open content dependency, not filled in speculatively. If a code-level override is ever preferred instead of the admin field, the documented mechanism is the `woocommerce_get_privacy_policy_text` filter (confirmed present in the same source function) — but the admin-setting route is preferred since it requires no deploy at all.
 
-### 12.3 Payment methods
+### 12.2a Checkout language audit — full sweep, not just "Shipment"
 
-CSS-only visual card treatment around the existing `.wc_payment_methods` / `.payment_box` markup (both confirmed as real, current classes on the live checkout page). Explicitly must not: replace the radio inputs, hide the existing payment description copy (VietQR/BACS/COD text is already good, custom-written), change the payment-selection JS, or touch VietQR/BACS or COD behavior in any way.
+Live-reviewed the entire checkout page for English leakage this pass, classified by mechanism (each needs a different fix, per the review brief's own taxonomy):
 
-### 12.4 Progress indicator
+| String | Classification | Mechanism |
+|---|---|---|
+| "Shipment" (cart totals + checkout order review) | core translation gap | `gettext_with_context` filter, §12.1 (documented, not yet implemented) |
+| Checkout privacy paragraph | owner/legal content, delivered via a core translation-default fallback | WooCommerce admin setting, §12.2 — wording is an open dependency, not written here |
+| Payment method descriptions (VietQR/BACS/COD text) | site-config copy | already custom-written and already Vietnamese — confirmed live, no gap found |
+| Field labels (Tên, Họ, Địa chỉ, etc.) | core translation, confirmed already Vietnamese | no action |
 
-**Status: OPTIONAL / P2.** If implemented: visual only, derived purely from page context (`is_cart()` / `is_checkout()`), zero AJAX/session state coupling, no fake or inferred checkout steps beyond what the page context itself proves.
+No new English-leakage strings were found beyond the two already documented in §12.1/§12.2 — this was a verification pass, not a new-defect pass. **Do not fix by editing installed language-pack files** (contract-standing rule, `docs/WOOCOMMERCE-VIETNAMESE-2026-08-08.md`) and **do not invent the privacy wording** in this or any future implementation pass — both remain open dependencies with their fix mechanism already specified.
+
+### 12.3 Payment methods — frozen
+
+CSS-only visual card treatment around the existing `.wc_payment_methods` / `.payment_box` markup (both confirmed as real, current classes on the live checkout page). Live-reviewed: "Chuyển khoản / VietQR" is pre-selected by default with its description visible; "Thanh toán khi nhận hàng" (COD) collapses to just its radio + label until selected. This native accordion-style behavior is correct and must be preserved.
+
+- **Selected state:** needs a visible container (border + subtle background shift) so the selected method is obvious without relying on the radio dot alone.
+- **Unselected state:** quieter border, no background fill.
+- **Radio visibility:** keep the native input visible (not hidden behind a custom-drawn control) — no `appearance:none` replacement, matching this project's established preference for real form controls over recreated ones (contract §22 / accessibility principle).
+- **Description hierarchy:** VietQR's longer explanatory paragraph and COD's shorter one both stay exactly as-is, just gain breathing room from the card treatment.
+- Explicitly must not: replace the radio inputs, hide the existing payment description copy, change the payment-selection JS, or touch VietQR/BACS or COD behavior in any way.
+
+### 12.4 Progress indicator — decision: REJECTED
+
+**Not deferred, not optional — rejected outright by this review.** Classic Cart and Classic Checkout (contract §2, architecture freeze) are two separate WordPress pages joined by a normal navigation, not steps in a client-side wizard. WooCommerce does not have navigable "Cart → Information → Shipping → Payment" states within checkout — it's a single-page form with visual sections, submitted once. A progress indicator implies a multi-step flow that does not actually exist; showing one would be presenting fake progression the underlying system can't back up. If the actual checkout flow ever changes to a genuine multi-step one (out of scope for Storefront V2 entirely — that would be a business-logic change), this decision should be revisited then, not worked around now with decorative steps.
+
+### 12.5 Form language — frozen (applies across Batch C, and is the baseline Batch B's PDP already follows)
+
+Derived from what's already working across the site (§ design system below), not invented for checkout specifically:
+
+- **Text inputs:** existing bordered style (`--lyli-color-border`, `var(--lyli-radius-sm)`), already used site-wide (footer forms, search, checkout fields today) — keep.
+- **Selects:** apply the same bordered + chevron treatment Batch A already shipped for the shop-archive sort control (`inc/woocommerce.php`/`style.css`, §7) to any other native `<select>` in cart/checkout/account that currently lacks it (e.g. country/province dropdowns) — same mechanism, not a new one.
+- **Quantity:** already has a clear −/input/+ treatment on cart/PDP — reuse unchanged on checkout if quantity ever appears there.
+- **Radios/checkboxes:** keep native inputs, sized and spaced consistently (payment methods, "Giao hàng đến một địa chỉ khác?", any future checkbox) — no custom-drawn replacements.
+- **Focus:** the existing global `:focus-visible { outline: 3px solid var(--lyli-color-primary); outline-offset: 2px; }` (style.css `:root` area) already covers every native control — reuse, do not invent a second focus treatment for forms.
+- **Error/helper text:** WooCommerce's own validation messaging (native, already accessible) — restyle only (color/spacing to match the muted-copy token), never replace with custom JS validation.
+- **Disabled state:** the same `opacity: 0.7` + `wc-variation-selection-needed`-style dimming already used on the PDP add-to-cart button (contract §10.3) is the site's one disabled-state pattern — reuse it (e.g. "Cập nhật giỏ hàng" until cart changes, already doing this natively).
 
 ---
 
-## 13. My Account
+## 13. My Account (CURRENT / FROZEN, detailed by the full-review pass)
 
-**Frozen: LIGHT POLISH ONLY.** Spacing, typography, optional card/border treatment on existing elements. No redesign effort beyond that. Lowest priority of all three batches.
+**Frozen: LIGHT POLISH ONLY.** Spacing, typography, optional card/border treatment on existing elements. No redesign effort beyond that. Lowest priority of all three batches — confirmed by this review, not just asserted: the logged-out login/register form is plain but functionally clear, and low-traffic relative to guest checkout on a small handmade shop (established finding, unchanged since the original preflight).
+
+- **Navigation treatment:** WooCommerce's native My Account tab navigation — restyle only (typography/spacing to match site tokens), no new nav component.
+- **Content width:** match the existing `.woocommerce-cart .entry-content` / `.woocommerce-checkout .entry-content` max-width (`1140px`, already declared in `style.css`) for consistency with cart/checkout.
+- **Spacing/forms:** reuse §12.5's form language exactly — no separate account-specific form treatment.
+- **Tables (orders list):** restyle only via the same `table.shop_table` treatment cart/checkout already use (including this pass's price-wrap fix, which applies here too since it's the same class).
+- **Mobile:** no separate mobile design needed — native WooCommerce account markup already stacks reasonably; verify no overflow, do not redesign.
+- **Logged-in dashboard, orders, addresses, account details, logout:** not independently re-designed — all inherit the same restyle-only treatment as the navigation/forms/tables above. Do not turn this into a bespoke "dashboard product."
+
+### 13a. Batch C intervention ceiling
+
+L0 (checkout privacy setting) → L1 (payment-method card CSS, form-language CSS reuse, My Account restyle) → L2 (`gettext_with_context`/`gettext` filters for the two string fixes, same pattern already implemented and shipped for the archive result-count in Batch A). **No L2 business-logic hooks, no L3, no L4/L5.** No new JS at all — Batch C is presentation-only by nature (reliability > originality), unlike Batch B's one small sticky-CTA script.
+
+### 13b. Batch C acceptance criteria (whole-screen, not element-by-element)
+
+**Cart:** shopper can verify items/quantities/total at a glance; checkout CTA visually dominates; mobile cart is not a crushed desktop table (already confirmed true — native table already reflows reasonably at 390px, and the one real defect found this pass — price wrap — is fixed).
+
+**Checkout:** form-completion path is obvious (field order/labels already clear, confirmed live); payment selection is visually obvious once card treatment ships; "Đặt hàng" remains the dominant final action; no ambiguity after AJAX refresh (existing `gettext_with_context` pattern applies identically to fragment-refreshed content, per §12.1's acceptance note); zero untranslated operational strings once §12.1/§12.2 ship; validation stays native and visible.
+
+**Account:** feels part of the same storefront (shared tokens/forms/tables), without having been turned into a separate design effort.
+
+---
+
+## Design system (derived from what's already working, full-review pass)
+
+This is not a new token system — every value below already exists in `style.css`. This section exists so Batch B/C reuse it explicitly instead of re-deriving spacing/color/type decisions per page, which is exactly the mistake that made the pre-A.2 archive feel like disconnected Botiga sections.
+
+**Typography**
+- Display/heading: Fraunces, 600 weight — used for H1 (page titles), product titles, section headings. Archive/PDP H1 uses a *scoped* smaller clamp (`clamp(1.6rem, calc(1.25rem + 1.4vw), 2.5rem)`, contract §6) than the global `.page-title` default (`clamp(2rem, calc(1.45rem + 2.4vw), 4.3rem)`) — the scoped version is the one to reuse for any future compact-header context; the global one is for a page carrying a title alone (cart/checkout currently use the unscoped, larger version — acceptable there since neither sits above a toolbar the way the archive did).
+- Body: Be Vietnam Pro, 400 weight — all copy, descriptions, table content.
+- Eyebrow: Be Vietnam Pro, 600 weight, `0.78–0.8rem`, uppercase, `letter-spacing: 0.08em`, `var(--lyli-color-primary)` — one established pattern (shop archive eyebrow), reuse verbatim for any future eyebrow, don't invent a second treatment.
+- Price: bespoke — `1.55rem` on PDP (`.summary .price`), smaller on cards, always full-weight/full-color, never muted. Muted-copy token (`--lyli-color-muted`) is reserved for secondary information (stock metadata, descriptions) and must never touch price text.
+
+**Spacing tiers actually in use** (do not invent a second scale):
+- Micro: `4–8px` (eyebrow-to-title, icon gaps)
+- Component: `12–18px` (card internal padding, form field gaps)
+- Section: `20–36px` (clamp-based, e.g. `clamp(20px, 3vw, 32px)`) — between related blocks within one page section
+- Block: `clamp(28px, 4–6vw, 68px)` — between major page sections (`.content-wrapper` margin-top, PDP `.images`/`.summary` margin-bottom)
+
+**Surfaces**
+- `--lyli-color-warm-white`: primary page/card background
+- `--lyli-color-cream`: secondary surface (order-summary panels on cart/checkout, hover fills)
+- Borders: `1px solid var(--lyli-color-border)`, `var(--lyli-radius-sm/md)` — used on inputs, chips, cards
+- Cards: `border-radius: 16px`, `box-shadow: var(--lyli-shadow-card)` (product cards, order-summary panels) — the one card treatment, reuse for any future card-like surface (payment-method cards, Batch C)
+
+**CTA language**
+- Primary: full `var(--lyli-color-primary)` fill, white text — add-to-cart, "Tiến hành thanh toán", "Đặt hàng". Exactly one per view.
+- Secondary: muted/lighter fill or outline — "Cập nhật giỏ hàng" (already correctly dimmed until actionable — reuse this *disabled-until-actionable* pattern, not a separate "secondary button" style, wherever the same semantics apply)
+- Text/navigation action: plain link color (`var(--lyli-color-primary)`, underline on hover) — breadcrumb, custom-order hint, "Xem chi tiết"-type links
+- Destructive: none currently styled distinctly (cart remove is an icon "×", not a labeled destructive button) — if Batch C introduces a labeled destructive action, use `--lyli-color-primary`'s existing warm palette, not a foreign red, consistent with the brand constraint against generic ecommerce visual language
+- Disabled: `opacity: 0.7` on the same base button style — never a separate greyed-out button component
+
+**Form language:** see §12.5 (written for Batch C, applies identically to any future PDP/archive form control).
 
 ---
 
@@ -544,7 +747,6 @@ Not part of approved implementation. Return only through a new preflight/approva
 Product image swap
 Custom PDP content schema
 Content migration across every product
-Sticky mobile add-to-cart
 Mini cart drawer
 Checkout flow redesign
 WooCommerce template overrides
@@ -555,6 +757,8 @@ Custom AJAX product grid
 Headless/frontend rewrite
 ```
 
+Sticky mobile add-to-cart is **no longer on this list** — the full-review pass made the decision (approved, §10.6) with a frozen behavior spec, superseding its earlier "deferred pending review" status.
+
 ---
 
 ## 20. Decision log
@@ -563,21 +767,22 @@ Headless/frontend rewrite
 - Moderate recomposition (not a redesign, not "do nothing")
 - Hook-first intervention policy, L0→L3
 - Zero WooCommerce template overrides
-- Archive composition (eyebrow/intro on main shop; term description on category archives)
-- Botiga native category chips (`shop_archive_header_style_show_categories` / `_show_sub_categories`)
+- Archive composition (eyebrow on main shop via `botiga_before_shop_archive_title`; intro copy via the native Shop-page-description slot, not a hook — §6a/A.2; term description on category archives)
+- Botiga native category chips, count-gated (`theme_mod_shop_archive_header_style_show_categories` / `_show_sub_categories` filters, ≥2 real choices required) — confirmed by full review to give real navigational value where they do appear (`Lyli Charm`/`Lyli Tiny`), not just a mechanical threshold
 - Product card hierarchy: image → title/price → stock-derived metadata → always-visible CTA
 - `shop_product_add_to_cart_layout` → `layout2` (fixes nested-anchor bug at the source, relocates CTA to native position)
 - Deterministic metadata only (stock status); "Handmade" label deferred pending tag-policy confirmation
-- PDP editorial composition using existing content only (no schema invention)
-- Related-products curated heading + native Botiga carousel
-- Checkout/cart visual polish + the two verified string fixes
+- PDP editorial composition using existing content only (no schema invention) — refined by full review to key specifically on the two proven-stable headings (§10.4), not a general heading-matcher
+- Related-products: curated heading, **native grid** (not carousel — full review reversed the original "carousel permitted" framing based on real catalog size, §10.5)
+- **Sticky mobile PDP add-to-cart** — approved by full review with a frozen proxy-only behavior spec (§10.6), no duplicated purchase state
+- Checkout/cart visual polish + the two verified string fixes + the full-review language audit (§12.2a) confirming no further English leakage
+- Cart/checkout/account table price `white-space: nowrap` fix (FIX NOW, shipped this pass)
+- `suppress_single_subcategory_nav()` correctness fix — only evaluate on real `product_cat` terms (FIX NOW, shipped this pass)
 
 ### DEFERRED
 - Product image swap (needs per-product gallery-data audit)
 - "Handmade" metadata label (needs founder confirmation of permanent tag policy)
-- Sticky PDP add-to-cart bar (needs post-Batch-A UX review)
-- Product-content schema migration (separate task)
-- Checkout progress indicator (P2, only if state-decoupled at implementation time)
+- Product-content schema migration (separate task; full review found the catalog's heading variance is itself evidence against attempting this yet, §10.4)
 - Checkout privacy-policy Vietnamese copy itself (owner/legal must supply the wording; the mechanism to apply it is documented)
 
 ### REJECTED
@@ -586,6 +791,8 @@ Headless/frontend rewrite
 - New JS animation library
 - Checkout engine changes
 - Page builder (Elementor or otherwise)
+- **Checkout progress indicator** — rejected outright by full review, not merely deferred: Classic Cart/Checkout have no real multi-step state to represent, so any progress UI would be fake progression (§12.4)
+- **Related-products carousel** — rejected for the current catalog size (3 items exactly fills one row; nothing to carousel through, §10.5). Revisit only if the catalog grows enough to routinely exceed one visible row.
 
 ---
 
@@ -605,34 +812,35 @@ Checked existing docs for contradictions with this contract:
 ## 22. Implementation checklist (quick reference)
 
 ```
-[ ] Batch A
-    [ ] shop_product_add_to_cart_layout → layout2 (Customizer)
-    [ ] shop_archive_header_style_show_categories → enabled (Customizer)
-    [ ] shop_archive_header_style_show_sub_categories → enabled (Customizer)
-    [ ] Archive eyebrow + intro hook (inc/woocommerce.php)
-    [ ] Product card CSS: always-visible CTA, metadata line, title/price weight
-    [ ] Stock-status metadata hook
-    [ ] Sort-dropdown 390px clipping fix (CSS)
-    [ ] Category chip mobile wrap/scroll verification + fix if needed (CSS)
-    [ ] WP-CLI hook-dump re-verification (empty anchors gone)
-    [ ] Full acceptance pass (§9) at 4 viewports
-    [ ] Deploy, commerce smoke test, founder review
+[x] Batch A — IMPLEMENTED, CLOSED (§6a final verdict)
+    [x] shop_product_add_to_cart_layout → layout2
+    [x] Category chips, count-gated (theme_mod_{name} filters)
+    [x] Archive eyebrow (hook) + intro (native Shop-page-description, not a hook)
+    [x] Product card CSS + stock-status metadata
+    [x] Sort-dropdown 390px fix, chevron affordance
+    [x] WP-CLI hook-dump verified (empty anchors gone)
+    [x] suppress_single_subcategory_nav() taxonomy correctness fix (full-review pass)
+    [x] Cart/checkout table price-wrap fix (full-review pass)
+    [x] Deployed, production-verified
 
-[ ] Batch B
-    [ ] Trial Botiga native gallery layouts (Customizer)
-    [ ] Recompose PDP description into labeled blocks (existing content only)
-    [ ] botiga_woocommerce_product_related_products_heading filter
-    [ ] shop_single_related_products_slider → enabled (Customizer)
-    [ ] Acceptance pass, deploy, smoke test, founder review
+[ ] Batch B (§10 — detailed freeze from the full-review pass)
+    [ ] Keep gallery-default (confirmed by catalog data, no Customizer change)
+    [ ] Recompose PDP description: only the 2 proven-stable headings (§10.4)
+    [ ] botiga_woocommerce_product_related_products_heading filter → curated heading
+    [ ] Related products stay native grid (do NOT enable shop_single_related_products_slider — §10.5 reversed the original "carousel permitted" framing)
+    [ ] Sticky mobile add-to-cart: new small JS file, proxy-only behavior per §10.6 (IntersectionObserver + click-proxy, no duplicated form state)
+    [ ] Acceptance pass (§10.8, whole-screen) at 4 viewports, deploy, smoke test, founder review
 
-[ ] Batch C
-    [ ] gettext_with_context filter for "Shipment"
-    [ ] Checkout privacy policy text (content from owner) → WooCommerce setting
-    [ ] Payment method CSS card treatment
-    [ ] My Account spacing/typography pass
-    [ ] Acceptance pass, deploy, smoke test, founder review
+[ ] Batch C (§12 — detailed freeze from the full-review pass)
+    [ ] gettext_with_context filter for "Shipment" (§12.1)
+    [ ] Checkout privacy policy text (content from owner) → WooCommerce setting (§12.2)
+    [ ] Payment method CSS card treatment (§12.3)
+    [ ] Form-language pass: select chevron treatment extended to any un-styled selects (§12.5)
+    [ ] My Account spacing/typography/table pass (§13)
+    [ ] Progress indicator: do NOT implement — rejected (§12.4)
+    [ ] Acceptance pass (§13b, whole-screen), deploy, smoke test, founder review
 ```
 
 ---
 
-*This document is the canonical contract for Storefront Composition V2. Implementation must not exceed the intervention ceiling in §3, must not implement anything listed in §19, and must stop for founder review if a documented fix in §4/§6/§10/§12 proves insufficient in practice.*
+*This document is the canonical contract for Storefront Composition V2. Implementation must not exceed the intervention ceiling in §3/§10.7/§13a, must not implement anything listed in §19, and must stop for founder review if a documented fix proves insufficient in practice.*

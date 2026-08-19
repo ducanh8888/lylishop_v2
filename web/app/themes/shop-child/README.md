@@ -46,3 +46,7 @@ Child theme for `lylishop.online` (parent: **Botiga Free 2.4.7**). Presentation 
 ## Owner editing surface
 
 All page text/images/sections/menu/logo/products/prices are WordPress-admin controlled. Global small values (footer intro, contact, socials, announcement, CTA defaults, copyright) come from **WP Admin → Lyli Shop → Cài đặt giao diện** (the `lyli-site-settings` MU plugin) — see `docs/OWNER-ADMIN-GUIDE.md`.
+
+- **Shop archive intro copy** (the one-line description under "Cửa hàng") is the WordPress **Shop page's own post content** — WP Admin → Pages → *Cửa hàng* (the page WooCommerce → Settings → Products → "Shop page" points at, `wc_get_page_id('shop')`). Rendered automatically by Botiga's `botiga_woocommerce_product_archive_description()`, no theme code involved. **A clean site rebuild must set this page's content** (the standard WooCommerce setup wizard creates the page itself, per `docs/PRODUCTION-INSTALL-RUNBOOK.md` step 10, but does not populate this text) — current copy: "Móc khóa len thủ công, làm theo yêu cầu, giao trong 1–3 ngày."
+- **Category archive intro copy** is each `product_cat` term's own **Description** field — WP Admin → Products → Categories. Empty by default; an empty description simply renders no intro text on that category's archive (not a bug, a content gap).
+- **Archive eyebrow** ("Quà tặng handmade") and the **category/sub-category chip row's visibility** (shown only when 2+ real, non-empty sibling categories exist) are theme-code-owned, not admin-editable — see `inc/woocommerce.php`.

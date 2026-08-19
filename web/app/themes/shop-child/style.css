@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.6.2
+Version: 1.6.3
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -1127,6 +1127,14 @@ form {
 .woocommerce-checkout .entry-content,
 .woocommerce-account .entry-content { max-width: 1140px; }
 .woocommerce table.shop_table { width: 100%; background: var(--lyli-color-warm-white); border: 1px solid var(--lyli-color-border); border-collapse: separate; }
+/*
+ * Storefront V2 full-review pass — live-verified at 390px: the cart
+ * table's price/subtotal cells narrow enough on mobile that the amount
+ * wraps mid-number ("55.0" / "00 đ" on two lines). A price splitting
+ * across a line break reads as a real defect, not a design choice —
+ * amounts should never wrap regardless of column width.
+ */
+.woocommerce table.shop_table .amount { white-space: nowrap; }
 .woocommerce-cart .cart-collaterals .cart_totals,
 .woocommerce-checkout #order_review,
 .woocommerce-account .woocommerce-MyAccount-content {

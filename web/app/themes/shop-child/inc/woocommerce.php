@@ -130,16 +130,33 @@ function suppress_single_category_nav($value)
     return (! is_wp_error($count) && $count >= 2) ? $value : false;
 }
 
+/**
+ * Storefront V2 full-review pass — narrow correctness fix. The original
+ * guard covered is_product_category() || is_product_tag() ||
+ * is_product_taxonomy() (mirroring Botiga's own sub-category query, which
+ * has the same quirk), but term IDs are shared across taxonomies in
+ * WordPress — a product_tag or attribute-taxonomy term's term_id has no
+ * relationship to product_cat's parent/child structure. Live-verified:
+ * wp_count_terms('product_cat', ['parent' => $tag_term_id]) on a real,
+ * reachable, non-empty tag archive (/product-tag/capybara-handmade/,
+ * term_id 59) returned 0 only because no category happens to have
+ * parent=59 — coincidence, not correctness. As the catalog grows and
+ * term IDs increase across taxonomies sharing the same ID space, that
+ * coincidence could flip and show unrelated categories as if they were
+ * "children" of the current tag. Sub-category chips are only a coherent
+ * concept on an actual product_cat term, so this now only ever evaluates
+ * the count there — every other taxonomy context suppresses outright.
+ */
 add_filter('theme_mod_shop_archive_header_style_show_sub_categories', __NAMESPACE__ . '\\suppress_single_subcategory_nav');
 function suppress_single_subcategory_nav($value)
 {
-    if (! $value || ! (is_product_category() || is_product_tag() || is_product_taxonomy())) {
-        return $value;
+    if (! $value || ! is_product_category()) {
+        return false;
     }
 
     $term = get_queried_object();
-    if (! $term instanceof \WP_Term) {
-        return $value;
+    if (! $term instanceof \WP_Term || $term->taxonomy !== 'product_cat') {
+        return false;
     }
 
     $count = wp_count_terms('product_cat', ['parent' => $term->term_id, 'hide_empty' => true]);
