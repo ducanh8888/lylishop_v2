@@ -96,18 +96,15 @@ function suppress_single_category_nav($value)
 add_filter('theme_mod_shop_archive_header_style_show_sub_categories', __NAMESPACE__ . '\\suppress_single_subcategory_nav');
 function suppress_single_subcategory_nav($value)
 {
-    if (! $value || ! is_product_category()) {
-        return false;
-    }
-
-    $term = get_queried_object();
-    if (! $term instanceof \WP_Term || $term->taxonomy !== 'product_cat') {
-        return false;
-    }
-
-    $count = wp_count_terms('product_cat', ['parent' => $term->term_id, 'hide_empty' => true]);
-
-    return (! is_wp_error($count) && $count >= 2) ? $value : false;
+    // Owner-reported flat-nav pass (docs/UX-AUDIT-POST-STOREFRONT-V2-2026-08-19.md):
+    // Botiga's own child-chip row and render_taxonomy_nav()'s up/sibling
+    // row previously rendered as two separate, visually stacked rows on
+    // any parent category. render_taxonomy_nav() below now renders
+    // children itself (as part of one merged local-browse strip), so
+    // Botiga's native mechanism is fully suppressed rather than
+    // count-gated — there is no longer a case where it should render.
+    unset($value);
+    return false;
 }
 
 /**
@@ -156,48 +153,61 @@ function simplify_paginated_result_count_text($translated, $single, $plural, $nu
 }
 
 /**
- * Post-Storefront-V2 soft catalog navigation pass (owner-reported: category
- * drill-down felt rigid, no deterministic way back up/sideways beyond the
- * breadcrumb; docs/UX-AUDIT-POST-STOREFRONT-V2-2026-08-19.md addendum).
+ * Owner-reported flat-navigation pass (docs/UX-AUDIT-POST-STOREFRONT-V2-2026-08-19.md,
+ * new finding, supersedes the original UX-016 two-system presentation).
  *
- * Root cause: Botiga's own sub-category chips
- * (botiga_shop_page_header_sub_category_links(), wc-page-header.php) only
- * ever list the DIRECT CHILDREN of the current term, and only render at all
- * when suppress_single_subcategory_nav() above allows it (≥2 populated
- * children). A leaf category — or any category with fewer than 2 populated
- * children — therefore shows zero taxonomy navigation beyond the
- * breadcrumb: a real dead end, live-confirmed on `Lyli Charm`, `Lyli Tiny`,
- * `Hoa hướng dương`, `Hoa tulip`, `Hoa giỏ` (every current leaf).
+ * UX-016's original problem was real and stays fixed: a shopper must never
+ * hit a dead end or need browser Back to get back up/sideways in the
+ * taxonomy. But UX-016 solved it by running TWO independent systems on the
+ * same page — Botiga's own native child-chip row (down only) plus this
+ * function's up/sibling row (up + sideways) — which stacked into two
+ * visually separate rows on any parent category, read by the owner as
+ * "logically correct but visually cumbersome," "navigating a taxonomy tree
+ * rather than browsing a small handmade shop."
  *
- * This adds a second, independent navigation concern Botiga's own gate
- * cannot express: moving UP to the parent (or shop root) and SIDEWAYS to
- * populated siblings — not DOWN to children, which Botiga's existing,
- * unmodified mechanism already owns. Deliberately hooked to WooCommerce's
- * own `woocommerce_before_shop_loop` (not Botiga's custom header function)
- * at an early priority so it always fires on every category archive
- * regardless of Botiga's show_sub_categories gating — the two systems are
- * independent by design (task brief §8/§19), not a replacement for one
- * another. "Up" is shown unconditionally (ancestor/exit navigation is not
- * subject to the "does this give a real choice" gate a lone child chip
- * would fail); siblings render only when ≥2 populated terms share the same
- * parent (current term + at least one real alternative), reusing the same
- * count-gating philosophy already established for child chips. Fully
- * derived from the live taxonomy graph via get_queried_object()/get_terms()
- * — no hardcoded category name, so it keeps working as the catalog grows.
+ * Research applied before redesigning (not a random restyle):
+ * Baymard's overcategorization research (https://baymard.com/blog/
+ * ecommerce-over-categorization) flags categories under ~10-30 products as
+ * filter/collection candidates rather than true categories, and live data
+ * confirms this catalog fits that exactly — every child term's product IDs
+ * are a strict subset of its parent's own (e.g. Lyli Charm ∪ Lyli Tiny =
+ * exactly Móc khóa len's own 11 products; every product carries BOTH the
+ * parent and child term). The parent category page already *is* the "view
+ * all" scope for its children, natively, via WooCommerce's own term
+ * hierarchy — no new query logic was needed to express that. Baymard's
+ * mobile "View All" research (https://baymard.com/blog/mobile-main-nav-
+ * view-all) additionally found that a bare category-name header/link is
+ * read by many users as non-interactive; only 24% of sites correctly label
+ * a "view all" scope explicitly — hence the "Tất cả {category}" chip below
+ * uses that exact explicit phrasing rather than relying on the H1 alone.
  *
- * Post-remediation-pass fix (UX-014 re-test): `woocommerce_before_shop_loop`
- * turned out to sit inside WooCommerce core's `if (woocommerce_product_loop())`
- * branch — it never fires when the current archive has zero products,
- * confirmed live via `do_action` on `/product-category/lyli-signature/`
- * (0 products): the function produced correct output when called directly,
- * but never actually ran through the real page request. That is exactly
- * the single worst dead-end case this was built for, so it was silently
- * not helping there at all. Also hooked to WooCommerce's own
- * `woocommerce_no_products_found` (fires in the sibling `else` branch,
- * before the native "no products found" notice) so the same nav renders
- * on an empty category too — the function is identical either way, only
- * one of the two hooks ever fires for a given request, so there is no
- * duplicate-render risk.
+ * New model — one row, not two:
+ *   - "up" link — unchanged, always shown (ancestor/exit navigation is not
+ *     subject to a "does this give a real choice" gate).
+ *   - if the current term has populated children: show a "Tất cả {current
+ *     term name}" chip (marked current — this page already IS that full
+ *     scope) followed by the child chips. This absorbs what Botiga's own
+ *     child-chip row used to render — suppress_single_subcategory_nav()
+ *     above now unconditionally disables Botiga's native mechanism so
+ *     there is exactly one rendering path, one set of hover/current
+ *     styles, one row.
+ *   - else (a leaf): show populated sibling chips (current term included,
+ *     marked current) — unchanged from the original UX-016 behavior, this
+ *     is still the right recovery mechanism for a leaf/empty category.
+ * Root-level sibling switching (e.g. reaching "Hoa len" while browsing
+ * "Móc khóa len") is deliberately no longer shown as a second row on a
+ * parent page — it's one tap away via the "up" link to Cửa hàng, where
+ * Botiga's own native top-level chips already list every populated
+ * top-level category. This trades one extra tap for removing an entire
+ * visual row on every parent-category page, which live testing (see the
+ * audit doc) found reads as clearly worthwhile at mobile widths.
+ *
+ * Still hooked to both `woocommerce_before_shop_loop` (normal case) and
+ * `woocommerce_no_products_found` (WooCommerce core never fires the former
+ * when an archive has zero products — the UX-014 fix, still required)
+ * — same function either way, no duplicate-render risk since only one of
+ * the two hooks ever fires per request. Fully derived from the live
+ * taxonomy graph — no hardcoded category name.
  */
 add_action('woocommerce_before_shop_loop', __NAMESPACE__ . '\\render_taxonomy_nav', 5);
 add_action('woocommerce_no_products_found', __NAMESPACE__ . '\\render_taxonomy_nav', 5);
@@ -229,12 +239,12 @@ function render_taxonomy_nav(): void
         return;
     }
 
-    $siblings = get_terms([
+    $children = get_terms([
         'taxonomy' => 'product_cat',
-        'parent' => $term->parent,
+        'parent' => $term->term_id,
         'hide_empty' => true,
     ]);
-    $siblings = is_wp_error($siblings) ? [] : $siblings;
+    $children = is_wp_error($children) ? [] : $children;
 
     printf(
         '<nav class="lyli-taxonomy-nav" aria-label="%s">',
@@ -246,23 +256,55 @@ function render_taxonomy_nav(): void
         esc_html($up_label)
     );
 
-    if (count($siblings) >= 2) {
+    if (count($children) > 0) {
+        $current_url = get_term_link($term);
         echo '<span class="lyli-taxonomy-nav-siblings">';
-        foreach ($siblings as $sibling) {
-            $sibling_url = get_term_link($sibling);
-            if (is_wp_error($sibling_url)) {
+        if (! is_wp_error($current_url)) {
+            printf(
+                /* translators: %s: current category name */
+                '<a class="category-button lyli-taxonomy-nav-chip is-current" href="%s" aria-current="page">%s</a>',
+                esc_url($current_url),
+                esc_html(sprintf(__('Tất cả %s', 'shop-child'), $term->name))
+            );
+        }
+        foreach ($children as $child) {
+            $child_url = get_term_link($child);
+            if (is_wp_error($child_url)) {
                 continue;
             }
-            $is_current = $sibling->term_id === $term->term_id;
             printf(
-                '<a class="category-button lyli-taxonomy-nav-chip%s" href="%s"%s>%s</a>',
-                $is_current ? ' is-current' : '',
-                esc_url($sibling_url),
-                $is_current ? ' aria-current="page"' : '',
-                esc_html($sibling->name)
+                '<a class="category-button lyli-taxonomy-nav-chip" href="%s">%s</a>',
+                esc_url($child_url),
+                esc_html($child->name)
             );
         }
         echo '</span>';
+    } else {
+        $siblings = get_terms([
+            'taxonomy' => 'product_cat',
+            'parent' => $term->parent,
+            'hide_empty' => true,
+        ]);
+        $siblings = is_wp_error($siblings) ? [] : $siblings;
+
+        if (count($siblings) >= 2) {
+            echo '<span class="lyli-taxonomy-nav-siblings">';
+            foreach ($siblings as $sibling) {
+                $sibling_url = get_term_link($sibling);
+                if (is_wp_error($sibling_url)) {
+                    continue;
+                }
+                $is_current = $sibling->term_id === $term->term_id;
+                printf(
+                    '<a class="category-button lyli-taxonomy-nav-chip%s" href="%s"%s>%s</a>',
+                    $is_current ? ' is-current' : '',
+                    esc_url($sibling_url),
+                    $is_current ? ' aria-current="page"' : '',
+                    esc_html($sibling->name)
+                );
+            }
+            echo '</span>';
+        }
     }
 
     echo '</nav>';

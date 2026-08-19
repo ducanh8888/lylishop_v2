@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.10.0
+Version: 1.11.0
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -1039,12 +1039,33 @@ form {
     text-decoration: none;
     transition: color var(--lyli-transition), border-color var(--lyli-transition), background var(--lyli-transition);
 }
+/*
+ * Owner-reported: hover and current-category state "can become too
+ * similar." Root cause, found via computed-style + matched-CSSRule
+ * inspection (not guessed): Botiga generates a per-site Customizer
+ * stylesheet (`custom-styles.css`, from the theme's own "Button" color
+ * setting) containing
+ *   .woocommerce-page-header .category-button:hover {
+ *     background-color: #212121 !important; color: #fff !important;
+ *     border-color: #212121 !important;
+ *   }
+ * — a near-black fill with `!important`, which silently won over this
+ * theme's own (non-`!important`) hover rule regardless of specificity or
+ * load order, and read as visually close in darkness/weight to the
+ * primary-brown CURRENT-state fill, especially on a quick glance or tap.
+ * The only reliable way to override a `!important` rule is another
+ * `!important` rule at equal-or-higher specificity — Botiga's own output
+ * already set that precedent here, so matching it is the narrowly-scoped
+ * fix, not a general license to reach for `!important` elsewhere. Hover
+ * now uses a distinct blush surface (never the dark current-state fill),
+ * so CURRENT and HOVER can never visually collide again.
+ */
 @media (hover: hover) and (pointer: fine) {
     .category-button:hover,
     .woocommerce-page-header .category-button:hover {
-        border-color: var(--lyli-color-primary);
-        background: var(--lyli-color-warm-white);
-        color: var(--lyli-color-primary);
+        border-color: var(--lyli-color-primary) !important;
+        background: var(--lyli-color-blush) !important;
+        color: var(--lyli-color-primary) !important;
     }
 }
 /*
@@ -1059,10 +1080,18 @@ form {
     color: var(--lyli-color-warm-white);
 }
 @media (hover: hover) and (pointer: fine) {
+    /*
+     * !important for the same reason as the non-current hover rule above:
+     * Botiga's Customizer stylesheet's `.category-button:hover` also
+     * matches a current chip (it has no knowledge of `.is-current`), so
+     * without this a current chip would go near-black on hover instead of
+     * staying the current-state brown.
+     */
     .category-button.is-current:hover,
     .category-button[aria-current="page"]:hover {
-        border-color: var(--lyli-color-primary);
-        background: var(--lyli-color-primary);
+        border-color: var(--lyli-color-primary) !important;
+        background: var(--lyli-color-primary) !important;
+        color: var(--lyli-color-warm-white) !important;
     }
 }
 
