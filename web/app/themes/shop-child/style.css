@@ -1225,7 +1225,17 @@ form {
 .woocommerce-checkout .col2-set .col-2 { float: none; width: auto; }
 .woocommerce form .form-row input.input-text,
 .woocommerce form .form-row textarea,
-.woocommerce form .form-row select { width: 100%; max-width: 100%; min-height: 48px; padding: 10px 12px; background: var(--lyli-color-warm-white); }
+.woocommerce form .form-row select { width: 100%; max-width: 100%; min-height: 48px; padding: 10px 12px; }
+.woocommerce form .form-row input.input-text,
+.woocommerce form .form-row textarea { background: var(--lyli-color-warm-white); }
+/*
+ * Selects get their own background here (not the shorthand above): the
+ * `background` shorthand resets background-image too, which silently
+ * dropped the chevron affordance added below at an equal-specificity tie
+ * (live-verified: .woocommerce-checkout select.select's chevron never
+ * painted until this was split out).
+ */
+.woocommerce form .form-row select { background-color: var(--lyli-color-warm-white); }
 .woocommerce-account .woocommerce-MyAccount-navigation { width: 25%; }
 .woocommerce-account .woocommerce-MyAccount-navigation ul { list-style: none; margin: 0; padding: 8px; border: 1px solid var(--lyli-color-border); border-radius: 14px; background: var(--lyli-color-warm-white); }
 .woocommerce-account .woocommerce-MyAccount-navigation li a { display: block; padding: 11px 14px; border-radius: 9px; text-decoration: none; }
