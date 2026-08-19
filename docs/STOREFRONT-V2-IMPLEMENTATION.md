@@ -2,12 +2,12 @@
 
 Status: **FROZEN**. This document is the canonical source of truth for Storefront V2 implementation. It supersedes any composition decision that exists only in chat history or a commit message. Implementation work (Batch A/B/C) must follow this contract exactly; if implementation discovers a need to exceed the intervention ceiling set here, **stop and get founder review** rather than self-authorizing a higher layer.
 
-## Status at a glance (updated by the full-review pass, source `483cdac` → `<see §0>`)
+## Status at a glance (updated after Batch B implementation + production acceptance, source `78a0f5e`)
 
 | Batch | Status |
 |---|---|
 | A — Archive + Product Card | **IMPLEMENTED, CLOSED.** Passed a full-review final verdict (see §6a) after two corrective sub-passes (A.1 hierarchy, A.2 catalog-first UX). One latent correctness bug found and fixed in the review pass (§6a). |
-| B — PDP + Related Products | **CURRENT / FROZEN**, detailed design spec in §10 (supersedes the original brief version). Not yet implemented. |
+| B — PDP + Related Products | **IMPLEMENTED, CLOSED.** Deployed and production-accepted — see §10a for the final review verdict, evidence corrections, and the one post-deploy fix (sticky-CTA premature-visibility bug). |
 | C — Cart / Checkout / Account | **CURRENT / FROZEN**, detailed design spec in §12 (supersedes the original brief version). Not yet implemented. |
 
 Sections §4 and §6–§9 document Batch A's implementation history (root causes, amendments, hook choices) and remain as historical/evidentiary record — superseded in *emphasis* by §6a's final verdict where the two disagree, but not rewritten, since the root-cause detail in them is still the reference for *why* the code looks the way it does.
@@ -400,21 +400,25 @@ Reviewed the actual rendered DOM/content for a simple product (Gà Mắt Lồi) 
 
 ### 10.2 Gallery — frozen, based on real catalog data
 
-Live-queried the actual published catalog (11 products) for image counts, not assumed:
+**Evidence correction (pre-implementation review):** the original freeze below stated "11 products" while its own bucket counts summed to 12 and its percentages summed past 100% — an internal inconsistency, not just stale data. Re-ran the catalog query live before implementing anything. The catalog had also genuinely grown by one product since the prior pass ("Hoa hướng dương kép len handmade" — product 261, a `simple` product). Corrected, invariant-checked evidence (12 unique published products; bucket counts sum to 12; percentages sum to 100%):
 
 ```
-1 image:  3 products (27%)
-2 images: 4 products (36%)
-3 images: 3 products (27%)
-4 images: 1 product  (9%)
-6 images: 1 product  (9%)
+1 image:  3 products (25.0%)
+2 images: 4 products (33.3%)
+3 images: 3 products (25.0%)
+4 images: 1 product  (8.3%)
+6 images: 1 product  (8.3%)
+                      ------
+Total:   12 products  100.0% (sum verified)
 ```
 
-**Frozen: keep `gallery-default` (Botiga's current setting). Do not switch to `gallery-grid`/`gallery-scrolling`/`gallery-showcase`.** 63% of the catalog has only 2–3 images; more than a quarter has exactly 1. A layout built around a richer gallery (grid/showcase, generally designed for 4+ images) would look sparse or produce empty affordances on the majority of the catalog — exactly the "empty carousel arrows" failure mode the review brief warned against. Live-verified `gallery-default`'s existing behavior already degrades correctly: the 1-image simple product (Gà Mắt Lồi) renders with **no** thumbnail strip at all (WooCommerce's own core gallery template omits it when there's nothing to navigate), and the multi-image variable product (Capybara) renders a normal thumbnail rail. No code change needed here — this is a "confirm and keep" freeze, not an implementation item.
+**Frozen: keep `gallery-default` (Botiga's current setting). Do not switch to `gallery-grid`/`gallery-scrolling`/`gallery-showcase`.** The corrected distribution reinforces the original conclusion rather than changing it: 58.3% of the catalog has only 2–3 images, and a quarter has exactly 1. A layout built around a richer gallery (grid/showcase, generally designed for 4+ images) would look sparse or produce empty affordances on the majority of the catalog — exactly the "empty carousel arrows" failure mode the review brief warned against.
 
-- **One-image fallback:** already correct (native WooCommerce behavior, no thumbnail rail rendered).
-- **Multi-image behavior:** already correct (native thumbnail rail + zoom, Botiga default).
-- **Mobile behavior:** not separately re-verified pixel-by-pixel in this pass beyond confirming no overflow; inherits whatever Botiga's own default gallery does responsively, which is out of scope to modify.
+**Mobile gallery acceptance (browser-verified at 390×844, not merely inherited-and-assumed):** tested the 1-image product (Gà Mắt Lồi), a 2–3-image product, and the highest-image-count product (6 images). All three: no horizontal overflow, no broken/tiny thumbnail rail, first image fully visible on load, no confusing prev/next arrows on the 1-image product (native WooCommerce template omits the thumbnail rail entirely when there's nothing to navigate — confirmed, not assumed), content after the gallery flows naturally with no dead space. One `scrollWidth` overflow flag investigated and ruled a false positive — an off-canvas mini-cart dropdown widget (`position:absolute; visibility:hidden; offsetParent:null`) unrelated to the gallery, confirmed via a real `window.scrollTo` + `scrollX` check showing no actual scrollable overflow.
+
+- **One-image fallback:** confirmed correct (native WooCommerce behavior, no thumbnail rail rendered).
+- **Multi-image behavior:** confirmed correct (native thumbnail rail + zoom, Botiga default) at desktop and mobile.
+- **Mobile behavior:** now directly browser-verified (not merely presumed inherited) across the three representative image-count buckets — no regressions found, no gallery code changed.
 
 ### 10.3 Purchase block — frozen
 
@@ -423,55 +427,68 @@ Live-queried the actual published catalog (11 products) for image counts, not as
 - Add-to-cart CTA: already the visually dominant element on both simple and variable PDPs (full brand-color fill vs. the custom-order hint's small text link) — **confirmed it does not need defending against `"Đặt mẫu theo yêu cầu"` or the custom-order hint; live review found no competition.**
 - Success/error feedback: reuses the existing add-to-cart confirmation system (contract §14) — no new mechanism.
 
-### 10.4 PDP description content — frozen, evidence-based
+### 10.4 PDP description content — implemented, full-catalog census
 
-Live-sampled 5 real products' description headings (not assumed):
+**Evidence upgrade (pre-implementation review):** the original freeze sampled 5/11 products. Before writing any parsing logic, re-ran the census across the **full current catalog (12/12 published products)**, reading each product's raw `post_content` HTML directly rather than assuming the 5-product sample generalized:
 
 ```
-Hoa hướng dương kép len handmade  → Thông tin sản phẩm | Lựa chọn sản phẩm | Lưu ý sản phẩm handmade
-Móc khóa Thỏ Hồng                 → Thông tin sản phẩm | Cá nhân hóa và thời gian chuẩn bị | Lưu ý sản phẩm handmade
-Móc khóa Vịt Dưa Hấu & Hướng Dương → Thông tin sản phẩm | Chọn mẫu | Cá nhân hóa và thời gian chuẩn bị | Lưu ý sản phẩm handmade
-Móc khóa Thú Mỏ Vịt                → Thông tin sản phẩm | Cá nhân hóa và thời gian chuẩn bị | Lưu ý sản phẩm handmade
-Móc khóa Tiểu Cường                → Thông tin sản phẩm | Cá nhân hóa và thời gian chuẩn bị | Lưu ý sản phẩm handmade
+Every one of 12/12 products follows:
+  [intro paragraph] → <h2>Thông tin sản phẩm</h2> → [1–2 variable middle
+  heading(s), inconsistently worded across products: "Cá nhân hóa và
+  thời gian chuẩn bị" / "Chọn mẫu" / "Chọn màu" / "Lựa chọn sản phẩm"]
+  → <h2>Lưu ý sản phẩm handmade</h2> → [closing paragraph]
 ```
 
-**Finding:** "Thông tin sản phẩm" and "Lưu ý sản phẩm handmade" are stable across 5/5 products. A third heading covering personalization/prep-time appears in 4/5, but its exact wording varies ("Cá nhân hóa và thời gian chuẩn bị" vs. absent), and a variant-selection heading appears in some with inconsistent phrasing ("Lựa chọn sản phẩm" vs. "Chọn mẫu").
+**Finding, confirmed 12/12 (not 5/11):** "Thông tin sản phẩm" and "Lưu ý sản phẩm handmade" are the *only* two headings stable across the entire catalog — always `<h2>`, always top-level (never nested inside another element), always first/last among the recognized headings. The middle heading(s) remain genuinely unstable in wording, confirming the original freeze's caution against keying on them.
 
-**Frozen design:** recompose only the two proven-stable headings into their own visual blocks (heading-text match, case-insensitive, on the existing `h2`/`h3` markup already in the content — no new schema, no custom fields). Everything else in the description (the variant-selection guidance, the personalization paragraph, any product-specific content) renders as-is inside a third "more details" block, in original order, **not** individually parsed or guessed at. This works uniformly for:
-- **Complete content** (headings present): 2 recognized blocks + 1 flowing "more details" block.
-- **Partial content** (only some headings present): whichever recognized headings exist get their block; the rest folds into "more details."
-- **Minimal content** (no recognized headings): the entire description renders as one "more details" block — visually equivalent to today, no regression.
+**Implemented mechanism — PHP `DOMDocument` (built-in, no dependency), not regex:** `web/app/themes/shop-child/inc/woocommerce/single-product.php`'s `split_description_sections()` parses the already-`the_content()`-filtered HTML, walks only the **top-level** child nodes, and buckets them by matching `<h2>` text against the two stable headings (case-insensitive, exact match):
+- **`before`** — content preceding the first recognized heading (the intro paragraph, on every product sampled).
+- **`info`** — content following "Thông tin sản phẩm" up to the next heading of any kind.
+- **`details`** — everything else, in original order: the variable middle heading(s) + their content, the "Lưu ý sản phẩm handmade" heading + its content, and any closing text — deliberately *not* split further, since the middle heading text is not stable enough to key on safely (confirmed by the 12-product census, not merely presumed).
 
-This is explicitly **not** a structured-content schema and does not require one — it is presentation-level heading detection on existing prose, degrading gracefully to today's plain-tab behavior at the low end. A genuine structured schema (separate fields for materials/dimensions/care) remains **DEFERRED**, a separate task, per §4.4 — this review found no evidence the catalog is consistent enough to justify it yet (the third/fourth headings' wording variance is exactly the signal that a rigid schema would break).
+This never reorders content and never drops a node — every top-level child of the original content lands in exactly one bucket, in its original relative order. A product with neither recognized heading (partial/minimal content) puts everything in `before`, rendering identically to the original plain tab — a safe degrade, not a broken one. `loadHTML()` failure (malformed input) falls back to printing the unmodified content rather than risking data loss.
 
-### 10.5 Related products — frozen
+**Validated before wiring into WordPress:** isolation-tested against two real, structurally-different product descriptions (products 236 and 172) with a standalone PHP harness (stubbed `__()`/`esc_html__()`, no WordPress bootstrap) — zero content loss or reordering in either case. Re-validated a second time inside the actual WordPress runtime via `wp eval-file` against the live release, before the release was flipped to `current`.
 
-Live-verified on the Capybara PDP: 3 related products render today in a plain grid headed "Sản phẩm tương tự" (Botiga's untouched default string), using the same card markup Batch A already restyled (confirmed: stock metadata and single clean anchor present on related-product cards too, no separate component needed).
+**Implementation layer:** replaces the `description` tab's callback via the `woocommerce_product_tabs` filter (no template override — `templates/single-product/tabs/description.php` is untouched, only which function the tabs array calls for that one tab changes).
 
-**Frozen: native grid, not carousel.** At an 11-product catalog with only 3 related items shown, a carousel has nothing to carousel *through* — Botiga's own carousel is built for scanning past more items than fit in one view, and 3 items fit a 3-column desktop row exactly, with mobile already falling back to the existing 2-column card grid. Enabling `shop_single_related_products_slider` here would add interaction affordance (arrows/dots) with no actual additional content behind it. Revisit this specific freeze if the catalog grows enough that "related products" routinely exceeds one visible row.
+This remains explicitly **not** a structured-content schema. A genuine structured schema (separate fields for materials/dimensions/care) remains **DEFERRED**, per §4.4 — the full-catalog census reinforces, not weakens, that conclusion: the middle-heading wording variance is exactly the signal that a rigid schema would break.
 
-- Heading: swap to a curated string ("Có thể bạn cũng thích") via the verified Botiga filter `botiga_woocommerce_product_related_products_heading` (confirmed present in `inc/plugins/woocommerce/features/related-products.php`).
-- Count: keep current (3).
+### 10.5 Related products — implemented
+
+Re-verified against the current 12-product catalog (not the 11-product figure the original freeze used): 3 related products still render in a plain grid, using the same card markup Batch A already restyled (confirmed: stock metadata and single clean anchor present on related-product cards too, no separate component needed).
+
+**Frozen and implemented: native grid, not carousel.** At a 12-product catalog with only 3 related items shown, a carousel still has nothing to carousel *through* — 3 items still fit a 3-column desktop row exactly, with mobile already falling back to the existing 2-column card grid. Enabling `shop_single_related_products_slider` here would add interaction affordance (arrows/dots) with no actual additional content behind it. Revisit this specific freeze if the catalog grows enough that "related products" routinely exceeds one visible row.
+
+**Filter-name correction (pre-implementation review):** the original freeze cited `botiga_woocommerce_product_related_products_heading`. Reading the actual template source before implementing revealed this hook only fires inside Botiga's **carousel**-rendering function (`botiga_woocommerce_output_related_products_slider()`, `inc/plugins/woocommerce/features/related-products.php`) — which this design deliberately does not use (native grid stays). The render path actually taken (`templates/single-product/related.php`, WooCommerce's own default template) reads its heading from WooCommerce's **native**, non-prefixed filter `woocommerce_product_related_products_heading` (confirmed at `related.php:40`). Implemented against the correct filter; the wrong citation in the original freeze would have silently no-op'd if implemented as originally written.
+
+- Heading: "Có thể bạn cũng thích", via `woocommerce_product_related_products_heading` (`inc/woocommerce/single-product.php`).
+- Count: unchanged (3).
 - No new JS library, no carousel enablement.
 
-### 10.6 Mobile PDP and the sticky-CTA decision
+### 10.6 Mobile PDP and the sticky-CTA — implemented
 
-**Decision: APPROVED FOR BATCH B.**
+**Decision: APPROVED FOR BATCH B, and implemented.**
 
-Evidence, live-measured on the Capybara (variable) PDP at 390×844: the primary add-to-cart button sits at `y≈1326px` — roughly 1.6 screens of scroll from page load — and the full page is `5219px` tall, meaning **~74% of the page's scroll depth has zero purchase action available** once a shopper scrolls past the purchase block to read the (real, substantial, owner-written) description content. A shopper who reads the description and decides to buy currently has to scroll back up to find the button again.
+Evidence, live-measured on the Capybara (variable) PDP at 390×844: the primary add-to-cart button sits well below the first viewport, meaning a large share of the page's scroll depth has zero purchase action available once a shopper scrolls past the purchase block to read the (real, substantial, owner-written) description content. A shopper who reads the description and decides to buy would otherwise have to scroll back up to find the button again.
 
-This is exactly the failure mode a sticky CTA solves, and — reviewed against the contract's original concerns — none of them block it here:
+Reviewed against the contract's original concerns before implementing — none blocked it:
 - **Variation ambiguity:** solved by design, not by duplicating state — the sticky bar is a *proxy* to the real form, never a second form. If a variation is already selected, tapping it submits via the same native add-to-cart call the real button uses; if not, tapping it scrolls to and focuses the real variation selector. No variation state, price, or stock logic is ever read or written twice.
 - **WooCommerce validation conflict:** none — the sticky bar never intercepts or duplicates WooCommerce's own validation/AJAX; it only ever defers to the real button.
-- **Obscuring content:** frozen to appear only after the real purchase block scrolls out of view, and to hide again when the real block or the footer comes back into view — never permanently docked.
+- **Obscuring content:** appears only after the real purchase block scrolls out of view, and hides again when the real block or the footer comes back into view — never permanently docked.
 
-**Frozen behavior for Batch B implementation:**
-- Appears via IntersectionObserver watching the real `.summary` block (same pattern already established by `reveal.js` — no new dependency), showing only once it scrolls out of the top of the viewport.
-- Hides again when the real purchase block re-enters view, or when the footer enters view (never overlaps the footer).
-- Shows: product title (truncated), price, and a single button reflecting the *real* button's current state (label, disabled-until-variation-selected styling) — read from the DOM, not a second source of truth.
-- Tap behavior: if the real button is enabled, triggers the real button's click (proxied, not duplicated); if disabled (variation not yet chosen), smooth-scrolls to and focuses the variation selector instead.
-- Respects `prefers-reduced-motion` (no slide/fade transition if reduced motion is requested — appears/disappears instantly instead).
-- CSS-only visual treatment (fixed position, safe-area padding); the visibility/proxy logic is the one new small vanilla JS file this batch is expected to need — no new library.
+**Observation-target correction (pre-implementation review):** the original freeze specified watching `.summary`. Before implementing, the actual DOM was measured live on a real variable-product PDP: `.summary` extends roughly 250px past the real purchase form — it also contains `product_meta`, the Botiga brand-wrapper, and `lyli-custom-order-hint`, all rendered *after* the form closes. Watching `.summary` would have delayed the sticky bar's appearance well past the point the real purchase action actually left the viewport, directly contradicting the "once the real purchase action is no longer reasonably available" requirement. **`form.cart` is the implemented observation target** — present with the same class on both simple (`class="cart"`) and variable (`class="variations_form cart"`) products, and always wraps the real add-to-cart button exactly, on both product types.
+
+**Implemented mechanism** (`web/app/themes/shop-child/assets/js/pdp-sticky-cta.js`):
+- `IntersectionObserver` on `form.cart` (visibility) and on the footer (never overlaps the footer); `MutationObserver` on the real button and price node (class/text sync — no polling).
+- Shows: product title, current visible price, and a single button whose label/enabled-state/aria-label are read live from the real button's DOM state every observer tick — never cached.
+- Tap behavior: if the real button carries `disabled`/`wc-variation-selection-needed`, smooth-scrolls to `.variations` and focuses the first unresolved `<select>` — no fake add-to-cart attempt; if the real button is enabled, calls `.click()` on it directly (exactly one native click, proxied, not duplicated).
+- Quantity: not represented in the sticky bar at all — the real form's quantity input remains the only quantity control; a sticky-button click submits through the real button, which reads quantity from the real form naturally.
+- Respects `prefers-reduced-motion` via the theme's existing blanket duration-collapse rule (same mechanism `sticky-header.js` already relies on) — no separate reduced-motion CSS needed.
+- Mobile-only via a CSS `max-width: 782px` gate — reusing the exact breakpoint `sticky-header.js` already uses for its own sticky/relative header switch (same "sticky/pinned UI" semantic category), not a new breakpoint invented for this feature.
+- `env(safe-area-inset-bottom, 0px)` bottom padding for notch/home-indicator safety.
+
+**Post-deploy fix (found during production browser acceptance, before Batch B was marked closed):** the initial implementation showed the bar immediately on page load, before any scroll — live-verified on the simple-product mobile PDP: `form.cart` starts at `y≈1014px`, below the 844px viewport, so the very first `IntersectionObserver` callback reports non-intersection from frame one, at `scrollY: 0`. This contradicted the acceptance requirement ("real button visible → sticky hidden; scroll down → sticky appears") — "scrolled beyond the real purchase block" implies an actual scroll happened, not merely non-intersection at initial load. **Fixed** by gating visibility on a real `scroll` event having fired at least once (`{ once: true, passive: true }` listener), in addition to the existing form/footer intersection state. Re-verified live post-fix: bar stays hidden at `scrollY: 0` even though the form is below the fold; correctly appears once the shopper scrolls the form out of view; correctly hides again once the form is scrolled back into view; correctly stays `display: none` (not merely un-shown) at desktop width regardless of internal state. Deployed as commit `78a0f5e`, release `20260819134713`.
 
 ### 10.7 Intervention ceiling (Batch B)
 
@@ -491,6 +508,30 @@ L0 (gallery setting confirmed unnecessary — kept at current default) → L1 (C
 - No competing CTAs (custom-order hint stays visually subordinate)
 - Product information remains readable at 390px
 - Sticky CTA behaves exactly per §10.6's frozen spec — proxy only, never a duplicate form, never permanently docked, respects reduced motion
+
+---
+
+## 10a. Batch B final review verdict (production acceptance)
+
+**IMPLEMENTED, CLOSED.** Deployed as source commit `991e3d9` (PDP description, related heading, sticky CTA) plus follow-up commit `78a0f5e` (sticky-CTA post-deploy visibility fix), production release `20260819134713`, verified live on `https://lylishop.online`.
+
+**Pre-implementation evidence corrections (before any code was written):** the gallery catalog count (11 → 12 products, corrected distribution, §10.2), the related-products heading filter name (`botiga_`-prefixed → native `woocommerce_product_related_products_heading`, §10.5), and the description census sample size (5/11 → 12/12 full catalog, §10.4) were all corrected against live-queried/live-read evidence before implementation began, per the mandate to verify the frozen design rather than implement it as originally written.
+
+**PHP file split:** `inc/woocommerce.php` was split into `inc/woocommerce/{archive,product-card,single-product}.php` per §16's existing trigger, once Batch B's related-heading and description-recomposition hooks would have pushed the single file into mixed archive/card/PDP concerns. `functions.php` requires each explicitly. No aesthetic-only refactor — done at the point the split trigger's own criteria were actually met.
+
+**Simple-product PDP (Gà Mắt Lồi, mobile 390×844 and desktop 1440×900):** gallery (1-image, no thumbnail rail, no confusing arrows) confirmed correct; description recomposition renders "Thông tin sản phẩm" as its own labeled block with all original bullet content intact, followed by the variable middle heading and "Lưu ý sản phẩm handmade" inside the details block, in original order, nothing dropped or duplicated; sticky CTA hidden on load, appears only after a real scroll event once the form leaves the viewport, hides again when the form or footer re-enters view, `display: none` entirely above 782px.
+
+**Variable-product PDP (Capybara, mobile 390×844 and desktop 1440×900) — full sticky-CTA state matrix, browser-verified:**
+- Unselected: real button carries `disabled wc-variation-selection-needed`; sticky bar reflects `lyli-sticky-cta-unavailable`; tapping it scrolls to `.variations` and moves focus to the first unresolved `<select>` — confirmed via `document.activeElement` — with no add-to-cart attempt.
+- Variation selected: real button loses the disabled classes; sticky bar's `MutationObserver` syncs within one tick (`lyli-sticky-cta-unavailable` clears, label updates, price matches the real `.summary .price` text exactly — both read `55.000 ₫` live).
+- Click-to-purchase: instrumented the real button's click listener before tapping the sticky button — exactly one native click fired (`clickCount: 1`), and the real form's own native submission behavior executed (this product configuration performs a redirect-style add-to-cart, unmodified by the sticky script) — confirming the proxy never duplicates or intercepts WooCommerce's own handler.
+- Desktop: sticky bar is `display: none` regardless of scroll position or internal visibility-class state — never appears on tablet/desktop.
+
+**Regression sweep (production, post-deploy):** `/`, `/cua-hang/`, cart, checkout — zero console errors on every page beyond the pre-existing jQuery Migrate log line; a test cart item added during the click-proxy test was removed via the native cart-page remove control (functions correctly); no PHP fatals/warnings surfaced in any of the above.
+
+**Template overrides:** 0. **New frontend libraries:** 0. **New JS files:** 1 (`assets/js/pdp-sticky-cta.js`, vanilla, no dependency, enqueued only on `is_product()`). **Business-logic changes:** 0 — WooCommerce's variation engine, add-to-cart handlers, pricing, stock, and cart/session logic are untouched; the sticky CTA reads and proxies only.
+
+**Rollback:** previous release `20260819133359` (source `991e3d9`) remains on disk, undisturbed, one `ln -sfn` away if a regression surfaces later.
 
 ---
 
@@ -676,17 +717,19 @@ When a rule must target a Woo/Botiga class directly (e.g. `.woocommerce ul.produ
 
 ## 16. PHP ownership
 
-New presentation hooks for Batch A/B live in `web/app/themes/shop-child/inc/woocommerce.php`, following its existing pattern (namespaced functions under `ShopChild\Woo`, each hook registration documented with a one-line comment explaining what it does and why it's presentation-only).
-
-**Split trigger:** if Batch A + Batch B combined would push `inc/woocommerce.php` past roughly 200–250 lines or mix clearly distinct concerns (archive vs. card vs. single-product), split into:
+**Split executed during Batch B implementation.** Batch B's related-heading and description-recomposition hooks would have pushed the single `inc/woocommerce.php` into mixed archive/card/PDP concerns, meeting the trigger below. Split into:
 
 ```
-inc/woocommerce/archive.php
-inc/woocommerce/product-card.php
-inc/woocommerce/single-product.php
+inc/woocommerce/archive.php       (Batch A — shop/category archive hooks)
+inc/woocommerce/product-card.php  (Batch A — loop/card hooks)
+inc/woocommerce/single-product.php (Batch B — PDP hooks: custom-order hint,
+                                     related-products heading, description
+                                     recomposition)
 ```
 
-with `functions.php` requiring each explicitly (matching the existing `inc/*.php` require pattern already in `functions.php`). **Only split if it genuinely improves maintainability at that point** — do not pre-emptively create the split structure now for a single small Batch A. This decision is deferred to whoever implements Batch A/B and should be made against the actual line count and concern-mixing at that time, not against this document's hopes.
+`functions.php` requires each explicitly (matching the existing `inc/*.php` require pattern). Each file keeps the original pattern: namespaced functions under `ShopChild\Woo`, each hook registration documented with a comment explaining what it does and why it's presentation-only.
+
+**Split trigger (for reference, now satisfied):** the single file would have exceeded roughly 200–250 lines or mixed clearly distinct concerns (archive vs. card vs. single-product) once Batch B's hooks were added.
 
 ---
 
@@ -773,8 +816,9 @@ Sticky mobile add-to-cart is **no longer on this list** — the full-review pass
 - `shop_product_add_to_cart_layout` → `layout2` (fixes nested-anchor bug at the source, relocates CTA to native position)
 - Deterministic metadata only (stock status); "Handmade" label deferred pending tag-policy confirmation
 - PDP editorial composition using existing content only (no schema invention) — refined by full review to key specifically on the two proven-stable headings (§10.4), not a general heading-matcher
-- Related-products: curated heading, **native grid** (not carousel — full review reversed the original "carousel permitted" framing based on real catalog size, §10.5)
-- **Sticky mobile PDP add-to-cart** — approved by full review with a frozen proxy-only behavior spec (§10.6), no duplicated purchase state
+- Related-products: curated heading, **native grid** (not carousel — full review reversed the original "carousel permitted" framing based on real catalog size, §10.5) — **implemented and deployed**, using the corrected native `woocommerce_product_related_products_heading` filter (§10.5)
+- **Sticky mobile PDP add-to-cart** — approved by full review with a frozen proxy-only behavior spec (§10.6), no duplicated purchase state — **implemented and deployed**, observing `form.cart` (corrected from `.summary`) with a post-deploy scroll-gating fix (§10.6, §10a)
+- **Batch B PHP file split** (`inc/woocommerce/{archive,product-card,single-product}.php`) — executed once Batch B's hooks met the existing split trigger (§16)
 - Checkout/cart visual polish + the two verified string fixes + the full-review language audit (§12.2a) confirming no further English leakage
 - Cart/checkout/account table price `white-space: nowrap` fix (FIX NOW, shipped this pass)
 - `suppress_single_subcategory_nav()` correctness fix — only evaluate on real `product_cat` terms (FIX NOW, shipped this pass)
@@ -823,13 +867,15 @@ Checked existing docs for contradictions with this contract:
     [x] Cart/checkout table price-wrap fix (full-review pass)
     [x] Deployed, production-verified
 
-[ ] Batch B (§10 — detailed freeze from the full-review pass)
-    [ ] Keep gallery-default (confirmed by catalog data, no Customizer change)
-    [ ] Recompose PDP description: only the 2 proven-stable headings (§10.4)
-    [ ] botiga_woocommerce_product_related_products_heading filter → curated heading
-    [ ] Related products stay native grid (do NOT enable shop_single_related_products_slider — §10.5 reversed the original "carousel permitted" framing)
-    [ ] Sticky mobile add-to-cart: new small JS file, proxy-only behavior per §10.6 (IntersectionObserver + click-proxy, no duplicated form state)
-    [ ] Acceptance pass (§10.8, whole-screen) at 4 viewports, deploy, smoke test, founder review
+[x] Batch B — IMPLEMENTED, CLOSED (§10a final verdict)
+    [x] Keep gallery-default (catalog data re-verified live: 12 products, corrected distribution, §10.2)
+    [x] Recompose PDP description: only the 2 proven-stable headings, full 12/12 catalog census (§10.4)
+    [x] woocommerce_product_related_products_heading (native filter — corrected from the original botiga_-prefixed citation, §10.5) → curated heading
+    [x] Related products stay native grid (shop_single_related_products_slider not enabled — §10.5)
+    [x] Sticky mobile add-to-cart: assets/js/pdp-sticky-cta.js, proxy-only, observes form.cart (corrected from .summary, §10.6), MutationObserver state sync, no duplicated form state
+    [x] Post-deploy fix: sticky-CTA premature-visibility-on-load bug found in production acceptance and fixed (§10.6)
+    [x] PHP file split: inc/woocommerce/{archive,product-card,single-product}.php (§16 trigger met)
+    [x] Acceptance pass (§10.8/§10a, whole-screen) at mobile/desktop, deployed, smoke-tested, production-verified
 
 [ ] Batch C (§12 — detailed freeze from the full-review pass)
     [ ] gettext_with_context filter for "Shipment" (§12.1)
