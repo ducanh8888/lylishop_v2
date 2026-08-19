@@ -1,6 +1,6 @@
 # Post-Storefront V2 UX/UI Audit — 2026-08-19
 
-**Status: AUDIT ONLY. No runtime code, settings, or content changes were made in this pass.**
+**Status: REMEDIATED. Findings UX-001 through UX-016 have final dispositions — see §9. The original audit pass (below, §0–§8) is preserved as the historical record of what was found; §9 documents what was actually done about it, deployed 2026-08-20.**
 
 This is a new, independent audit phase — not a continuation or reopening of Storefront V2 (`docs/STOREFRONT-V2-IMPLEMENTATION.md`, CLOSED, historical, not modified by this document). It evaluates the live production site as a customer would experience it, not against the frozen V2 contract's own acceptance criteria.
 
@@ -17,22 +17,27 @@ This is a new, independent audit phase — not a continuation or reopening of St
 
 Confirmed the live site corresponds to the closed Storefront V2 state before auditing began.
 
-**Runtime/browser used:** Chromium via Playwright MCP (`mcp__playwright__*` tools). **No Safari or Firefox testing was performed** — this is a real methodology gap, not an oversight to hide (see §Not Tested).
+**Runtime/browser used:** Chromium via Playwright MCP (`mcp__playwright__*` tools). **No Safari or Firefox testing was performed** — this is a real methodology gap, not an oversight to hide (see §Not Tested). **Still true as of the remediation pass** — only Chromium was available in this environment on both dates; see §9 for the explicit re-statement.
 
 ### Real production inventory (WP-CLI, live-queried — not assumed from old docs)
 
-| | |
-|---|---|
-| Published pages | 12 (`Trang chủ`, `Cửa hàng`, `Giỏ hàng`, `Thanh toán`, `Tài khoản`, `Giới thiệu`, `Liên hệ`, `Đặt mẫu theo yêu cầu`, `Chính sách vận chuyển`, `Chính sách đổi trả`, `Chính sách bảo mật`, `Điều khoản`, `Blog`) |
-| Published products | **14** (grown from the 12 last reviewed in Batch B) — 9 simple, 5 variable |
-| Product categories | 12 total, including **4 with zero products**: `Lyli Signature`, `Gấu bông len`, `Hộp quà`, `Hoa tulip`, `Bó hoa len có sẵn` (5, not 4 — corrected count) |
-| Categories with real stock | `Móc khóa len` (11, children `Lyli Charm` 4 / `Lyli Tiny` 7), `Hoa len` (3, child `Hoa len lẻ` 3, grandchild `Hoa hướng dương` 3) |
-| Blog posts | 5, all published the same day |
-| Payment methods enabled | `bacs` (Chuyển khoản / VietQR), `cod` — confirmed live via `WC()->payment_gateways()` |
-| Main nav items | 6: Trang chủ, Danh mục, Sản phẩm, Blog, Giới thiệu, Liên hệ |
-| Registration | **Disabled** (`woocommerce_enable_myaccount_registration` = `no`) — guest checkout is the only customer path |
+**Correction (remediation pass, 2026-08-20):** this table as originally written was internally inconsistent — it named 13 pages while stating "12", and stated "12 total" categories while separately listing and self-correcting to 5 empty ones. Both were arithmetic slips in the original write-up, not a sign the underlying live query was wrong. Corrected counts for the original audit date, plus the catalog had already grown again by the time of the remediation pass one day later (a real, expected, live-shop growth pattern, not a further inconsistency) — both snapshots are kept below rather than silently overwritten:
 
-This inventory materially changed the audit route list from what an old contract would suggest: the catalog crossed the 12-product pagination threshold for the first time (new: pagination UI, untested before), and several categories exist with zero products (new dead-end-page surface).
+| | 2026-08-19 (original audit) | 2026-08-20 (remediation pass) |
+|---|---|---|
+| Published pages | 13 | 14 (new: `Hoa len` landing page, `hoa-len-handmade`) |
+| Published products | 14 (9 simple, 5 variable) | 16 |
+| Product categories (total) | 12 | 13 (new: `Hoa giỏ`, populated) |
+| Product categories (empty) | 5: `Lyli Signature`, `Gấu bông len`, `Hộp quà`, `Đặt mẫu theo yêu cầu`, `Bó hoa len có sẵn` | 5 (same 5 — still empty) |
+| Product categories (populated) | 7 | 8 |
+| Blog posts | 5, all published the same day | 5 (unchanged) |
+| Payment methods enabled | `bacs` (Chuyển khoản / VietQR), `cod` | unchanged |
+| Main nav items | 6: Trang chủ, Danh mục, Sản phẩm, Blog, Giới thiệu, Liên hệ | unchanged |
+| Registration | Disabled (`woocommerce_enable_myaccount_registration` = `no`) | unchanged |
+
+`Đặt mẫu theo yêu cầu` (the custom-order routing category, term 21) was omitted from the original audit's empty-category list by mistake — it is real, empty, and top-level, exactly like the other 4. Corrected here.
+
+This inventory materially changed the audit route list from what an old contract would suggest: the catalog crossed the 12-product pagination threshold for the first time (new: pagination UI, untested before), and several categories exist with zero products (new dead-end-page surface, since remediated for navigability — see UX-014 in §9).
 
 ---
 
@@ -512,6 +517,91 @@ Every increase is genuinely new, previously-absent navigation content (a leaf ca
 ### Production
 
 Deployed across three same-day commits as issues were found during acceptance (not one blind deploy): `70dc9ee` (feature), `0238056` (chip-fill specificity fix), `d6c871f` (focus-visible fix). Final production release `20260819201428`, source `d6c871f676211e74bb93f3394eb24ffac895fdb6`.
+
+---
+
+## 9. Remediation pass — final dispositions (2026-08-20)
+
+Every finding below was re-reproduced live on current production before any change — none was implemented from the original write-up alone. Baseline before this pass: main `bfbd7bc7add837db63fe9de3b6e6caa7e52d87ec`, production release `20260819201428`, source `d6c871f676211e74bb93f3394eb24ffac895fdb6`.
+
+**UX-001 — Homepage Hoa len routing**
+**STATUS: FIXED** (found already partially fixed independently; completed the remainder) **IMPLEMENTED BY:** content only, no commit (WP page content, applied before this pass's own code changes) **PRODUCTION VERIFIED:** yes
+Re-reproduced first: the owner/editor had already replaced the homepage's "Hoa len đặt riêng" card with "Hoa len," linking to a new, real, dedicated landing page (`/hoa-len-handmade/`, WP page 279) that correctly routes to the populated `Hoa len lẻ` category and embeds live product grids for `Hoa hướng dương`/`Hoa tulip` — found independent of this session, between the original audit and this remediation pass. The core defect (routing an in-stock category through the custom-order-only funnel) is resolved. Residual, minor, **not fixed in this pass**: the new landing page itself also links to `Bó hoa len có sẵn`, which is still genuinely empty (0 products) — a shopper clicking it lands on an empty archive, though now with UX-016's up/sibling recovery navigation rather than a hard dead end (UX-014 fix directly helps here too). Left as owner-content, out of this pass's authority to edit further.
+
+**UX-002 — Policy discoverability**
+**STATUS: FIXED** **IMPLEMENTED BY:** `c59980a` **PRODUCTION VERIFIED:** yes
+Re-confirmed still true (zero policy links anywhere). Added all 4 published policy pages to the existing slim copyright bar (paired with "Tài khoản," not a new 4th footer column). Verified live: all 4 hrefs correct, no mobile overlap with the back-to-top button (see UX-013).
+
+**UX-003 — Vietnamese 404**
+**STATUS: FIXED** **IMPLEMENTED BY:** `da23979` (initial 3 strings) + `cbd3889` (found a 4th, "Most Popular," during production acceptance) **PRODUCTION VERIFIED:** yes
+Exact source strings verified against the deployed Botiga 2.4.7 source (`inc/template-tags.php`, `header.php`) before writing any filter. Scoped `gettext` filter, domain=`botiga` + exact source string. All 4 confirmed Vietnamese live: heading, body, search placeholder, and the best-sellers section heading.
+
+**UX-004 — Skip link / theme chrome localization**
+**STATUS: FIXED** **IMPLEMENTED BY:** `da23979` (same filter/commit as UX-003 — one mechanism covers both) **PRODUCTION VERIFIED:** yes
+"Skip to content" → "Bỏ qua đến nội dung," confirmed live via `:focus-visible` inspection (the element most keyboard/screen-reader users encounter first on every page). Did not expand into a theme-wide translation sweep — only confirmed leaks were touched, exactly as scoped.
+
+**UX-005 — Brand message too keychain-specific**
+**STATUS: FIXED** **IMPLEMENTED BY:** content only, no commit (WP post content, `wp eval-file` with verified single-occurrence `str_replace`, backed up before changing — see §10) **PRODUCTION VERIFIED:** yes
+Re-queried the live catalog first: `Gấu bông len` (plush) is still genuinely empty — confirmed the task's own warning applied, so plush was deliberately **not** named as available. Broadened the homepage eyebrow, H1, intro paragraph, and brand-story H2 from "Móc khóa len" to "Đồ len" (generic "yarn items"), and the intro paragraph now explicitly names both `móc khóa` and `hoa len` as concrete, actually-in-stock examples. Custom-order page H1 broadened from "…móc khóa len handmade…" to "…mẫu len handmade…"; its body paragraph already correctly named all three families (keychains/flowers/plush) as custom-order capability, which is honest framing there (not implying ready stock) and was left unchanged. Verified live at 390px — no wall-of-text regression, still reads as 4 short lines.
+
+**UX-006 — Homepage final CTA color**
+**STATUS: FIXED** **IMPLEMENTED BY:** `da23979` **PRODUCTION VERIFIED:** yes
+Re-measured: still `rgb(194, 195, 210)`. Root-caused precisely this time (the original audit's "accidental default swatch" theory was wrong — the homepage's own block JSON carries no color choice at all; it was a deliberate CSS rule using the real, defined `--lyli-color-lavender` token). Swapped to `--lyli-color-blush`, the same token the page's other CTA block already uses, for one consistent CTA family instead of two unrelated hues. Checked 360/390/430/1366/1440/1920 — no layout impact, color-only change.
+
+**UX-007 — Short-desktop shop density**
+**STATUS: FIXED (partial, by design)** **IMPLEMENTED BY:** `da23979` **PRODUCTION VERIFIED:** yes
+**Before:** 1366×768 `firstProductTop` = 548.7px (71.4% of viewport). **After:** 515.8px (67.2%) — a 32.9px / 4.2-point improvement. Trimmed the header's own padding ceiling and the breadcrumb's 30px margin (the single largest, clearly-attributable gap in the header stack); deliberately left the post-header margin-collapse system untouched (Batch A.2 history shows it already needed one fix, and it's shared with 1440/1920, which had to stay balanced). 1440×900 and 1920×1080 re-verified balanced (not cramped), 390×844 re-verified not cramped. This is a **measured, real, but modest** improvement, not a full resolution of the underlying "how much chrome does an archive need" question — a larger structural change (e.g., collapsing the eyebrow or moving the intro) was judged out of proportion for this pass and was not attempted.
+
+**UX-008 — Pagination touch targets**
+**STATUS: FIXED** **IMPLEMENTED BY:** `da23979` **PRODUCTION VERIFIED:** yes
+**Before:** 36×36px. **After:** 44×44px, confirmed live on both page 1 and page 2 of the current (now 16-product) catalog. Current-state color/spacing/softness untouched — Botiga's own customizer button-color setting already resolved to the Lyli primary brown here, confirmed live before touching anything.
+
+**UX-009 — Policy reading width**
+**STATUS: FIXED (scoped)** **IMPLEMENTED BY:** `da23979` (new `inc/content-pages.php`) **PRODUCTION VERIFIED:** yes
+**Before:** 1110px (~133 chars/line) on every plain WP page. **After:** 760px (~88 chars/line, matching the blog's own established pattern) on the 4 policy pages + "Giới thiệu" only. Explicitly checked "Liên hệ" (short, not dense prose) and "Đặt mẫu theo yêu cầu" (structured card columns, not a wall of text) live before excluding them — confirmed both still render at the original 1110px, unaffected, verified live post-deploy.
+
+**UX-010 — Variable product disabled CTA explanation**
+**STATUS: REJECTED** **IMPLEMENTED BY:** n/a **PRODUCTION VERIFIED:** n/a (no change made)
+Re-tested live on a variable PDP at 390×844 before deciding. Found: bold "Chọn mẫu" label directly above the native select (which itself reads "Chọn một tùy chọn"), immediately followed by a visibly dimmed (`opacity: 0.7`) button — the same disabled-state language used everywhere else on the site. Judged this sequence self-explanatory for a reasonable first-time shopper; the requested hint text would restate what the label already says one line above. Per the task's own explicit instruction for this exact scenario ("if the flow is already sufficiently obvious: REJECT the additional hint as redundant"), rejected.
+
+**UX-011 — Visual variant picker**
+**STATUS: DEFER** — unchanged, separate founder-approved future scope. Production architecture has not changed; native Woo variation mechanics remain untouched.
+
+**UX-012 — Sticky mobile CTA visual polish**
+**STATUS: FIXED** **IMPLEMENTED BY:** `da23979` **PRODUCTION VERIFIED:** yes
+Added `var(--lyli-radius-lg)` to the sticky bar's top corners only — the one existing brand token already used elsewhere for this radius tier, not a new value. Confirmed live: bar height, padding, shadow, and — critically — `pdp-sticky-cta.js`'s visibility/proxy/sync logic are byte-for-byte untouched; only a `border-radius` line was added to the CSS rule. Checked 360/390/430/844×390 and safe-area behavior (`env(safe-area-inset-bottom)` already existing, untouched).
+
+**UX-013 — Back-to-top / footer collision**
+**STATUS: FIXED** **IMPLEMENTED BY:** `da23979` **PRODUCTION VERIFIED:** yes
+Re-reproduced the original footer overlap, and **found a second, previously-undocumented overlap** during this pass: Botiga's back-to-top button also collided with the sticky PDP CTA bar itself (live-measured, near-total bounding-box overlap on any PDP once both are visible). Fixed both with a single mobile-only offset (`bottom: calc(88px + safe-area)`), clearing both the footer link row and the sticky bar. Verified live at 360/390/430 on the footer (all pages) and specifically on a PDP with the sticky bar visible; also spot-checked cart/checkout/account (no fixed-bottom UI there to collide with, confirmed unaffected).
+
+**UX-014 — Empty product category recovery**
+**STATUS: SUPERSEDED, then FIXED after a real gap was found in the superseding mechanism** **IMPLEMENTED BY:** `da23979` **PRODUCTION VERIFIED:** yes
+Re-tested per the task's own instruction to check whether UX-016 already covers this. Found it did **not**: `render_taxonomy_nav()` was hooked only to `woocommerce_before_shop_loop`, which WooCommerce core never fires when an archive has zero products (confirmed via direct `do_action` testing on the actual empty-archive request — the function produced correct output when called manually, but the real page request never reached it). This is exactly the single worst dead-end case the feature was built for, silently not helped by it. Also hooked the same function to `woocommerce_no_products_found`. Verified live on `/product-category/lyli-signature/` (0 products): up-link to "Móc khóa len" + sibling chips "Lyli Charm"/"Lyli Tiny" now render correctly above the native "no products" notice.
+
+**UX-015 — Search no-result recovery**
+**STATUS: FIXED** **IMPLEMENTED BY:** `da23979` **PRODUCTION VERIFIED:** yes
+Added "Thử từ khóa khác hoặc xem tất cả sản phẩm." (with a real link to the shop archive) after WooCommerce's own native notice, scoped to `is_search()` specifically so it never duplicates UX-014's category-specific up/sibling navigation. Verified live on a nonsense-term search.
+
+**UX-016 — Soft catalog navigation regression check**
+**STATUS: KEEP (no regression found, one real gap found and fixed under UX-014)**
+Specifically tested the "two consecutive taxonomy rows" concern (Botiga's child chips + the new up/sibling row) at 360/390/430 on `Móc khóa len` (a parent category that shows both). Judged the composition clear, not confusing: the two rows read as functionally distinct (go deeper vs. go up/sideways), visually distinguished (Botiga's chips vs. the up-link's ghost-link treatment + filled current-state chip), with adequate spacing between them. No architecture change made. The one real regression-adjacent finding from this pass — the empty-category hook gap — is filed under UX-014 above since that's the finding it directly addresses, not a defect in UX-016's own design.
+
+---
+
+## 10. Content/DB changes (reproducibility record)
+
+All WordPress content mutations made during this pass, for a clean-rebuild/restore process to account for:
+
+| Object | Change | Old value | New value | Mechanism | Rollback |
+|---|---|---|---|---|---|
+| Homepage (post 14) | Eyebrow text | `Móc khóa len handmade, mua trực tiếp tại LyliShop` | `Quà len handmade, mua trực tiếp tại LyliShop` | `wp eval-file`, verified single-occurrence `str_replace` | Restore from `shared/backups/ux005-content-2026-08-20/post-14-before.txt` (full pre-change `post_content`) via `wp post update 14 --post_content=<file>` |
+| Homepage (post 14) | H1 | `Móc khóa len handmade cute cho những món quà nhỏ có cảm xúc.` | `Đồ len handmade cute cho những món quà nhỏ có cảm xúc.` | same | same |
+| Homepage (post 14) | Hero intro paragraph (opening clause) | `Móc khóa len handmade cute từ LyliShop: phụ kiện len nhỏ xinh, đóng gói làm quà,` | `Đồ len handmade cute từ LyliShop: móc khóa, hoa len và phụ kiện nhỏ xinh, đóng gói làm quà,` | same | same |
+| Homepage (post 14) | Brand-story H2 | `Móc khóa len handmade được chuẩn bị theo từng món quà` | `Đồ len handmade được chuẩn bị theo từng món quà` | same | same |
+| Custom-order page (post 17) | H1 | `Liên hệ đặt móc khóa len handmade theo yêu cầu` | `Liên hệ đặt mẫu len handmade theo yêu cầu` | same | Restore from `shared/backups/ux005-content-2026-08-20/post-17-before.txt` via `wp post update 17 --post_content=<file>` |
+
+No taxonomy, product, menu, or WooCommerce-setting changes were made in this pass. The `Hoa len` landing page (post 279) and the homepage's card-03 link/label change (UX-001) were **not** made by this pass — found already in place, authored independently between the original audit and this remediation pass; not this session's own change to roll back.
 
 ---
 
