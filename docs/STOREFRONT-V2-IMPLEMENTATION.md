@@ -2,13 +2,13 @@
 
 Status: **FROZEN**. This document is the canonical source of truth for Storefront V2 implementation. It supersedes any composition decision that exists only in chat history or a commit message. Implementation work (Batch A/B/C) must follow this contract exactly; if implementation discovers a need to exceed the intervention ceiling set here, **stop and get founder review** rather than self-authorizing a higher layer.
 
-## Status at a glance (updated after Batch B implementation + production acceptance, source `78a0f5e`)
+## Status at a glance (updated after Batch C implementation + production acceptance, source `891593b`)
 
 | Batch | Status |
 |---|---|
 | A — Archive + Product Card | **IMPLEMENTED, CLOSED.** Passed a full-review final verdict (see §6a) after two corrective sub-passes (A.1 hierarchy, A.2 catalog-first UX). One latent correctness bug found and fixed in the review pass (§6a). |
 | B — PDP + Related Products | **IMPLEMENTED, CLOSED.** Deployed and production-accepted — see §10a for the final review verdict, evidence corrections, and the one post-deploy fix (sticky-CTA premature-visibility bug). |
-| C — Cart / Checkout / Account | **CURRENT / FROZEN**, detailed design spec in §12 (supersedes the original brief version). Not yet implemented. |
+| C — Cart / Checkout / Account | **IMPLEMENTED / CONTENT PENDING.** Deployed and production-accepted for everything technical — see §12a. The checkout privacy consent paragraph remains WooCommerce's English default; no owner-approved Vietnamese wording exists yet for that specific sentence, and inventing/machine-translating legal copy is out of scope. Not marked fully CLOSED until that content is supplied. |
 
 Sections §4 and §6–§9 document Batch A's implementation history (root causes, amendments, hook choices) and remain as historical/evidentiary record — superseded in *emphasis* by §6a's final verdict where the two disagree, but not rewritten, since the root-cause detail in them is still the reference for *why* the code looks the way it does.
 
@@ -550,80 +550,140 @@ Live-reviewed at 1440px and 390px with a real item in cart. Desktop table (produ
 - Information that matters before checkout: product identity/image, quantity, subtotal, order total — all present, all legible
 - Noise to visually reduce: none found — the table is already lean (no shipping estimator, no extra upsell blocks)
 
-### 12.1 Fix untranslated "Shipment"
+### 12.1 Fix untranslated "Shipment" — implemented
 
-**Root cause, verified from WooCommerce core source** (`includes/class-wc-cart.php`): `_x('Shipment', 'shipping packages', 'woocommerce')`. This is a real core string, translated with a **context** (`shipping packages`), missing from the active Vietnamese translation coverage for that specific context — not a broken install (see `docs/WOOCOMMERCE-VIETNAMESE-2026-08-08.md`, which already documents that some community-translated strings can remain in English and explicitly advises **against** editing installed translation files directly, since a language-pack update would silently revert that edit).
+**Root cause, re-verified live from WooCommerce core source** (`includes/class-wc-cart.php`): `_x('Shipment', 'shipping packages', 'woocommerce')`. Confirmed unchanged since the original freeze — still a real core string, translated with a **context** (`shipping packages`), missing from the active Vietnamese translation coverage for that specific context (see `docs/WOOCOMMERCE-VIETNAMESE-2026-08-08.md`, which documents this class of gap and explicitly advises **against** editing installed translation files directly).
 
-**Fix strategy — smallest scoped mechanism, consistent with that existing guidance:**
+**Implemented** in `web/app/themes/shop-child/inc/woocommerce/commerce-ui.php` as a named, namespaced function (`ShopChild\Woo\translate_shipment_label`), following the same module convention as `archive.php`/`single-product.php` rather than a global anonymous filter:
 
 ```php
-add_filter('gettext_with_context', function ($translated, $text, $context, $domain) {
+add_filter('gettext_with_context', __NAMESPACE__ . '\\translate_shipment_label', 10, 4);
+function translate_shipment_label(string $translated, string $text, string $context, string $domain): string
+{
     if ($domain === 'woocommerce' && $text === 'Shipment' && $context === 'shipping packages') {
-        return 'Vận chuyển';
+        return __('Vận chuyển', 'shop-child');
     }
     return $translated;
-}, 10, 4);
+}
 ```
 
-Scoped on **domain + exact source string + exact context** simultaneously — cannot match or alter any other string, in WooCommerce or any other textdomain. This is a `gettext_with_context` filter (not `gettext`) because the source uses `_x()`, which routes through the context-aware filter, not the plain one.
+Scoped on **domain + exact source string + exact context** simultaneously — cannot match or alter any other string, in WooCommerce or any other textdomain.
 
-**Acceptance:**
+**Acceptance — verified live on production:**
 ```
-Cart: Vietnamese (incl. "Vận chuyển")
-Checkout: Vietnamese (incl. "Vận chuyển")
-Order-review fragments after AJAX refresh: still Vietnamese (fragments re-render server-side, so the filter applies identically — verify live after an AJAX cart update, not just on initial page load)
-```
-
-### 12.2 Checkout privacy paragraph
-
-**Root cause, verified from WooCommerce core source** (`includes/wc-template-functions.php`, `wc_get_privacy_policy_text()`): the English paragraph is WooCommerce's own hard-coded default, returned via `get_option('woocommerce_checkout_privacy_policy_text', <English default>)` because that option has never been set.
-
-**Preferred fix — L0, WooCommerce admin setting, not code:**
-
-```
-WooCommerce → Settings → Accounts & Privacy → "Checkout privacy policy"
+Cart initial render: "Vận chuyển" (was "Shipment")
+Checkout initial render: "Vận chuyển" (was "Shipment")
+Checkout AJAX fragment refresh (triggered via the real `update_checkout` event,
+  the same event WooCommerce's own address-change handler fires): "Vận chuyển"
+  survives the refresh — fragments re-render server-side through the same
+  translation pipeline, confirmed live, not merely assumed
 ```
 
-**This task does not invent the Vietnamese legal copy.** The exact wording for that field must be supplied or approved by the owner/legal separately — recorded here as an open content dependency, not filled in speculatively. If a code-level override is ever preferred instead of the admin field, the documented mechanism is the `woocommerce_get_privacy_policy_text` filter (confirmed present in the same source function) — but the admin-setting route is preferred since it requires no deploy at all.
+### 12.2 Checkout privacy paragraph — CONTENT PENDING
 
-### 12.2a Checkout language audit — full sweep, not just "Shipment"
+**Root cause, re-verified from WooCommerce core source** (`includes/wc-template-functions.php`, `wc_get_privacy_policy_text()`): unchanged — the English paragraph is WooCommerce's own hard-coded default, returned via `get_option('woocommerce_checkout_privacy_policy_text', <English default>)` because that option has never been set. Live-confirmed on production: `wp option get woocommerce_checkout_privacy_policy_text` returns the English default verbatim.
 
-Live-reviewed the entire checkout page for English leakage this pass, classified by mechanism (each needs a different fix, per the review brief's own taxonomy):
+**Searched for an already-approved Vietnamese wording before concluding this is blocked**, per the task's own requirement — found:
+- `wp_page_for_privacy_policy` **is set** (post ID 20, "Chính sách bảo mật", `publish`, last updated 15/08/2026) — a full, real, owner-approved Vietnamese Privacy Policy **page** already exists and is live at `/chinh-sach-bao-mat/`. The checkout paragraph's `[privacy_policy]` shortcode already correctly links to it (confirmed live: the rendered link text "chính sách riêng tư" — itself a core-translated string, unrelated to this gap — points at `https://lylishop.online/chinh-sach-bao-mat/`).
+- **No approved wording exists specifically for the short checkout consent sentence itself** ("Your personal data will be used to process your order…") — this is a distinct, shorter piece of copy from the full policy page, and nothing in `docs/`, WP options, or the admin guide supplies an approved Vietnamese version of it.
 
-| String | Classification | Mechanism |
-|---|---|---|
-| "Shipment" (cart totals + checkout order review) | core translation gap | `gettext_with_context` filter, §12.1 (documented, not yet implemented) |
-| Checkout privacy paragraph | owner/legal content, delivered via a core translation-default fallback | WooCommerce admin setting, §12.2 — wording is an open dependency, not written here |
-| Payment method descriptions (VietQR/BACS/COD text) | site-config copy | already custom-written and already Vietnamese — confirmed live, no gap found |
-| Field labels (Tên, Họ, Địa chỉ, etc.) | core translation, confirmed already Vietnamese | no action |
+**Decision, per the task's explicit constraint:** do not invent or machine-translate this sentence. Left as an open content dependency — implement everything else in Batch C, and do not report Batch C as fully CLOSED while this remains.
 
-No new English-leakage strings were found beyond the two already documented in §12.1/§12.2 — this was a verification pass, not a new-defect pass. **Do not fix by editing installed language-pack files** (contract-standing rule, `docs/WOOCOMMERCE-VIETNAMESE-2026-08-08.md`) and **do not invent the privacy wording** in this or any future implementation pass — both remain open dependencies with their fix mechanism already specified.
+```
+PRIVACY CONTENT DEPENDENCY:
+Owner-approved Vietnamese wording required for the short checkout
+consent paragraph (WooCommerce → Settings → Accounts & Privacy →
+"Checkout privacy policy"). The full Privacy Policy PAGE is already
+approved, live, and correctly linked — only this one shorter sentence
+is outstanding.
+```
 
-### 12.3 Payment methods — frozen
+Fix mechanism (unchanged, ready to apply the moment wording is supplied): `WooCommerce → Settings → Accounts & Privacy → "Checkout privacy policy"` — an L0 admin setting, no deploy required.
 
-CSS-only visual card treatment around the existing `.wc_payment_methods` / `.payment_box` markup (both confirmed as real, current classes on the live checkout page). Live-reviewed: "Chuyển khoản / VietQR" is pre-selected by default with its description visible; "Thanh toán khi nhận hàng" (COD) collapses to just its radio + label until selected. This native accordion-style behavior is correct and must be preserved.
+### 12.2a Checkout language audit — full sweep, re-verified live
 
-- **Selected state:** needs a visible container (border + subtle background shift) so the selected method is obvious without relying on the radio dot alone.
-- **Unselected state:** quieter border, no background fill.
-- **Radio visibility:** keep the native input visible (not hidden behind a custom-drawn control) — no `appearance:none` replacement, matching this project's established preference for real form controls over recreated ones (contract §22 / accessibility principle).
-- **Description hierarchy:** VietQR's longer explanatory paragraph and COD's shorter one both stay exactly as-is, just gain breathing room from the card treatment.
-- Explicitly must not: replace the radio inputs, hide the existing payment description copy, change the payment-selection JS, or touch VietQR/BACS or COD behavior in any way.
+Re-reviewed the entire checkout page for English leakage against the current catalog/cart state, classified by mechanism:
+
+| String | Classification | Mechanism | Status |
+|---|---|---|---|
+| "Shipment" (cart totals + checkout order review) | core translation gap | `gettext_with_context` filter, §12.1 | **Fixed, deployed, verified** |
+| Checkout privacy paragraph | owner/legal content, delivered via a core translation-default fallback | WooCommerce admin setting, §12.2 | **Open — content dependency** |
+| `[privacy_policy]` shortcode link text ("chính sách riêng tư") | core translation, confirmed already Vietnamese via the vi language pack | no action | Already correct |
+| Payment method descriptions (VietQR/BACS/COD text) | site-config copy | already custom-written and already Vietnamese — confirmed live, no gap found | Already correct |
+| Field labels (Tên, Họ, Địa chỉ, Quốc gia/Khu vực, Tỉnh/Thành phố, Phường/Xã, etc.) | core translation, confirmed already Vietnamese | no action | Already correct |
+
+No new English-leakage strings were found beyond the one already documented in §12.2 — this was a verification pass, not a new-defect pass. **Did not** edit installed language-pack files, and **did not** invent the privacy wording.
+
+### 12.3 Payment methods — implemented
+
+CSS-only visual card treatment around the existing `.wc_payment_methods` / `.wc_payment_method` / `.payment_box` markup (all confirmed live on the deployed checkout page). Live-verified enabled gateways: `bacs` ("Chuyển khoản / VietQR") and `cod` ("Thanh toán khi nhận hàng") — matches the contract's assumption exactly (`WC()->payment_gateways()->get_available_payment_gateways()`).
+
+**Implemented mechanism** — CSS `:has(input:checked)`, not a JS-added state class:
+
+```css
+.woocommerce-checkout ul.wc_payment_methods li.wc_payment_method:has(input:checked) {
+    border-color: var(--lyli-color-primary);
+    background: var(--lyli-color-cream);
+}
+```
+
+This reads the real native radio's checked state directly, so the visual selected-state can never drift from the actual selection — including across a checkout AJAX fragment refresh, which re-renders the identical native markup server-side (verified live: switching to COD then triggering `update_checkout` left the COD card correctly highlighted after the refresh). Browsers without `:has()` simply render every method in its quiet/unselected treatment — a plainer page, not a broken one; no JS fallback needed since nothing functional depends on the visual state.
+
+- **Selected state:** confirmed live — primary-color border + cream background, description sits inside with a divider.
+- **Unselected state:** confirmed live — quiet border, warm-white background.
+- **Radio visibility:** native input untouched, no `appearance:none` on the radio itself.
+- **Description hierarchy:** VietQR/COD descriptions unchanged, unmoved — only spacing/border added around the existing `.payment_box`.
+- Verified: no gateway IDs, payment-selection JS, or gateway business logic touched; radios click-switch instantly and the CSS state follows the real checked radio on every click, live-confirmed via `getComputedStyle`.
 
 ### 12.4 Progress indicator — decision: REJECTED
 
 **Not deferred, not optional — rejected outright by this review.** Classic Cart and Classic Checkout (contract §2, architecture freeze) are two separate WordPress pages joined by a normal navigation, not steps in a client-side wizard. WooCommerce does not have navigable "Cart → Information → Shipping → Payment" states within checkout — it's a single-page form with visual sections, submitted once. A progress indicator implies a multi-step flow that does not actually exist; showing one would be presenting fake progression the underlying system can't back up. If the actual checkout flow ever changes to a genuine multi-step one (out of scope for Storefront V2 entirely — that would be a business-logic change), this decision should be revisited then, not worked around now with decorative steps.
 
-### 12.5 Form language — frozen (applies across Batch C, and is the baseline Batch B's PDP already follows)
+### 12.5 Form language — implemented (applies across Batch C, and is the baseline Batch B's PDP already follows)
 
-Derived from what's already working across the site (§ design system below), not invented for checkout specifically:
+Derived from what's already working across the site, not invented for checkout specifically.
 
-- **Text inputs:** existing bordered style (`--lyli-color-border`, `var(--lyli-radius-sm)`), already used site-wide (footer forms, search, checkout fields today) — keep.
-- **Selects:** apply the same bordered + chevron treatment Batch A already shipped for the shop-archive sort control (`inc/woocommerce.php`/`style.css`, §7) to any other native `<select>` in cart/checkout/account that currently lacks it (e.g. country/province dropdowns) — same mechanism, not a new one.
-- **Quantity:** already has a clear −/input/+ treatment on cart/PDP — reuse unchanged on checkout if quantity ever appears there.
-- **Radios/checkboxes:** keep native inputs, sized and spaced consistently (payment methods, "Giao hàng đến một địa chỉ khác?", any future checkbox) — no custom-drawn replacements.
-- **Focus:** the existing global `:focus-visible { outline: 3px solid var(--lyli-color-primary); outline-offset: 2px; }` (style.css `:root` area) already covers every native control — reuse, do not invent a second focus treatment for forms.
-- **Error/helper text:** WooCommerce's own validation messaging (native, already accessible) — restyle only (color/spacing to match the muted-copy token), never replace with custom JS validation.
-- **Disabled state:** the same `opacity: 0.7` + `wc-variation-selection-needed`-style dimming already used on the PDP add-to-cart button (contract §10.3) is the site's one disabled-state pattern — reuse it (e.g. "Cập nhật giỏ hàng" until cart changes, already doing this natively).
+**selectWoo/select2 finding (pre-implementation review, corrects an unstated assumption):** live DOM inspection found billing/shipping **country and state/province** are enhanced by WooCommerce's own bundled selectWoo (confirmed via the `select2-hidden-accessible` class on the real `<select>`, plus a live `.select2-container` in the DOM). The **ward/"Phường-Xã"** select (`billing_city`/`shipping_city`, the Vietnam-address connector's own field) is native and unenhanced — no select2 class, confirmed live. Styling the native `<select>` for country/state would have touched an invisible element and changed nothing on screen, so:
+
+- **Country/state (selectWoo-enhanced):** styled the actual rendered `.select2-selection` UI directly — border, radius, and background matched to the site's input tokens; focus/open state gets the primary-color border. selectWoo itself was left fully enabled, untouched.
+- **Ward select (native):** reuses the exact bordered + chevron treatment Batch A shipped for the shop-archive sort control (§7) — same mechanism, not a second select style.
+- **One real bug found and fixed during production acceptance** (not present in the original freeze): a pre-existing `.form-row select { background: var(--lyli-color-warm-white) }` rule used the `background` *shorthand*, which resets `background-image` too — at an equal-specificity tie with the new chevron rule, this silently dropped the ward select's chevron. Split `background-color` out from the shorthand so the two rules stop colliding (deployed as a same-day follow-up commit, verified live before Batch C was reported closed).
+- **Text inputs:** existing bordered style (`--lyli-color-border`, `var(--lyli-radius-sm)`) — unchanged, already correct.
+- **Quantity:** unchanged, already correct on cart/PDP.
+- **Radios/checkboxes:** kept native throughout, including the new payment-method cards (§12.3) — no custom-drawn replacements anywhere.
+- **Focus:** confirmed live — the existing global `:focus-visible` rule still covers payment radios and every checkout control unmodified; no second focus treatment was added.
+- **Error/helper text:** untouched — native WooCommerce validation only.
+- **Disabled state:** untouched — the existing `opacity: 0.7` pattern remains the site's one disabled-state language.
+
+---
+
+## 12a. Batch C final review verdict (production acceptance)
+
+**IMPLEMENTED / CONTENT PENDING.** Deployed as source commit `42acdf8` (translation + payment/select CSS) plus same-day follow-up commit `891593b` (select-chevron cascade fix found during acceptance), production release `20260819143928`, verified live on `https://lylishop.online`.
+
+**Pre-implementation review, cart:** re-tested with a real simple product + a real variable product (variation attribute correctly appears baked into the cart-item title per WooCommerce's own `WC_Product_Variation::get_name()` default format — confirmed this is native behavior, not a missing `dl.variation` bug). Native table composition, price-wrap fix, and quantity/coupon/subtotal all still correct against the current (12-product) catalog. No new cart defect found — left untouched per the frozen contract.
+
+**Pre-implementation review, stale assumptions corrected:**
+1. §12.1's example code was inline/anonymous — implemented instead as a named, namespaced function in a new module (§14 below), consistent with how `archive.php`/`single-product.php` already work.
+2. §12.5 did not record that country/state are selectWoo-enhanced while the ward select is native — both now handled by their actually-correct mechanism (§12.5).
+3. The checkout privacy paragraph search (§12.2) found a previously-undocumented fact: a full, approved, live Vietnamese Privacy Policy **page** already exists (`wp_page_for_privacy_policy`, post 20) — narrowing the real open dependency to just the short consent sentence, not the whole legal topic.
+
+**Implemented:**
+- "Shipment" → "Vận chuyển": scoped `gettext_with_context` filter, verified on cart, checkout, and after a real checkout AJAX fragment refresh (§12.1).
+- Payment-method card treatment: `:has(input:checked)`-driven, native radios untouched, verified surviving an AJAX fragment refresh (§12.3).
+- Checkout address selects: selectWoo UI styled for country/state, native chevron treatment for the ward select — including a same-day fix for a background-shorthand cascade collision found in production acceptance (§12.5).
+- Checkout hierarchy, cart structure, and the progress-indicator rejection: all re-verified against the current catalog/cart and left exactly as frozen — no defect found that would justify touching them (§12.0, §12.4).
+- My Account: reviewed logged-out at both viewports (§13a) — already-shipped light polish (bordered nav/content, shared table/form language) holds up; no new defect found, so nothing further was added, per the explicit instruction not to add scope merely because this surface is less glamorous than the PDP.
+
+**Not implemented (by design, not oversight):** the checkout privacy consent sentence — no owner-approved Vietnamese wording exists yet; inventing or machine-translating it was explicitly out of scope (§12.2).
+
+**AJAX acceptance (live-verified):** dispatched a real `update_checkout` event (the same event WooCommerce's own address-change handler fires) — "Vận chuyển" persisted, the previously-selected COD payment card's highlighted state persisted, selectWoo remained enhanced, zero console errors before or after.
+
+**Regression sweep (production, post-deploy):** `/`, `/cua-hang/` (zero empty product-loop anchors, sort chevron intact, no overflow), simple PDP (sticky CTA hidden-on-load → appears after real incremental scroll past `form.cart` → hides on scroll-back, confirmed unaffected by Batch C's CSS-only changes; description recomposition sections intact), variable PDP (related-products heading intact) — zero console errors beyond the pre-existing jQuery Migrate log and two unrelated image-preload warnings (native browser preload-timing noise, not caused by this batch). Keyboard focus on payment radios confirmed via the existing global `:focus-visible` rule.
+
+**Template overrides:** 0. **New JS files:** 0. **New JS libraries:** 0. **Business-logic changes:** 0 — gateway IDs, payment selection JS, checkout AJAX, and WooCommerce validation are all untouched; every new rule is presentation (CSS) or scoped string translation (one `gettext_with_context` filter).
+
+**Rollback:** previous release `20260819134713` (source `78a0f5e`, the last Batch B state) remains on disk, undisturbed, one `ln -sfn` away if a regression surfaces later.
 
 ---
 
@@ -640,13 +700,13 @@ Derived from what's already working across the site (§ design system below), no
 
 ### 13a. Batch C intervention ceiling
 
-L0 (checkout privacy setting) → L1 (payment-method card CSS, form-language CSS reuse, My Account restyle) → L2 (`gettext_with_context`/`gettext` filters for the two string fixes, same pattern already implemented and shipped for the archive result-count in Batch A). **No L2 business-logic hooks, no L3, no L4/L5.** No new JS at all — Batch C is presentation-only by nature (reliability > originality), unlike Batch B's one small sticky-CTA script.
+L0 (checkout privacy setting — mechanism ready, wording pending) → L1 (payment-method card CSS, selectWoo/select form-language CSS, My Account restyle — all shipped) → L2 (one `gettext_with_context` filter for "Shipment", shipped, same pattern already used for the archive result-count in Batch A). **No L2 business-logic hooks, no L3, no L4/L5.** Zero new JS shipped — Batch C stayed presentation-only by nature (reliability > originality) end to end, confirmed at implementation time, not just planned.
 
 ### 13b. Batch C acceptance criteria (whole-screen, not element-by-element)
 
 **Cart:** shopper can verify items/quantities/total at a glance; checkout CTA visually dominates; mobile cart is not a crushed desktop table (already confirmed true — native table already reflows reasonably at 390px, and the one real defect found this pass — price wrap — is fixed).
 
-**Checkout:** form-completion path is obvious (field order/labels already clear, confirmed live); payment selection is visually obvious once card treatment ships; "Đặt hàng" remains the dominant final action; no ambiguity after AJAX refresh (existing `gettext_with_context` pattern applies identically to fragment-refreshed content, per §12.1's acceptance note); zero untranslated operational strings once §12.1/§12.2 ship; validation stays native and visible.
+**Checkout:** form-completion path is obvious (field order/labels already clear, confirmed live); payment selection is visually obvious with the shipped card treatment; "Đặt hàng" remains the dominant final action; no ambiguity after AJAX refresh (verified live via a real `update_checkout` event — "Vận chuyển" and the selected-payment card state both survive); zero untranslated *operational* strings (§12.1 shipped) — the one remaining English string is owner/legal content (§12.2, open dependency, not an operational string); validation stays native and visible.
 
 **Account:** feels part of the same storefront (shared tokens/forms/tables), without having been turned into a separate design effort.
 
@@ -720,16 +780,19 @@ When a rule must target a Woo/Botiga class directly (e.g. `.woocommerce ul.produ
 **Split executed during Batch B implementation.** Batch B's related-heading and description-recomposition hooks would have pushed the single `inc/woocommerce.php` into mixed archive/card/PDP concerns, meeting the trigger below. Split into:
 
 ```
-inc/woocommerce/archive.php       (Batch A — shop/category archive hooks)
-inc/woocommerce/product-card.php  (Batch A — loop/card hooks)
+inc/woocommerce/archive.php        (Batch A — shop/category archive hooks)
+inc/woocommerce/product-card.php   (Batch A — loop/card hooks)
 inc/woocommerce/single-product.php (Batch B — PDP hooks: custom-order hint,
                                      related-products heading, description
                                      recomposition)
+inc/woocommerce/commerce-ui.php    (Batch C — cart/checkout/account
+                                     presentation: the "Shipment" scoped
+                                     translation fix)
 ```
 
 `functions.php` requires each explicitly (matching the existing `inc/*.php` require pattern). Each file keeps the original pattern: namespaced functions under `ShopChild\Woo`, each hook registration documented with a comment explaining what it does and why it's presentation-only.
 
-**Split trigger (for reference, now satisfied):** the single file would have exceeded roughly 200–250 lines or mixed clearly distinct concerns (archive vs. card vs. single-product) once Batch B's hooks were added.
+**Split trigger (for reference, now satisfied twice):** the single file would have exceeded roughly 200–250 lines or mixed clearly distinct concerns once Batch B's hooks were added; Batch C's cart/checkout translation fix is a fourth, equally distinct concern from archive/card/PDP, so it got its own narrow module (`commerce-ui.php`) rather than being folded into `single-product.php` — matching the task's explicit instruction not to dump checkout translations into the PDP file, and not to build a directory taxonomy more complex than the shop itself.
 
 ---
 
@@ -822,12 +885,18 @@ Sticky mobile add-to-cart is **no longer on this list** — the full-review pass
 - Checkout/cart visual polish + the two verified string fixes + the full-review language audit (§12.2a) confirming no further English leakage
 - Cart/checkout/account table price `white-space: nowrap` fix (FIX NOW, shipped this pass)
 - `suppress_single_subcategory_nav()` correctness fix — only evaluate on real `product_cat` terms (FIX NOW, shipped this pass)
+- **"Shipment" → "Vận chuyển"** — scoped `gettext_with_context` filter, named/namespaced, verified surviving checkout AJAX fragment refresh — **implemented and deployed** (§12.1)
+- **Payment-method card treatment** — `:has(input:checked)`-driven, native radios/JS untouched — **implemented and deployed**, verified surviving AJAX refresh (§12.3)
+- **Checkout selectWoo/native-select form language** — selectWoo UI styled directly for country/state, Batch A chevron treatment reused for the native ward select, including a same-day cascade-collision fix found in production acceptance — **implemented and deployed** (§12.5)
+- **Batch C PHP module** (`inc/woocommerce/commerce-ui.php`) — a fourth narrow module, not folded into `single-product.php` (§16)
 
 ### DEFERRED
 - Product image swap (needs per-product gallery-data audit)
 - "Handmade" metadata label (needs founder confirmation of permanent tag policy)
 - Product-content schema migration (separate task; full review found the catalog's heading variance is itself evidence against attempting this yet, §10.4)
-- Checkout privacy-policy Vietnamese copy itself (owner/legal must supply the wording; the mechanism to apply it is documented)
+
+### CONTENT PENDING (not deferred — technical mechanism is ready and unblocked)
+- **Checkout privacy consent paragraph** — no owner-approved Vietnamese wording exists for this specific short sentence (distinct from the full Privacy Policy page, which is already approved and live at `/chinh-sach-bao-mat/`, post ID 20). Apply via `WooCommerce → Settings → Accounts & Privacy → "Checkout privacy policy"` the moment wording is supplied — no further deploy needed (§12.2).
 
 ### REJECTED
 - Custom commerce frontend / headless / React
@@ -877,14 +946,14 @@ Checked existing docs for contradictions with this contract:
     [x] PHP file split: inc/woocommerce/{archive,product-card,single-product}.php (§16 trigger met)
     [x] Acceptance pass (§10.8/§10a, whole-screen) at mobile/desktop, deployed, smoke-tested, production-verified
 
-[ ] Batch C (§12 — detailed freeze from the full-review pass)
-    [ ] gettext_with_context filter for "Shipment" (§12.1)
-    [ ] Checkout privacy policy text (content from owner) → WooCommerce setting (§12.2)
-    [ ] Payment method CSS card treatment (§12.3)
-    [ ] Form-language pass: select chevron treatment extended to any un-styled selects (§12.5)
-    [ ] My Account spacing/typography/table pass (§13)
-    [ ] Progress indicator: do NOT implement — rejected (§12.4)
-    [ ] Acceptance pass (§13b, whole-screen), deploy, smoke test, founder review
+[x] Batch C — IMPLEMENTED / CONTENT PENDING (§12a final verdict)
+    [x] gettext_with_context filter for "Shipment" (§12.1) — verified incl. AJAX fragment refresh
+    [ ] Checkout privacy policy text (content from owner) → WooCommerce setting (§12.2) — OPEN, mechanism ready, wording not yet supplied
+    [x] Payment method CSS card treatment (§12.3) — :has(input:checked), verified incl. AJAX fragment refresh
+    [x] Form-language pass: selectWoo UI styled for country/state, native chevron for the ward select, cascade-collision fix (§12.5)
+    [x] My Account reviewed — already-shipped light polish confirmed sufficient, nothing further added (§13)
+    [x] Progress indicator: confirmed NOT implemented — rejected, re-verified still correct (§12.4)
+    [x] Acceptance pass (§13b, whole-screen) at mobile/desktop, deployed, smoke-tested, production-verified — not fully CLOSED pending privacy content
 ```
 
 ---
