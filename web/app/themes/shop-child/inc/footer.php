@@ -115,6 +115,57 @@ function render_footer_info(): void
     if ($copyright === '') {
         $copyright = sprintf('© %s %s', wp_date('Y'), get_bloginfo('name'));
     }
-    printf('<div class="lyli-footer-bottom"><span>%s</span><a href="%s">%s</a></div>', esc_html($copyright), esc_url(home_url('/tai-khoan/')), esc_html__('Tài khoản', 'shop-child'));
+
+    echo '<div class="lyli-footer-bottom"><span>' . esc_html($copyright) . '</span>';
+    echo '<div class="lyli-footer-bottom-links">';
+    render_footer_legal_links();
+    printf('<a href="%s">%s</a>', esc_url(home_url('/tai-khoan/')), esc_html__('Tài khoản', 'shop-child'));
     echo '</div>';
+    echo '</div>';
+    echo '</div>';
+}
+
+/**
+ * Post-Storefront-V2 UX audit UX-002 — the 4 published policy pages
+ * (Privacy, Return, Shipping, Terms) had no link anywhere on the site
+ * (confirmed live: zero matches across every page's <a> elements) —
+ * reachable only by a visitor who already knew or guessed the URL. A
+ * low-noise slot already exists for exactly this: the slim copyright bar
+ * (`.lyli-footer-bottom`) that already carries the "Tài khoản" link, the
+ * common real-world pattern of pairing copyright + legal links rather than
+ * a fourth full-width footer column (which would unbalance the existing
+ * 3-column brand/nav/contact layout the task brief explicitly warned
+ * against).
+ *
+ * Looked up by slug, not a hardcoded page ID — each page must exist and be
+ * published or it's silently omitted (no broken links if a page is ever
+ * unpublished or renamed via WP Admin → Pages, which remains the owner's
+ * normal editing surface, not this code).
+ */
+function render_footer_legal_links(): void
+{
+    $slugs = [
+        'chinh-sach-van-chuyen' => __('Vận chuyển', 'shop-child'),
+        'chinh-sach-doi-tra' => __('Đổi trả', 'shop-child'),
+        'chinh-sach-bao-mat' => __('Bảo mật', 'shop-child'),
+        'dieu-khoan' => __('Điều khoản', 'shop-child'),
+    ];
+
+    $links = [];
+    foreach ($slugs as $slug => $label) {
+        $page = get_page_by_path($slug);
+        if ($page instanceof \WP_Post && $page->post_status === 'publish') {
+            $links[] = ['url' => get_permalink($page), 'label' => $label];
+        }
+    }
+
+    if (empty($links)) {
+        return;
+    }
+
+    echo '<ul class="lyli-footer-legal">';
+    foreach ($links as $link) {
+        printf('<li><a href="%s">%s</a></li>', esc_url($link['url']), esc_html($link['label']));
+    }
+    echo '</ul>';
 }
