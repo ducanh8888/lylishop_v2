@@ -995,12 +995,27 @@ form {
  * relying on the border for definition — no new colors, no icons, just a
  * token swap plus removing the now-redundant border.
  */
-.category-button {
+/*
+ * Botiga's own rule for chips inside the archive header is
+ * `.woocommerce-page-header .category-button` (two classes) — a bare
+ * `.category-button` selector loses to it outright regardless of source
+ * order (same specificity trap already documented above for
+ * `.categories-wrapper`). Matching that ancestor here, rather than only
+ * writing a bare `.category-button` rule, is what makes this apply to
+ * Botiga's own shop-root/child chips too, not just the new taxonomy-nav
+ * chips rendered outside that header block. Also resets the assorted
+ * margin/border-width overrides Botiga's compound selectors apply at that
+ * same specificity, since layout here comes from the wrapper's flex `gap`
+ * instead.
+ */
+.category-button,
+.woocommerce-page-header .category-button {
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 44px;
+    margin: 0;
     padding: 8px 16px;
     border-radius: 999px;
     border: 1px solid transparent;
@@ -1013,9 +1028,11 @@ form {
     transition: color var(--lyli-transition), border-color var(--lyli-transition), background var(--lyli-transition);
 }
 @media (hover: hover) and (pointer: fine) {
-    .category-button:hover {
+    .category-button:hover,
+    .woocommerce-page-header .category-button:hover {
         border-color: var(--lyli-color-primary);
         background: var(--lyli-color-warm-white);
+        color: var(--lyli-color-primary);
     }
 }
 /*
