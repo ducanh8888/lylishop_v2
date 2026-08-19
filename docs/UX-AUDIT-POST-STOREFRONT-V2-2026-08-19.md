@@ -420,4 +420,99 @@ Severity: **P0** blocks purchase · **P1** significant confusion/friction/barrie
 
 ---
 
+## 8. Addendum — soft catalog navigation (owner-reported, implemented and closed)
+
+**Added 2026-08-19, same day as the original audit, after a direct owner report** (not one of the 15 numbered findings above — a new, distinct issue). Unlike the rest of this document, this addendum covers a pass that was **implemented and deployed**, not merely audited.
+
+### UX-016 — Category drill-down had no deterministic way back up or sideways
+
+**SEVERITY:** P1 (owner-reported) **TYPE:** hierarchy, affordance, mobile
+**PAGE/FLOW:** any `product_cat` category archive
+**STATE:** leaf category, or any category with <2 populated children
+
+**OWNER REPORT (verbatim intent):** category navigation felt rigid; drilling into a category left no obvious way to return to Cửa hàng, go up to a parent, or switch to a sibling, without relying on browser Back; existing chips read as "heavy outlined pills, disconnected from the softer handmade character of Lyli Shop."
+
+**REPRODUCED, root cause confirmed:** Botiga's own sub-category chips (`botiga_shop_page_header_sub_category_links()`) only ever list a term's *direct children*, and only render at all when `suppress_single_subcategory_nav()` (existing count-gating, Batch A.2) allows ≥2 of them. Live taxonomy query (WP-CLI, not assumed) found every current leaf category — `Lyli Charm`, `Lyli Tiny`, `Hoa hướng dương`, `Hoa tulip`, `Hoa giỏ` — rendered **zero** taxonomy navigation beyond the small breadcrumb text. Confirmed live on `/product-category/hoa-huong-duong/`: breadcrumb only, no chip row at all.
+
+**Live taxonomy graph** (`get_terms()`, hide_empty:false, live-queried — not the stale snapshot in the task brief):
+
+```
+Móc khóa len (11)              Gấu bông len (0, empty)
+├─ Lyli Signature (0, empty)   Hộp quà (0, empty)
+├─ Lyli Charm (4)               Đặt mẫu theo yêu cầu (0, empty)
+└─ Lyli Tiny (7)
+
+Hoa len (3)
+├─ Bó hoa len có sẵn (0, empty)
+├─ Hoa giỏ (1)
+└─ Hoa len lẻ (2)
+   ├─ Hoa hướng dương (1)
+   └─ Hoa tulip (1)
+```
+
+Max depth 2. 5 top-level categories, 3 empty (correctly excluded from all navigation, per contract).
+
+### Candidates reviewed
+
+**A — Breadcrumb + compact up-link + child/sibling pills.** Clear separation of concerns; scales to any depth. *Chosen*, in a refined single-row form (see below).
+
+**B — Improved breadcrumb hierarchy + one unified current/sibling chip row, no separate up-link.** Rejected: breadcrumb links are small, low-contrast text — explicitly disqualified by the brief as "the only way back up." Folding "exit to parent" and "switch to sibling" into visually identical chips would blur a real semantic difference (leaving the current branch entirely vs. staying within it).
+
+**C — Compact taxonomy trail + "Xem tất cả …" contextual control + child choices.** Rejected: "view all" framing doesn't naturally express *both* "go up" and "switch sideways" — would still need a separate sibling row, arriving at something functionally identical to A with an extra conceptual layer and no real benefit.
+
+### Chosen model
+
+One compact row, rendered only on category archives (`is_product_category()`), hooked to WooCommerce's native `woocommerce_before_shop_loop` (priority 5) — deliberately **not** Botiga's own gated header function, so it always fires regardless of Botiga's ≥2-children gate:
+
+```
+[← Parent-or-Cửa-hàng]  [Sibling 1]  [Sibling 2 (current, filled)]  [Sibling 3]
+```
+
+- **Up target:** always shown (ancestor/exit navigation is not subject to the "does this give a real choice" gate — a lone leaf still needs a deterministic way back). Parent term if `$term->parent`, else the shop archive URL, labeled "Cửa hàng".
+- **Siblings:** other populated terms sharing the current term's parent (`get_terms(['parent' => $term->parent, 'hide_empty' => true])`), current one marked `aria-current="page"`. Rendered only when ≥2 total (current + ≥1 real alternative) — an empty sibling never appears, a lone sibling group (just the current term, no alternative) hides the row entirely rather than showing a pointless single chip.
+- Fully derived from `get_queried_object()`/`get_terms()` at request time — **zero hardcoded category names**, verified by testing against `Lyli Signature`'s and `Hoa giỏ`'s live behavior without any special-casing in the code.
+- Botiga's own child-chip row (existing, unmodified, still count-gated ≥2) renders independently, below or absent as before — the two mechanisms solve different problems and don't replace each other.
+
+**Chip visual treatment** (owner's "heavy outlined pills" complaint): root-caused via computed style, not guessed — `.category-button`'s fill (`--lyli-color-warm-white`) was identical to the page canvas behind it, so only the 1px border was ever visible, reading as a hollow wireframe outline rather than a filled pill. Fixed by giving chips a real, visibly-different fill (`--lyli-color-cream`) and removing the now-redundant border — applies to Botiga's own native chips too (shop-root and child chips), not just the new component, so the softening is sitewide and consistent. Current-state chips reuse the exact filled-primary-circle language the site already established for pagination's current-page number, rather than inventing a second "selected" pattern.
+
+**Two real defects found and fixed during production acceptance, before this was reported closed:**
+1. Botiga's own chips (inside `.woocommerce-page-header`) are styled by a two-class selector (`.woocommerce-page-header .category-button`) that beat this theme's original bare one-class rule outright — live-verified the new taxonomy-nav chips got the soft cream fill correctly while Botiga's own shop-root/child chips stayed on the old white-fill/near-black-2px-border look. Fixed by matching Botiga's ancestor-qualified specificity.
+2. Botiga's global `a:focus { outline: thin dotted }` (higher specificity than this theme's bare `:focus-visible` rule) silently won on any plain-anchor chip — live-verified a focused chip fell back to a thin dotted ring, nearly invisible on a dark-filled current chip since its color inherits `currentColor` (white-on-dark). Fixed with a scoped, matching-specificity override for the two link types this pass touches (not a sitewide fix — that pre-existing gap likely affects other plain links too, out of scope for this pass, worth a future audit finding).
+
+### Implementation
+
+- **PHP:** `render_taxonomy_nav()`, `inc/woocommerce/archive.php` (existing file, same "archive presentation" concern already owned there — not a new module, per the task's own "don't build a directory taxonomy more complex than the shop" instruction).
+- **CSS:** `style.css` — `.lyli-taxonomy-nav`/`.lyli-taxonomy-nav-up`/`.lyli-taxonomy-nav-siblings` (new, `lyli-` prefixed), `.category-button` fill/height/focus fixes (shared with Botiga's native chips).
+- **JS:** 0 (none needed or added).
+- **Template overrides:** 0.
+
+### Measurements — `firstProductTop` before/after (no regression to UX-007)
+
+| State | Viewport | Before | After | Δ |
+|---|---|---|---|---|
+| Shop root (untouched by this pass) | 1366×768 | 548.7px (71.4%) | 553.8px (72.1%) | +5.1 (measurement noise, not a real change — shop root's own render path was never touched) |
+| Móc khóa len (parent) | 1366×768 | 487.7px (63.5%) | 530.9px (69.1%) | +43.2 |
+| Móc khóa len (parent) | 390×844 | 421.9px (50.0%) | 465.0px (55.1%) | +43.1 |
+| Lyli Charm (leaf, was a dead end) | 1366×768 | 420.9px (54.8%) | 468.9px (61.1%) | +48.0 |
+| Lyli Charm (leaf) | 1440×900 | 421.9px (46.9%) | 469.9px (52.2%) | +48.0 |
+| Lyli Charm (leaf) | 390×844 | 355.0px (42.1%) | 403.0px (47.8%) | +48.0 |
+| Hoa hướng dương (deep leaf, was a dead end) | 390×844 | 486.8px (57.7%) | 550.0px (65.1%) | +63.2 |
+
+Every increase is genuinely new, previously-absent navigation content (a leaf category had *zero* chip content before), not padding inflation — each state's post-change percentage still sits at or below the shop root's own pre-existing 71–72% baseline (a state this pass deliberately left untouched), so no new worst-case was created relative to what the site already shipped.
+
+### Acceptance — verified live on production
+
+- **Deep-link entry** (fresh navigation, no history): `Lyli Charm`, `Hoa tulip`, `Hoa hướng dương` all render correct up/sibling context with zero prior state.
+- **Sibling switching:** clicking a sibling chip on `Hoa tulip` correctly navigates to `Hoa hướng dương` and back.
+- **Up navigation:** clicking "← Hoa len lẻ" from `Hoa hướng dương` correctly lands on the parent, which itself shows a correct further "← Hoa len" + sibling `Hoa giỏ` — verified the model composes correctly at every depth, not just depth 1.
+- **Mobile 360×800, 390×844, 430×932, landscape 844×390, tablet 768×1024:** zero horizontal overflow at any width; single-row layout holds; touch targets measured at 44px minimum (chips and up-link both).
+- **Keyboard/accessibility:** every control is a real `<a href>` (no `div onclick`); `aria-current="page"` on the current chip; `<nav aria-label="Điều hướng danh mục">` landmark; visible `:focus-visible` ring confirmed after the specificity fix above.
+- **Regression:** zero empty product-loop anchors (Batch A), sticky CTA + description recomposition + related grid intact (Batch B), Vận chuyển translation + privacy copy + payment cards intact (Batch C), zero console errors on every page checked (home, shop, all 4 taxonomy depths, PDP, cart, checkout, account, blog).
+
+### Production
+
+Deployed across three same-day commits as issues were found during acceptance (not one blind deploy): `70dc9ee` (feature), `0238056` (chip-fill specificity fix), `d6c871f` (focus-visible fix). Final production release `20260819201428`, source `d6c871f676211e74bb93f3394eb24ffac895fdb6`.
+
+---
+
 *This document is a new, independent audit phase. It does not modify, supersede, or reopen `docs/STOREFRONT-V2-IMPLEMENTATION.md`, which remains the closed, historical record of Storefront V2.*
