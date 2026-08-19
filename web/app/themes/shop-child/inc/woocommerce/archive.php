@@ -184,8 +184,23 @@ function simplify_paginated_result_count_text($translated, $single, $plural, $nu
  * count-gating philosophy already established for child chips. Fully
  * derived from the live taxonomy graph via get_queried_object()/get_terms()
  * — no hardcoded category name, so it keeps working as the catalog grows.
+ *
+ * Post-remediation-pass fix (UX-014 re-test): `woocommerce_before_shop_loop`
+ * turned out to sit inside WooCommerce core's `if (woocommerce_product_loop())`
+ * branch — it never fires when the current archive has zero products,
+ * confirmed live via `do_action` on `/product-category/lyli-signature/`
+ * (0 products): the function produced correct output when called directly,
+ * but never actually ran through the real page request. That is exactly
+ * the single worst dead-end case this was built for, so it was silently
+ * not helping there at all. Also hooked to WooCommerce's own
+ * `woocommerce_no_products_found` (fires in the sibling `else` branch,
+ * before the native "no products found" notice) so the same nav renders
+ * on an empty category too — the function is identical either way, only
+ * one of the two hooks ever fires for a given request, so there is no
+ * duplicate-render risk.
  */
 add_action('woocommerce_before_shop_loop', __NAMESPACE__ . '\\render_taxonomy_nav', 5);
+add_action('woocommerce_no_products_found', __NAMESPACE__ . '\\render_taxonomy_nav', 5);
 function render_taxonomy_nav(): void
 {
     if (! is_product_category()) {
@@ -251,4 +266,31 @@ function render_taxonomy_nav(): void
     }
 
     echo '</nav>';
+}
+
+/**
+ * Post-Storefront-V2 UX audit UX-015 — a no-result product search showed
+ * only WooCommerce's generic native notice ("Không tìm thấy sản phẩm nào
+ * khớp với lựa chọn của bạn.") with no explicit next step. Scoped to
+ * is_search() specifically — a no-result *category* archive is already
+ * covered by render_taxonomy_nav()'s up/sibling navigation (UX-014), so
+ * this doesn't duplicate that. Hooked after WooCommerce's own notice
+ * (default priority 10) so this reads as a follow-on suggestion, not a
+ * competing message.
+ */
+add_action('woocommerce_no_products_found', __NAMESPACE__ . '\\render_search_no_results_guidance', 15);
+function render_search_no_results_guidance(): void
+{
+    if (! is_search()) {
+        return;
+    }
+
+    $shop_url = wc_get_page_id('shop') > 0 ? get_permalink(wc_get_page_id('shop')) : home_url('/');
+
+    printf(
+        '<p class="lyli-search-no-results-hint">%s <a href="%s">%s</a>.</p>',
+        esc_html__('Thử từ khóa khác hoặc', 'shop-child'),
+        esc_url($shop_url),
+        esc_html__('xem tất cả sản phẩm', 'shop-child')
+    );
 }

@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.9.0
+Version: 1.10.0
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -741,7 +741,19 @@ form {
     border: 1px solid color-mix(in srgb, var(--lyli-color-primary) 12%, transparent);
 }
 .lyli-story-mark { color: var(--lyli-color-primary); font-family: var(--lyli-font-heading); font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.18; }
-.lyli-final-cta { padding: clamp(34px, 8vw, 90px) var(--lyli-gutter); border-radius: 26px; background: var(--lyli-color-lavender); border: 1px solid var(--lyli-color-border); }
+/*
+ * Post-Storefront-V2 UX audit UX-006 — was --lyli-color-lavender (#C2C3D2),
+ * a cool blue-gray. Root-caused: NOT an accidental default block-editor
+ * swatch as originally hypothesized (the homepage's own block JSON carries
+ * no per-block color choice at all) — it was a deliberate CSS rule using a
+ * real, defined palette token that simply reads as off-brand at this
+ * position, the single most conversion-relevant spot on the homepage.
+ * Swapped to --lyli-color-blush, the same warm dusty-rose token the
+ * page's other CTA block ("Có một ý tưởng...", .lyli-custom-cta) already
+ * uses, so the two CTA sections on the same page read as one consistent
+ * family instead of two unrelated hues.
+ */
+.lyli-final-cta { padding: clamp(34px, 8vw, 90px) var(--lyli-gutter); border-radius: 26px; background: var(--lyli-color-blush); border: 1px solid color-mix(in srgb, var(--lyli-color-primary) 14%, transparent); }
 .lyli-final-cta h2 { max-width: 19ch; margin-inline: auto; font-size: clamp(1.9rem, calc(1.45rem + 2vw), 3.6rem); }
 .lyli-final-cta p { max-width: 48ch; margin-inline: auto; color: var(--lyli-color-muted); }
 
@@ -1055,6 +1067,26 @@ form {
 }
 
 /*
+ * Post-Storefront-V2 UX audit UX-008 — Botiga's own pagination controls
+ * (`.woocommerce-pagination li .page-numbers`) measured 36×36px live,
+ * below the site's own established 44px touch-target convention used
+ * everywhere else. Only became reachable for the first time once the
+ * catalog crossed 12 products (page 2+ appeared). Matches Botiga's own
+ * selector shape so it wins on load order rather than needing
+ * `!important`; color/current-state styling is untouched (Botiga's own
+ * customizer button-color setting already resolves to the Lyli primary
+ * brown here, confirmed live — only size needed fixing).
+ */
+.woocommerce-pagination li .page-numbers {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    line-height: normal;
+}
+
+/*
  * Taxonomy up/sibling navigation (docs/UX-AUDIT-POST-STOREFRONT-V2-2026-08-19.md
  * owner-reported addendum) — see inc/woocommerce/archive.php
  * render_taxonomy_nav() for the full rationale. One compact row: a
@@ -1178,11 +1210,27 @@ form {
  * product row appeared, the core reported UX problem. This is a catalog
  * entry point, not a campaign hero.
  */
+/*
+ * Post-Storefront-V2 UX audit UX-007 — at 1366×768 (a common laptop
+ * height, not just a narrow 900px-tall viewport), firstProductTop
+ * measured 548.7px — only ~29% of the viewport showed any product.
+ * Trimmed the header's own padding ceiling modestly (not the fragile
+ * post-header margin-collapse system documented below, which A.2 already
+ * had to fix once) — a measurable, low-risk reduction in redundant
+ * whitespace rather than hiding any content.
+ */
 .woocommerce-page-header {
     background: var(--lyli-color-warm-white);
-    padding-top: clamp(22px, 3vw, 32px);
-    padding-bottom: clamp(18px, 2.4vw, 24px);
+    padding-top: clamp(18px, 2.6vw, 26px);
+    padding-bottom: clamp(14px, 2vw, 18px);
 }
+/*
+ * UX-007 — Botiga's own breadcrumb carried a 30px margin-bottom, the
+ * single largest gap in the header stack (vs. 6–14px between every other
+ * header element). Scoped to the archive-header context only — PDP has
+ * its own separate breadcrumb placement, untouched.
+ */
+.woocommerce-page-header .woocommerce-breadcrumb { margin-bottom: 14px; }
 .woocommerce-page-header h1 { color: var(--lyli-color-primary); }
 /*
  * Storefront V2 Batch A.1/A.2 — the shared .page-title rule above (used
@@ -1218,6 +1266,24 @@ form {
 }
 .woocommerce-no-products-found { max-width: 760px; margin: 60px auto; text-align: center; }
 .woocommerce-no-products-found .woocommerce-info { padding: 32px; border: 1px solid var(--lyli-color-border); border-radius: 16px; background: var(--lyli-color-surface-soft); }
+.lyli-search-no-results-hint { margin: 14px 0 0; color: var(--lyli-color-muted); text-align: center; }
+
+/*
+ * Post-Storefront-V2 UX audit UX-009 — see inc/content-pages.php for the
+ * scoping rationale (policy pages + "Giới thiệu" only, not every WP
+ * page). Constrains paragraph/list/heading text to a comfortable reading
+ * measure; explicitly does not touch table/gallery/wide-block content, so
+ * anything intentionally wider (an embedded table, a full-width image)
+ * still uses the full container.
+ */
+.lyli-readable-content .entry-content > p,
+.lyli-readable-content .entry-content > ul,
+.lyli-readable-content .entry-content > ol,
+.lyli-readable-content .entry-content > h2,
+.lyli-readable-content .entry-content > h3,
+.lyli-readable-content .entry-content > h4 {
+    max-width: 760px;
+}
 
 /* Single product */
 .single-product div.product { padding-top: clamp(18px, 3vw, 42px); }
@@ -1271,6 +1337,16 @@ form {
  * view. Reuses the existing primary-button and motion-token language
  * rather than a separate visual system.
  */
+/*
+ * Post-Storefront-V2 UX audit UX-012 — the sticky bar was the one major
+ * interactive surface on the site with zero corner radius (every card/
+ * button/chip elsewhere uses the brand's rounded language), reading as a
+ * utility bar rather than a native Lyli surface. Visual-only change: top
+ * corners rounded with the existing --lyli-radius-lg token, border
+ * softened to match, shadow left as-is (already correctly subtle).
+ * Visibility/proxy/observation logic in pdp-sticky-cta.js is completely
+ * untouched.
+ */
 .lyli-sticky-cta {
     display: none;
     position: fixed;
@@ -1283,6 +1359,7 @@ form {
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
     background: var(--lyli-color-warm-white);
     border-top: 1px solid var(--lyli-color-border);
+    border-radius: var(--lyli-radius-lg) var(--lyli-radius-lg) 0 0;
     box-shadow: 0 -8px 24px rgba(45, 42, 38, 0.08);
     transform: translateY(100%);
     transition: transform var(--lyli-motion-base) var(--lyli-ease-standard);
@@ -1290,6 +1367,23 @@ form {
 @media (max-width: 782px) {
     .lyli-sticky-cta { display: flex; }
     .lyli-sticky-cta.lyli-sticky-cta-visible { transform: translateY(0); }
+}
+/*
+ * Post-Storefront-V2 UX audit UX-013 — Botiga's own back-to-top button
+ * (`.back-to-top.display { bottom: 30px; right: 30px }`) collided with
+ * two different things on mobile, both live-measured: the footer's
+ * "Tài khoản" link (covered ~48px of its tap area) and, on any PDP with
+ * the sticky add-to-cart bar visible, the sticky bar itself (near-total
+ * bounding-box overlap). Raised on mobile only, clear of both — the
+ * sticky CTA's own height plus safe-area inset, applied everywhere on
+ * mobile rather than only on PDP, since detecting "is the sticky bar
+ * currently visible" would need JS coupling between two independently-
+ * built components for no real benefit (an empty gap of exposed page
+ * background above the footer on non-PDP mobile pages is a fully
+ * acceptable trade for a positioning rule this simple and robust).
+ */
+@media (max-width: 782px) {
+    .back-to-top.display { bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
 }
 .lyli-sticky-cta-info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
 .lyli-sticky-cta-title {
@@ -1455,8 +1549,17 @@ form {
 .lyli-footer-menu a:hover,
 .lyli-footer-contact a:hover,
 .lyli-footer-social a:hover { color: var(--lyli-color-primary); }
-.lyli-footer-bottom { width: min(calc(100% - (var(--lyli-gutter) * 2)), 1140px); margin: auto; padding: 20px 0; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--lyli-color-border); font-size: .88rem; }
+.lyli-footer-bottom { width: min(calc(100% - (var(--lyli-gutter) * 2)), 1140px); margin: auto; padding: 20px 0; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--lyli-color-border); font-size: .88rem; }
 .lyli-footer-bottom a { color: var(--lyli-color-primary); }
+/*
+ * Post-Storefront-V2 UX audit UX-002 — the 4 policy pages had no link
+ * anywhere on the site. The slim copyright bar already carries the
+ * "Tài khoản" link, so pairing legal links here (a common real-world
+ * footer pattern) avoids a fourth full-width column that would unbalance
+ * the existing brand/nav/contact 3-column layout.
+ */
+.lyli-footer-bottom-links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.lyli-footer-legal { display: flex; flex-wrap: wrap; gap: 14px; margin: 0; padding: 0; list-style: none; }
 
 /* Mobile-first responsive product and storefront layouts. */
 .woocommerce-account .woocommerce-MyAccount-navigation,
