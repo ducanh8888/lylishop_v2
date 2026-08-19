@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.7.0
+Version: 1.8.0
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -1230,6 +1230,87 @@ form {
 .woocommerce-account .woocommerce-MyAccount-navigation ul { list-style: none; margin: 0; padding: 8px; border: 1px solid var(--lyli-color-border); border-radius: 14px; background: var(--lyli-color-warm-white); }
 .woocommerce-account .woocommerce-MyAccount-navigation li a { display: block; padding: 11px 14px; border-radius: 9px; text-decoration: none; }
 .woocommerce-account .woocommerce-MyAccount-navigation li.is-active a { background: var(--lyli-color-surface-soft); }
+
+/*
+ * Storefront V2 Batch C — payment-method card treatment.
+ * Native markup only (.wc_payment_methods > li.wc_payment_method, each
+ * containing the real radio input, its label, and a .payment_box
+ * description) — no custom-drawn control, no JS-added state class. The
+ * selected/unselected visual state is expressed with :has(), reading the
+ * real checked radio directly, so it can never drift out of sync with
+ * the actual native selection state (including after a checkout AJAX
+ * fragment refresh, which re-renders this exact markup server-side).
+ * Browsers without :has() simply show the unselected treatment for every
+ * row — a quieter page, not a broken one.
+ */
+.woocommerce-checkout ul.wc_payment_methods { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.woocommerce-checkout ul.wc_payment_methods li.wc_payment_method {
+    padding: 14px 16px;
+    border: 1px solid var(--lyli-color-border);
+    border-radius: var(--lyli-radius-md);
+    background: var(--lyli-color-warm-white);
+    transition: border-color var(--lyli-transition), background-color var(--lyli-transition);
+}
+.woocommerce-checkout ul.wc_payment_methods li.wc_payment_method:has(input:checked) {
+    border-color: var(--lyli-color-primary);
+    background: var(--lyli-color-cream);
+}
+.woocommerce-checkout ul.wc_payment_methods li.wc_payment_method input[type="radio"] { margin-right: 8px; }
+.woocommerce-checkout ul.wc_payment_methods li.wc_payment_method label { font-weight: 600; color: var(--lyli-color-text); cursor: pointer; }
+.woocommerce-checkout ul.wc_payment_methods li.wc_payment_method .payment_box {
+    margin: 10px 0 0;
+    padding: 12px 14px 0;
+    border-top: 1px solid var(--lyli-color-border);
+    color: var(--lyli-color-muted);
+    font-size: 0.92rem;
+    background: none;
+}
+.woocommerce-checkout ul.wc_payment_methods li.wc_payment_method .payment_box::before { display: none; }
+
+/*
+ * Storefront V2 Batch C — checkout address selects.
+ * Live-verified: billing/shipping country + state are enhanced by
+ * WooCommerce's own bundled selectWoo/select2 (`select2-hidden-
+ * accessible` class present on the real <select>) — the visible control
+ * is `.select2-selection`, not the (visually hidden but still real,
+ * still keyboard-operable) native <select> underneath it. Styling the
+ * native select here would touch an invisible element and change
+ * nothing on screen, so the selectWoo-rendered UI is targeted directly
+ * instead; selectWoo itself is left enabled and untouched. The
+ * ward/"Phường-Xã" select (billing_city / shipping_city) is native,
+ * unenhanced (no select2 class, confirmed live), so it reuses the same
+ * bordered + chevron treatment already shipped for the shop-archive sort
+ * control (Batch A, §7) rather than inventing a second select style.
+ */
+.woocommerce-checkout .select2-container--default .select2-selection--single {
+    height: 48px;
+    padding: 0;
+    border: 1px solid var(--lyli-color-border);
+    border-radius: var(--lyli-radius-sm);
+    background-color: var(--lyli-color-warm-white);
+}
+.woocommerce-checkout .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 46px;
+    padding-left: 12px;
+    color: var(--lyli-color-text);
+}
+.woocommerce-checkout .select2-container--default .select2-selection--single .select2-selection__arrow { height: 46px; }
+.woocommerce-checkout .select2-container--default.select2-container--focus .select2-selection--single,
+.woocommerce-checkout .select2-container--default.select2-container--open .select2-selection--single {
+    border-color: var(--lyli-color-primary);
+}
+.woocommerce-checkout select.select {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 34px 10px 12px;
+    border: 1px solid var(--lyli-color-border);
+    border-radius: var(--lyli-radius-sm);
+    background-color: var(--lyli-color-warm-white);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%237A3B17' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    appearance: none;
+}
 
 /* Lyli content lives inside Botiga's single semantic footer. */
 .bhfb.bhfb-footer { margin-top: clamp(48px, 9vw, 120px); background: var(--lyli-color-cream); color: var(--lyli-color-muted); border-top: 1px solid var(--lyli-color-border); }
