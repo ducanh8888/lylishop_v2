@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.8.0
+Version: 1.9.0
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -982,25 +982,107 @@ form {
     margin-top: 14px;
     -webkit-overflow-scrolling: touch;
 }
+/*
+ * Post-Storefront-V2 soft-navigation pass — owner feedback described these
+ * as "heavy outlined pills, disconnected from the softer handmade
+ * character of Lyli Shop." Root cause, live-verified via computed style:
+ * the chip's fill (--lyli-color-warm-white, #FFFCF7) was IDENTICAL to the
+ * page canvas behind it (--lyli-color-canvas is the same token), so the
+ * 1px border was the only visible signal — an outline floating on
+ * matching background reads as a harder, more "wireframe/admin-filter"
+ * shape than a genuinely filled pill would. Softness comes from giving the
+ * chip a real, visibly-different fill (--lyli-color-cream) instead of
+ * relying on the border for definition — no new colors, no icons, just a
+ * token swap plus removing the now-redundant border.
+ */
 .category-button {
     flex: 0 0 auto;
-    padding: 7px 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 8px 16px;
     border-radius: 999px;
-    border: 1px solid var(--lyli-color-border);
-    background: var(--lyli-color-warm-white);
-    color: var(--lyli-color-text);
+    border: 1px solid transparent;
+    background: var(--lyli-color-cream);
+    color: var(--lyli-color-primary);
     font-size: 0.82rem;
+    font-weight: 500;
     white-space: nowrap;
     text-decoration: none;
     transition: color var(--lyli-transition), border-color var(--lyli-transition), background var(--lyli-transition);
 }
 @media (hover: hover) and (pointer: fine) {
     .category-button:hover {
-        color: var(--lyli-color-primary);
         border-color: var(--lyli-color-primary);
-        background: var(--lyli-color-cream);
+        background: var(--lyli-color-warm-white);
     }
 }
+/*
+ * Current-category state. Reuses the exact filled-circle "you are here"
+ * language the site already established for pagination's current-page
+ * number (table.woocommerce-pagination .page-numbers.current) rather than
+ * inventing a second "selected" visual pattern.
+ */
+.category-button.is-current,
+.category-button[aria-current="page"] {
+    background: var(--lyli-color-primary);
+    color: var(--lyli-color-warm-white);
+}
+@media (hover: hover) and (pointer: fine) {
+    .category-button.is-current:hover,
+    .category-button[aria-current="page"]:hover {
+        border-color: var(--lyli-color-primary);
+        background: var(--lyli-color-primary);
+    }
+}
+
+/*
+ * Taxonomy up/sibling navigation (docs/UX-AUDIT-POST-STOREFRONT-V2-2026-08-19.md
+ * owner-reported addendum) — see inc/woocommerce/archive.php
+ * render_taxonomy_nav() for the full rationale. One compact row: a
+ * ghost-style "up" link (deliberately NOT chip-styled — it is exit/
+ * ancestor navigation, a different kind of action from lateral sibling
+ * browsing, and should read differently) followed by sibling chips
+ * (reusing .category-button, so they automatically match every other chip
+ * on the site). The whole row scrolls natively on overflow, the same
+ * proven no-JS pattern already used for .categories-wrapper — no custom
+ * carousel, no new script.
+ */
+.lyli-taxonomy-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 10px;
+    margin: 14px 0 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+}
+.lyli-taxonomy-nav-up {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 2px;
+    min-height: 44px;
+    color: var(--lyli-color-muted);
+    font-size: 0.82rem;
+    text-decoration: none;
+    white-space: nowrap;
+    border-right: 1px solid var(--lyli-color-border);
+    padding-right: 12px;
+    transition: color var(--lyli-transition);
+}
+@media (hover: hover) and (pointer: fine) {
+    .lyli-taxonomy-nav-up:hover { color: var(--lyli-color-primary); }
+}
+.lyli-taxonomy-nav-siblings {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 8px;
+}
+
 .woocommerce .woocommerce-result-count { margin: 0; color: var(--lyli-color-muted); }
 .woocommerce .woocommerce-ordering { max-width: 100%; }
 /*

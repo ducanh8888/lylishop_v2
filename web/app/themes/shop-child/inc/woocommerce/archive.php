@@ -154,3 +154,101 @@ function simplify_paginated_result_count_text($translated, $single, $plural, $nu
 
     return $translated;
 }
+
+/**
+ * Post-Storefront-V2 soft catalog navigation pass (owner-reported: category
+ * drill-down felt rigid, no deterministic way back up/sideways beyond the
+ * breadcrumb; docs/UX-AUDIT-POST-STOREFRONT-V2-2026-08-19.md addendum).
+ *
+ * Root cause: Botiga's own sub-category chips
+ * (botiga_shop_page_header_sub_category_links(), wc-page-header.php) only
+ * ever list the DIRECT CHILDREN of the current term, and only render at all
+ * when suppress_single_subcategory_nav() above allows it (≥2 populated
+ * children). A leaf category — or any category with fewer than 2 populated
+ * children — therefore shows zero taxonomy navigation beyond the
+ * breadcrumb: a real dead end, live-confirmed on `Lyli Charm`, `Lyli Tiny`,
+ * `Hoa hướng dương`, `Hoa tulip`, `Hoa giỏ` (every current leaf).
+ *
+ * This adds a second, independent navigation concern Botiga's own gate
+ * cannot express: moving UP to the parent (or shop root) and SIDEWAYS to
+ * populated siblings — not DOWN to children, which Botiga's existing,
+ * unmodified mechanism already owns. Deliberately hooked to WooCommerce's
+ * own `woocommerce_before_shop_loop` (not Botiga's custom header function)
+ * at an early priority so it always fires on every category archive
+ * regardless of Botiga's show_sub_categories gating — the two systems are
+ * independent by design (task brief §8/§19), not a replacement for one
+ * another. "Up" is shown unconditionally (ancestor/exit navigation is not
+ * subject to the "does this give a real choice" gate a lone child chip
+ * would fail); siblings render only when ≥2 populated terms share the same
+ * parent (current term + at least one real alternative), reusing the same
+ * count-gating philosophy already established for child chips. Fully
+ * derived from the live taxonomy graph via get_queried_object()/get_terms()
+ * — no hardcoded category name, so it keeps working as the catalog grows.
+ */
+add_action('woocommerce_before_shop_loop', __NAMESPACE__ . '\\render_taxonomy_nav', 5);
+function render_taxonomy_nav(): void
+{
+    if (! is_product_category()) {
+        return;
+    }
+
+    $term = get_queried_object();
+    if (! $term instanceof \WP_Term || $term->taxonomy !== 'product_cat') {
+        return;
+    }
+
+    if ($term->parent) {
+        $parent = get_term($term->parent, 'product_cat');
+        if (! $parent instanceof \WP_Term) {
+            return;
+        }
+        $up_url = get_term_link($parent);
+        $up_label = $parent->name;
+    } else {
+        $shop_page_id = wc_get_page_id('shop');
+        $up_url = $shop_page_id > 0 ? get_permalink($shop_page_id) : home_url('/');
+        $up_label = __('Cửa hàng', 'shop-child');
+    }
+
+    if (is_wp_error($up_url) || ! $up_url) {
+        return;
+    }
+
+    $siblings = get_terms([
+        'taxonomy' => 'product_cat',
+        'parent' => $term->parent,
+        'hide_empty' => true,
+    ]);
+    $siblings = is_wp_error($siblings) ? [] : $siblings;
+
+    printf(
+        '<nav class="lyli-taxonomy-nav" aria-label="%s">',
+        esc_attr__('Điều hướng danh mục', 'shop-child')
+    );
+    printf(
+        '<a class="lyli-taxonomy-nav-up" href="%s"><span aria-hidden="true">&larr;</span> %s</a>',
+        esc_url($up_url),
+        esc_html($up_label)
+    );
+
+    if (count($siblings) >= 2) {
+        echo '<span class="lyli-taxonomy-nav-siblings">';
+        foreach ($siblings as $sibling) {
+            $sibling_url = get_term_link($sibling);
+            if (is_wp_error($sibling_url)) {
+                continue;
+            }
+            $is_current = $sibling->term_id === $term->term_id;
+            printf(
+                '<a class="category-button lyli-taxonomy-nav-chip%s" href="%s"%s>%s</a>',
+                $is_current ? ' is-current' : '',
+                esc_url($sibling_url),
+                $is_current ? ' aria-current="page"' : '',
+                esc_html($sibling->name)
+            );
+        }
+        echo '</span>';
+    }
+
+    echo '</nav>';
+}
