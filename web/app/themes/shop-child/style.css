@@ -1099,6 +1099,23 @@ form {
     display: flex;
     gap: 8px;
 }
+/*
+ * Botiga's own `a:focus { outline: thin dotted; outline-offset: 5px }`
+ * (styles.css) is one element + one pseudo-class (0,1,1) — higher
+ * specificity than this theme's bare `:focus-visible` rule (0,1,0), so it
+ * silently wins on any plain-anchor chip/link regardless of load order.
+ * Live-verified: an unfocused `.category-button` chip fell back to
+ * Botiga's thin dotted ring instead of the intended 3px solid one, and on
+ * a dark-filled current chip that ring's color (currentColor, i.e. the
+ * chip's own white text) was nearly invisible against the dark fill.
+ * Scoped to the two link types this pass touches, matching Botiga's
+ * specificity band rather than reaching for `!important`.
+ */
+.category-button:focus-visible,
+.lyli-taxonomy-nav-up:focus-visible {
+    outline: 3px solid var(--lyli-color-primary);
+    outline-offset: 2px;
+}
 
 .woocommerce .woocommerce-result-count { margin: 0; color: var(--lyli-color-muted); }
 .woocommerce .woocommerce-ordering { max-width: 100%; }
