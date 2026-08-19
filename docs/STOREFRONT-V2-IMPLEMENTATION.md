@@ -2,13 +2,15 @@
 
 Status: **FROZEN**. This document is the canonical source of truth for Storefront V2 implementation. It supersedes any composition decision that exists only in chat history or a commit message. Implementation work (Batch A/B/C) must follow this contract exactly; if implementation discovers a need to exceed the intervention ceiling set here, **stop and get founder review** rather than self-authorizing a higher layer.
 
-## Status at a glance (updated after Batch C implementation + production acceptance, source `891593b`)
+## Status at a glance (updated after the owner-approved privacy content closed out Batch C, doc commit pending)
 
 | Batch | Status |
 |---|---|
 | A — Archive + Product Card | **IMPLEMENTED, CLOSED.** Passed a full-review final verdict (see §6a) after two corrective sub-passes (A.1 hierarchy, A.2 catalog-first UX). One latent correctness bug found and fixed in the review pass (§6a). |
 | B — PDP + Related Products | **IMPLEMENTED, CLOSED.** Deployed and production-accepted — see §10a for the final review verdict, evidence corrections, and the one post-deploy fix (sticky-CTA premature-visibility bug). |
-| C — Cart / Checkout / Account | **IMPLEMENTED / CONTENT PENDING.** Deployed and production-accepted for everything technical — see §12a. The checkout privacy consent paragraph remains WooCommerce's English default; no owner-approved Vietnamese wording exists yet for that specific sentence, and inventing/machine-translating legal copy is out of scope. Not marked fully CLOSED until that content is supplied. |
+| C — Cart / Checkout / Account | **IMPLEMENTED, CLOSED.** Deployed and production-accepted (§12a). The last open dependency — owner-approved Vietnamese checkout privacy consent wording — was supplied and applied as an L0 WooCommerce setting (§12.2); no runtime code change or redeploy was needed. |
+
+**STOREFRONT COMPOSITION V2: CLOSED.** All three batches implemented, deployed, and production-accepted. See §24 for the closing summary.
 
 Sections §4 and §6–§9 document Batch A's implementation history (root causes, amendments, hook choices) and remain as historical/evidentiary record — superseded in *emphasis* by §6a's final verdict where the two disagree, but not rewritten, since the root-cause detail in them is still the reference for *why* the code looks the way it does.
 
@@ -579,26 +581,27 @@ Checkout AJAX fragment refresh (triggered via the real `update_checkout` event,
   translation pipeline, confirmed live, not merely assumed
 ```
 
-### 12.2 Checkout privacy paragraph — CONTENT PENDING
+### 12.2 Checkout privacy paragraph — implemented, closed
 
-**Root cause, re-verified from WooCommerce core source** (`includes/wc-template-functions.php`, `wc_get_privacy_policy_text()`): unchanged — the English paragraph is WooCommerce's own hard-coded default, returned via `get_option('woocommerce_checkout_privacy_policy_text', <English default>)` because that option has never been set. Live-confirmed on production: `wp option get woocommerce_checkout_privacy_policy_text` returns the English default verbatim.
+**Root cause** (`includes/wc-template-functions.php`, `wc_get_privacy_policy_text()`): the English paragraph was WooCommerce's own hard-coded default, returned via `get_option('woocommerce_checkout_privacy_policy_text', <English default>)` because that option had never been set. Live-confirmed still true immediately before this fix: `wp option get woocommerce_checkout_privacy_policy_text` returned the English default verbatim.
 
-**Searched for an already-approved Vietnamese wording before concluding this is blocked**, per the task's own requirement — found:
-- `wp_page_for_privacy_policy` **is set** (post ID 20, "Chính sách bảo mật", `publish`, last updated 15/08/2026) — a full, real, owner-approved Vietnamese Privacy Policy **page** already exists and is live at `/chinh-sach-bao-mat/`. The checkout paragraph's `[privacy_policy]` shortcode already correctly links to it (confirmed live: the rendered link text "chính sách riêng tư" — itself a core-translated string, unrelated to this gap — points at `https://lylishop.online/chinh-sach-bao-mat/`).
-- **No approved wording exists specifically for the short checkout consent sentence itself** ("Your personal data will be used to process your order…") — this is a distinct, shorter piece of copy from the full policy page, and nothing in `docs/`, WP options, or the admin guide supplies an approved Vietnamese version of it.
-
-**Decision, per the task's explicit constraint:** do not invent or machine-translate this sentence. Left as an open content dependency — implement everything else in Batch C, and do not report Batch C as fully CLOSED while this remains.
+**Content dependency resolved:** the owner supplied and explicitly approved the following exact Vietnamese wording for production:
 
 ```
-PRIVACY CONTENT DEPENDENCY:
-Owner-approved Vietnamese wording required for the short checkout
-consent paragraph (WooCommerce → Settings → Accounts & Privacy →
-"Checkout privacy policy"). The full Privacy Policy PAGE is already
-approved, live, and correctly linked — only this one shorter sentence
-is outstanding.
+Lyli Shop sử dụng thông tin bạn cung cấp để xử lý đơn hàng, hỗ trợ mua sắm và thực hiện các mục đích được nêu trong [privacy_policy].
 ```
 
-Fix mechanism (unchanged, ready to apply the moment wording is supplied): `WooCommerce → Settings → Accounts & Privacy → "Checkout privacy policy"` — an L0 admin setting, no deploy required.
+**Applied via the preferred L0 mechanism** — a WooCommerce setting, not code:
+
+```
+WooCommerce → Settings → Accounts & Privacy → "Checkout privacy policy"
+```
+
+Set via `wp option update woocommerce_checkout_privacy_policy_text` (value piped via stdin to preserve UTF-8/diacritics exactly, byte-diffed against the source wording after write to confirm an exact match — no truncation, no re-encoding, no re-wrapping). The `[privacy_policy]` shortcode was preserved exactly as given, so WooCommerce continues to expand it into a real link at render time — confirmed live: it resolves to the already-approved, already-live Privacy Policy page (`wp_page_for_privacy_policy`, post ID 20, "Chính sách bảo mật", `/chinh-sach-bao-mat/`).
+
+**No PHP filter, no theme code, no translation-file edit, and no new runtime release were needed or added** — this was purely a WordPress option value change, applied directly against the already-deployed release (`20260819143928`, source `891593b`), which remains the current production runtime unchanged.
+
+**Verified live, desktop (1440×900) and mobile (390×844):** rendered paragraph is fully Vietnamese, contains the approved wording verbatim, the anchor text ("chính sách riêng tư") resolves to `https://lylishop.online/chinh-sach-bao-mat/`, no literal `[privacy_policy]` text ever appears, no duplicate paragraph, valid HTML (`<p>` with one `<a>`), wraps naturally into 3–4 lines on mobile without overflow, and sits as clearly subordinate/legal-reading copy above "ĐẶT HÀNG" — never competing with it. Survives a real `update_checkout` AJAX fragment refresh unchanged (re-verified alongside "Vận chuyển" and the payment-card selected state in the same pass).
 
 ### 12.2a Checkout language audit — full sweep, re-verified live
 
@@ -659,7 +662,7 @@ Derived from what's already working across the site, not invented for checkout s
 
 ## 12a. Batch C final review verdict (production acceptance)
 
-**IMPLEMENTED / CONTENT PENDING.** Deployed as source commit `42acdf8` (translation + payment/select CSS) plus same-day follow-up commit `891593b` (select-chevron cascade fix found during acceptance), production release `20260819143928`, verified live on `https://lylishop.online`.
+**IMPLEMENTED, CLOSED.** Deployed as source commit `42acdf8` (translation + payment/select CSS) plus same-day follow-up commit `891593b` (select-chevron cascade fix found during acceptance), production release `20260819143928`, verified live on `https://lylishop.online`. The remaining content dependency (checkout privacy wording) was resolved by an owner-approved WordPress option value — see §12.2 — applied directly to this same already-deployed release with no code change and no new runtime release.
 
 **Pre-implementation review, cart:** re-tested with a real simple product + a real variable product (variation attribute correctly appears baked into the cart-item title per WooCommerce's own `WC_Product_Variation::get_name()` default format — confirmed this is native behavior, not a missing `dl.variation` bug). Native table composition, price-wrap fix, and quantity/coupon/subtotal all still correct against the current (12-product) catalog. No new cart defect found — left untouched per the frozen contract.
 
@@ -895,8 +898,7 @@ Sticky mobile add-to-cart is **no longer on this list** — the full-review pass
 - "Handmade" metadata label (needs founder confirmation of permanent tag policy)
 - Product-content schema migration (separate task; full review found the catalog's heading variance is itself evidence against attempting this yet, §10.4)
 
-### CONTENT PENDING (not deferred — technical mechanism is ready and unblocked)
-- **Checkout privacy consent paragraph** — no owner-approved Vietnamese wording exists for this specific short sentence (distinct from the full Privacy Policy page, which is already approved and live at `/chinh-sach-bao-mat/`, post ID 20). Apply via `WooCommerce → Settings → Accounts & Privacy → "Checkout privacy policy"` the moment wording is supplied — no further deploy needed (§12.2).
+- **Checkout privacy consent paragraph** — owner-approved Vietnamese wording supplied and applied via `WooCommerce → Settings → Accounts & Privacy → "Checkout privacy policy"` — **implemented and closed**, no deploy needed (§12.2).
 
 ### REJECTED
 - Custom commerce frontend / headless / React
@@ -946,15 +948,33 @@ Checked existing docs for contradictions with this contract:
     [x] PHP file split: inc/woocommerce/{archive,product-card,single-product}.php (§16 trigger met)
     [x] Acceptance pass (§10.8/§10a, whole-screen) at mobile/desktop, deployed, smoke-tested, production-verified
 
-[x] Batch C — IMPLEMENTED / CONTENT PENDING (§12a final verdict)
+[x] Batch C — IMPLEMENTED, CLOSED (§12a final verdict)
     [x] gettext_with_context filter for "Shipment" (§12.1) — verified incl. AJAX fragment refresh
-    [ ] Checkout privacy policy text (content from owner) → WooCommerce setting (§12.2) — OPEN, mechanism ready, wording not yet supplied
+    [x] Checkout privacy policy text (owner-approved wording) → WooCommerce setting (§12.2) — applied, verified desktop/mobile/AJAX
     [x] Payment method CSS card treatment (§12.3) — :has(input:checked), verified incl. AJAX fragment refresh
     [x] Form-language pass: selectWoo UI styled for country/state, native chevron for the ward select, cascade-collision fix (§12.5)
     [x] My Account reviewed — already-shipped light polish confirmed sufficient, nothing further added (§13)
     [x] Progress indicator: confirmed NOT implemented — rejected, re-verified still correct (§12.4)
-    [x] Acceptance pass (§13b, whole-screen) at mobile/desktop, deployed, smoke-tested, production-verified — not fully CLOSED pending privacy content
+    [x] Acceptance pass (§13b, whole-screen) at mobile/desktop, deployed, smoke-tested, production-verified — CLOSED
 ```
+
+---
+
+## 24. Storefront Composition V2 — closing summary
+
+**CLOSED.** All three batches implemented, deployed, and production-accepted:
+
+```
+Batch A — Archive + Product Card    CLOSED (§6a)
+Batch B — PDP + Related Products    CLOSED (§10a)
+Batch C — Cart / Checkout / Account CLOSED (§12a, content dependency resolved above)
+```
+
+Final production state: release `20260819143928`, source `891593b78160ef24883d7d62ce5cd62447cccff9` (unchanged since Batch C's runtime deploy — the closing privacy-content step was a WordPress option value only, requiring no code change and no new release). `main` head reflects this document's own closeout commit on top of that runtime SHA.
+
+Across all three batches: **0 template overrides, 0 new JS libraries, 1 new small vanilla JS file** (`pdp-sticky-cta.js`, Batch B, explicitly pre-approved in the original brief), **0 business-logic changes** — WooCommerce continues to own every commerce primitive (products, variations, cart, checkout, orders, payment, shipping, stock) in full; the theme owns presentation and a small number of narrowly-scoped translation filters only.
+
+No further Storefront V2 work is scoped. Any future redesign is a new, separately-approved phase.
 
 ---
 
