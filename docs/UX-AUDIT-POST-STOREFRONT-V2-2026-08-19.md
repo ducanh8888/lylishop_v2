@@ -683,4 +683,18 @@ Verified live: 360/390/430/768/820(via 768 pattern)/844×390/1366/1440/1920 — 
 
 ---
 
+## Addendum (2026-08-20) — soft catalog navigation cross-reference
+
+UX-017's server-rendered two-row navigation (Row 1 = top-level family, Row 2 = local
+collection) was made **progressively-enhanced soft navigation** — clicking any category chip,
+sorting, or paginating now updates the page without a full reload, while every server route,
+translation, and product-card renderer remains exactly as this audit documented (no template
+overrides, no client-side product-card duplication). Full research, architecture rationale,
+and live acceptance results are in
+`docs/SOFT-CATALOG-NAVIGATION-RESEARCH-2026-08-20.md` — not folded into this document, per the
+same separation-of-phases convention this doc itself established relative to
+`STOREFRONT-V2-IMPLEMENTATION.md`.
+
+---
+
 *This document is a new, independent audit phase. It does not modify, supersede, or reopen `docs/STOREFRONT-V2-IMPLEMENTATION.md`, which remains the closed, historical record of Storefront V2.*
