@@ -605,4 +605,82 @@ No taxonomy, product, menu, or WooCommerce-setting changes were made in this pas
 
 ---
 
+## 11. UX-017 — Category navigation felt like a taxonomy tree, not a shop (owner-reported, 2026-08-20)
+
+**Owner observation:** hover/current colors on category controls felt inconsistent; a hovered chip could look too close to the current one; parent category pages exposed multiple navigation rows that were "logically correct but visually cumbersome"; the overall feel was "navigating a taxonomy tree rather than browsing a small handmade shop."
+
+### Research applied
+
+- **Baymard — Overcategorization** (`baymard.com/blog/ecommerce-over-categorization`): categories under roughly 10–30 products are filter/collection candidates, not true categories; splitting products that share attributes into separate categories forces "pogosticking" to compare alternatives.
+- **Baymard — Mobile "View All"** (`baymard.com/blog/mobile-main-nav-view-all`): a bare category-name header is frequently not understood as a tappable "view everything" control; explicit "View All {category}" wording performs far better (only 24% of sites get this right).
+- **W3C menu interaction-state guidance**: distinct, non-ambiguous visual states for available/hover/focus/current controls.
+
+### Root causes (measured, not assumed)
+
+1. **Two independent navigation systems stacked visually.** UX-016 deliberately ran Botiga's own native child-chip row (down only) alongside a separate up/sibling row (up + sideways) on the same parent-category page — architecturally sound, visually two rows.
+2. **Hover/current collision — found via matched-CSSRule inspection.** Botiga generates a Customizer stylesheet (`custom-styles.css`, from the theme's own "Button" color setting) containing `.woocommerce-page-header .category-button:hover { background-color: #212121 !important; color: #fff !important; border-color: #212121 !important; }` — a near-black fill with `!important`, silently overriding this theme's own (non-`!important`) hover rule regardless of specificity or source order, and visually close in weight/darkness to the primary-brown current-state fill.
+
+### Live taxonomy (product IDs, not just counts)
+
+```
+Móc khóa len (17, 11 products: 249,251,246,241,236,231,169,170,172,120,107)
+├─ Lyli Signature (41, 0)
+├─ Lyli Charm (40, 4: 249,251,169,170)
+└─ Lyli Tiny (39, 7: 246,241,236,231,172,120,107)
+
+Hoa len (19, 5 products: 320,308,299,268,259)
+├─ Bó hoa len có sẵn (67, 0)
+├─ Hoa giỏ (75, 1: 299)
+└─ Hoa len lẻ (68, 4: 320,308,268,259)
+   ├─ Hoa hướng dương (71, 1: 259)
+   └─ Hoa tulip (73, 1: 268)
+```
+
+**Key fact:** every child term's product set is an exact subset of its parent's own — every product carries both the parent and child term. `Lyli Charm ∪ Lyli Tiny = Móc khóa len` exactly; `Hoa giỏ ∪ Hoa len lẻ = Hoa len` exactly. The parent category page already *is* the "view all" scope for its children, natively, with no query change needed.
+
+### Overcategorization assessment
+
+**Likely:** yes, by Baymard's own quantitative marker — `Lyli Charm` (4), `Lyli Tiny` (7), `Hoa giỏ` (1), `Hoa hướng dương` (1), `Hoa tulip` (1) are all well under the 10–30 product threshold, and each reads as a style/series distinction (a charm collection, a size/scale line, a flower variety) rather than a fundamentally different product type.
+**Structural migration recommended:** **no, not in this pass.** A migration (converting these into attributes/tags, or flattening the hierarchy) would touch URLs, SEO, breadcrumbs, product assignments, and the newly-created `hoa-len-handmade` landing page's own links — real, cross-cutting risk explicitly out of this task's authority. This section is the flagged structural recommendation the task asked for; **presentation-only** changes were implemented instead, valid under either taxonomy.
+
+### Candidates considered
+
+**A — current scope + collection strip (chosen):** one row — up-link, then a "Tất cả {current category}" chip (current-marked) followed by children (or siblings on a leaf). Root-level sibling switching (e.g. Móc khóa len ↔ Hoa len) moves one tap away via the up-link to Cửa hàng, where Botiga's own native top-level chips already list every populated top-level category — traded deliberately after live mobile testing showed the extra row cost more than the one extra tap.
+**B — one flat taxonomy strip (`[Cửa hàng][Hoa len][Móc khóa len][Lyli Charm][Lyli Tiny]`):** rejected — flattening two hierarchy levels into one row loses the parent/child semantic distinction the breadcrumb still needs to carry; risks ambiguity about what "Hoa len" vs "Lyli Charm" actually means side-by-side without a clear grouping cue.
+**C — broad scope + subtype strip only (identical in spirit to A, without the explicit up-link separator):** effectively converges with A once "up" is proven necessary (UX-016's original, still-valid requirement) — A is C with the ancestor-exit control made explicit and visually distinct from the local browse chips, rather than folded into the same row.
+
+### Chosen model — implemented
+
+One row via `render_taxonomy_nav()` (`inc/woocommerce/archive.php`), Botiga's native child-chip mechanism now fully suppressed (`suppress_single_subcategory_nav()` always returns `false`):
+- **Parent** (has populated children): `← {grandparent or Cửa hàng}` then `Tất cả {category}` (current) then child chips.
+- **Leaf** (no children): `← {parent}` then sibling chips (current included, marked).
+- **Empty category**: same function, still hooked to both `woocommerce_before_shop_loop` and `woocommerce_no_products_found` (UX-014's fix, re-verified still firing).
+
+### Interaction state matrix (computed style, live)
+
+| | Default | Hover (desktop) | Focus-visible | Current | Current+hover |
+|---|---|---|---|---|---|
+| background | `--lyli-color-cream` `rgb(251,239,229)` | `--lyli-color-blush` `rgb(246,228,227)` `!important` | same as default/current | `--lyli-color-primary` `rgb(122,59,23)` | `--lyli-color-primary` `!important` |
+| text | `--lyli-color-primary` `rgb(122,59,23)` | `--lyli-color-primary` | unchanged | `--lyli-color-warm-white` `rgb(255,252,247)` | `--lyli-color-warm-white` `!important` |
+| border | transparent | `--lyli-color-primary` `!important` | n/a | transparent | `--lyli-color-primary` `!important` |
+| outline | none | none | `3px solid var(--lyli-color-primary)`, 2px offset | none | `3px solid var(--lyli-color-primary)` |
+
+Live-verified via `browser_hover` + `getComputedStyle` (not inferred from source): hovering a non-current chip → `rgb(246,228,227)` bg / `rgb(122,59,23)` border-text; the current chip stays `rgb(122,59,23)` bg / `rgb(255,252,247)` text at all times. No shared color between hover and current states.
+
+### Measurements
+
+| State | Viewport | Before (two rows) | After (one row) | Δ |
+|---|---|---|---|---|
+| Parent (Móc khóa len) | 390×844 | 465.0px | 394.2px | −70.8 |
+| Parent (Móc khóa len) | 1366×768 | 530.9px | 440.9px | −90.0 |
+| Parent (Móc khóa len) | 1440×900 | 469.9px | 441.9px | −28.0 |
+
+Shop root, leaf categories, and deep-leaf categories were single-row already and are unchanged (not re-measured — no code path affecting them changed).
+
+### Acceptance
+
+Verified live: 360/390/430/768/820(via 768 pattern)/844×390/1366/1440/1920 — zero horizontal overflow at any width. Direct entry (fresh navigation, no history) to a parent, leaf, deep leaf, and the empty `Lyli Signature` category all render correct, non-dead-end navigation. `aria-current="page"` present only on real `<a href>` elements representing the true current URL. Regression: shop root untouched, zero empty product-loop anchors, PDP description/related/sticky-CTA intact, cart/checkout Vận chuyển translation intact, console clean on every page checked.
+
+---
+
 *This document is a new, independent audit phase. It does not modify, supersede, or reopen `docs/STOREFRONT-V2-IMPLEMENTATION.md`, which remains the closed, historical record of Storefront V2.*
