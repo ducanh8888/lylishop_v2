@@ -1191,10 +1191,21 @@ form {
  */
 body.lyli-catalog-panel-open { overflow: hidden; }
 
+/*
+ * Without JS (or without native <dialog> support), the mobile trigger
+ * button and panel are non-functional, so the fallback must be the
+ * always-working Row 2 (.lyli-taxonomy-nav) — never a dead-end button.
+ * catalog-nav.js only adds `has-js-catalog-panel` to <html> once it has
+ * confirmed <dialog>.showModal exists; every rule below that swaps Row 2
+ * out for the trigger is gated behind that class, matching the same
+ * default-visible/JS-adds-the-swap pattern already used by
+ * .has-js-reveal above.
+ */
 @media (max-width: 782px) {
-    .lyli-catalog-row-family,
-    .lyli-catalog-nav .lyli-taxonomy-nav { display: none; }
-    .lyli-catalog-mobile-trigger {
+    .has-js-catalog-panel .lyli-catalog-row-family,
+    .has-js-catalog-panel .lyli-catalog-nav .lyli-taxonomy-nav { display: none; }
+    .lyli-catalog-mobile-trigger { display: none; }
+    .has-js-catalog-panel .lyli-catalog-mobile-trigger {
         display: flex;
         align-items: center;
         justify-content: space-between;

@@ -330,6 +330,9 @@
     }
 
     if (panel && trigger && typeof panel.showModal === 'function') {
+        // Only now is the mobile trigger/panel actually usable — swap CSS
+        // out of the always-working Row 2 fallback (see style.css).
+        document.documentElement.classList.add('has-js-catalog-panel');
         trigger.addEventListener('click', openCategoryPanel);
 
         panel.addEventListener('click', function (event) {
