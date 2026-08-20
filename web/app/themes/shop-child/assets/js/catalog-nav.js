@@ -268,16 +268,16 @@
         softNavigate(link.href);
     });
 
-    document.addEventListener('change', function (event) {
-        var select = event.target.closest('.woocommerce-ordering select');
-        if (!select) {
-            return;
-        }
-        var form = select.closest('form');
+    // WooCommerce's own ordering script submits the form itself on
+    // `change` (it does not rely on the native change-event default
+    // action), so intercepting `change` with preventDefault() has no
+    // effect — the actual thing to intercept is the form's `submit`.
+    document.addEventListener('submit', function (event) {
+        var form = event.target.closest('.woocommerce-ordering');
         if (!form) {
             return;
         }
-        // The select's own form action + field values already encode the
+        // The form's own action + field values already encode the
         // canonical Woo sort URL — build it the same way a real submit
         // would, rather than inventing a second sort vocabulary.
         var params = new URLSearchParams(new FormData(form));
