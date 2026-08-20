@@ -4,7 +4,7 @@ Theme URI: https://lylishop.online
 Author: lylishop developer
 Author URI: https://github.com/ducanh8888/lylishop_v2
 Description: Child theme V1 storefront for Lyli Shop (Botiga Free parent). Brand identity, typography, color, spacing, product archive/single presentation, Classic Cart/Checkout styling, responsive/accessibility. Presentation only — no order, payment, voucher or business logic (PLAN.md §6.1).
-Version: 1.11.0
+Version: 1.12.0
 Requires at least: 7.0.2
 Tested up to: 7.0
 Requires PHP: 8.3
@@ -1160,6 +1160,174 @@ form {
     display: flex;
     gap: 8px;
 }
+
+/*
+ * Soft-catalog-navigation pass (docs/SOFT-CATALOG-NAVIGATION-RESEARCH-2026-08-20.md).
+ * Desktop: two rows, ROW 1 = product family (top-level), ROW 2 =
+ * .lyli-taxonomy-nav (local collection, unchanged). Mobile: both rows
+ * hidden, a single "Danh mục" trigger + native <dialog> panel instead —
+ * matches the existing 782px breakpoint sticky-header/sticky-CTA already
+ * use, not a new one.
+ */
+.lyli-catalog-nav { margin-top: 14px; }
+.lyli-catalog-row-family {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+}
+.lyli-catalog-nav .lyli-taxonomy-nav { margin-top: 10px; }
+.lyli-catalog-mobile-trigger,
+.lyli-catalog-panel { display: none; }
+
+@media (max-width: 782px) {
+    .lyli-catalog-row-family,
+    .lyli-catalog-nav .lyli-taxonomy-nav { display: none; }
+    .lyli-catalog-mobile-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
+        min-height: 48px;
+        padding: 10px 16px;
+        border: 1px solid var(--lyli-color-border);
+        border-radius: var(--lyli-radius-md);
+        background: var(--lyli-color-cream);
+        color: var(--lyli-color-primary);
+        font-family: var(--lyli-font-body);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: border-color var(--lyli-transition), background var(--lyli-transition);
+    }
+    .lyli-catalog-mobile-trigger-label {
+        text-transform: uppercase;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        color: var(--lyli-color-muted);
+    }
+    .lyli-catalog-mobile-trigger-current {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: right;
+        font-family: var(--lyli-font-heading);
+        font-weight: 600;
+    }
+    .lyli-catalog-mobile-trigger:focus-visible {
+        outline: 3px solid var(--lyli-color-primary);
+        outline-offset: 2px;
+    }
+}
+
+/*
+ * Native <dialog> — modal semantics (focus containment, Escape, background
+ * inertness) come from the browser, not hand-rolled ARIA. Only ever opened
+ * on <=782px (catalog-nav.js gates this the same way the CSS above does),
+ * so the desktop rows are the only interface there.
+ */
+.lyli-catalog-panel {
+    box-sizing: border-box;
+    width: min(100%, 480px);
+    max-height: 82vh;
+    margin: auto auto 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--lyli-radius-lg) var(--lyli-radius-lg) 0 0;
+    background: var(--lyli-color-warm-white);
+    box-shadow: 0 -8px 32px rgba(45, 42, 38, 0.16);
+}
+.lyli-catalog-panel::backdrop {
+    background: rgba(45, 42, 38, 0.35);
+}
+.lyli-catalog-panel[open] {
+    display: block;
+    animation: lyli-panel-in var(--lyli-motion-base) var(--lyli-ease-out);
+}
+@keyframes lyli-panel-in {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .lyli-catalog-panel[open] { animation: none; }
+}
+.lyli-catalog-panel-inner {
+    max-height: 82vh;
+    overflow-y: auto;
+    padding: 18px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+}
+.lyli-catalog-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.lyli-catalog-panel-title {
+    margin: 0;
+    font-family: var(--lyli-font-heading);
+    font-size: 1.1rem;
+    color: var(--lyli-color-primary);
+}
+.lyli-catalog-panel-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 999px;
+    background: var(--lyli-color-cream);
+    color: var(--lyli-color-primary);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.lyli-catalog-panel-close:focus-visible {
+    outline: 3px solid var(--lyli-color-primary);
+    outline-offset: 2px;
+}
+.lyli-catalog-panel-link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 4px;
+    color: var(--lyli-color-text);
+    text-decoration: none;
+    font-size: 0.94rem;
+}
+.lyli-catalog-panel-link-all {
+    font-weight: 600;
+    color: var(--lyli-color-primary);
+    border-bottom: 1px solid var(--lyli-color-border);
+    margin-bottom: 6px;
+}
+.lyli-catalog-panel-group { border-top: 1px solid var(--lyli-color-border); padding-top: 4px; margin-top: 4px; }
+.lyli-catalog-panel-group:first-of-type { border-top: none; margin-top: 0; }
+.lyli-catalog-panel-link-parent {
+    font-family: var(--lyli-font-heading);
+    font-weight: 600;
+    color: var(--lyli-color-primary);
+}
+.lyli-catalog-panel-children { padding-left: 16px; }
+.lyli-catalog-panel-link.is-current {
+    color: var(--lyli-color-primary);
+    font-weight: 700;
+    position: relative;
+}
+.lyli-catalog-panel-link.is-current::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    margin-left: 8px;
+    border-radius: 999px;
+    background: var(--lyli-color-primary);
+}
+
 /*
  * Botiga's own `a:focus { outline: thin dotted; outline-offset: 5px }`
  * (styles.css) is one element + one pseudo-class (0,1,1) — higher
@@ -1697,4 +1865,70 @@ form {
     .lyli-editorial-news .wp-block-latest-posts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .lyli-footer-inner { grid-template-columns: minmax(260px, 1.7fr) minmax(0, 1fr) minmax(0, 1fr); }
     .lyli-footer-brand { grid-column: auto; }
+}
+
+/* ==========================================================================
+   Soft catalog navigation (docs/SOFT-CATALOG-NAVIGATION-RESEARCH-2026-08-20.md)
+   ========================================================================== */
+
+/*
+ * assets/js/catalog-nav.js sets [aria-busy="true"] on #primary while a
+ * fetch is in flight — the existing grid stays fully visible and
+ * interactive (task brief: "do NOT blank the grid immediately"), just
+ * subtly dimmed so the pending state reads without a spinner/skeleton.
+ * The dim is itself skipped under reduced motion below (state, not motion,
+ * so it's not fully removed — just not eased).
+ */
+#primary[aria-busy="true"] { opacity: 0.6; transition: opacity var(--lyli-motion-base) var(--lyli-ease-standard); }
+
+/*
+ * View Transition API (progressive enhancement — catalog-nav.js only calls
+ * document.startViewTransition when it exists and prefers-reduced-motion
+ * is not set; every browser without support gets the plain CSS
+ * .lyli-catalog-swap-* fallback below instead, same visual result, less
+ * smooth interpolation). Named on #primary specifically, not the whole
+ * page, so header/footer/sticky elements never animate.
+ */
+#primary { view-transition-name: lyli-catalog-region; }
+::view-transition-old(lyli-catalog-region) {
+    animation: lyli-catalog-out var(--lyli-motion-base) var(--lyli-ease-standard) both;
+}
+::view-transition-new(lyli-catalog-region) {
+    animation: lyli-catalog-in var(--lyli-motion-base) var(--lyli-ease-out) both;
+}
+@keyframes lyli-catalog-out {
+    to { opacity: 0; transform: translateX(-10px); }
+}
+@keyframes lyli-catalog-in {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+/*
+ * CSS-only fallback for browsers without the View Transition API —
+ * catalog-nav.js toggles these classes directly around the DOM swap
+ * instead of calling startViewTransition().
+ */
+.lyli-catalog-swap-out { animation: lyli-catalog-out var(--lyli-motion-base) var(--lyli-ease-standard) both; }
+.lyli-catalog-swap-in { animation: lyli-catalog-in var(--lyli-motion-base) var(--lyli-ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(lyli-catalog-region),
+    ::view-transition-new(lyli-catalog-region),
+    .lyli-catalog-swap-out,
+    .lyli-catalog-swap-in {
+        animation: none !important;
+    }
+}
+
+/* Visually-hidden live region for the polite result-count announcement. */
+.lyli-catalog-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }

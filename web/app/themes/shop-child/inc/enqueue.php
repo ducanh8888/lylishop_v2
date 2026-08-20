@@ -150,3 +150,29 @@ function enqueue_sticky_header_script(): void
         ['strategy' => 'defer']
     );
 }
+
+/**
+ * Soft catalog navigation (docs/SOFT-CATALOG-NAVIGATION-RESEARCH-2026-08-20.md).
+ * Vanilla JS, no dependency, deferred. Only enqueued on the shop archive and
+ * category archives — never on PDP/cart/checkout/account/blog, and never
+ * touches anything there. Every link/control it enhances already works
+ * without it (see the script's own top-of-file docblock).
+ */
+add_action('wp_enqueue_scripts', __NAMESPACE__ . '\\enqueue_catalog_nav_script', 14);
+function enqueue_catalog_nav_script(): void
+{
+    if (! function_exists('is_shop') || (! is_shop() && ! is_product_category())) {
+        return;
+    }
+
+    $path = get_stylesheet_directory() . '/assets/js/catalog-nav.js';
+    $modified = file_exists($path) ? filemtime($path) : false;
+
+    wp_enqueue_script(
+        'lyli-catalog-nav',
+        get_stylesheet_directory_uri() . '/assets/js/catalog-nav.js',
+        [],
+        $modified !== false ? (string) $modified : null,
+        ['strategy' => 'defer']
+    );
+}

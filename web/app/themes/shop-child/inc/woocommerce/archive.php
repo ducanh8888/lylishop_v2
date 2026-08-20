@@ -67,13 +67,16 @@ function render_shop_archive_eyebrow(): void
 add_filter('theme_mod_shop_archive_header_style_show_categories', __NAMESPACE__ . '\\suppress_single_category_nav');
 function suppress_single_category_nav($value)
 {
-    if (! $value || ! is_shop()) {
-        return $value;
-    }
-
-    $count = wp_count_terms('product_cat', ['parent' => 0, 'hide_empty' => true]);
-
-    return (! is_wp_error($count) && $count >= 2) ? $value : false;
+    // Soft-catalog-navigation pass (docs/SOFT-CATALOG-NAVIGATION-RESEARCH-2026-08-20.md):
+    // Botiga's own top-level chip renderer only ever fires on is_shop()
+    // (hard-coded in botiga_shop_page_header_category_links() itself, not
+    // filterable), so it could never cover the new desktop "Row 1 = product
+    // family" requirement on category archives. render_top_level_category_row()
+    // below now owns top-level chips everywhere (shop root + every category
+    // depth), so Botiga's native mechanism is fully suppressed rather than
+    // count-gated, matching the same pattern already used for sub-categories.
+    unset($value);
+    return false;
 }
 
 /**
@@ -209,6 +212,217 @@ function simplify_paginated_result_count_text($translated, $single, $plural, $nu
  * the two hooks ever fires per request. Fully derived from the live
  * taxonomy graph — no hardcoded category name.
  */
+/**
+ * Soft-catalog-navigation pass (docs/SOFT-CATALOG-NAVIGATION-RESEARCH-2026-08-20.md).
+ *
+ * Desktop IA change requested by the owner: two rows with a clear semantic
+ * split — ROW 1 = product family (top-level categories, shown on shop root
+ * AND every category depth so switching families is always one click, not
+ * "up then choose"), ROW 2 = local collection (render_taxonomy_nav() below,
+ * unchanged model — "Tất cả {category}" + children, or siblings on a leaf).
+ * This is deliberately NOT the old UX-016 "down row + up/sideways row"
+ * stacking problem: both rows here mean the same thing on every page (family,
+ * then local scope), rather than one row meaning "go deeper" and the other
+ * meaning "go up or sideways."
+ *
+ * On mobile (<=782px, the theme's existing sticky-header/sticky-CTA
+ * breakpoint), both rows are hidden by CSS in favor of a single "Danh mục"
+ * trigger opening a native <dialog> panel containing the same data — see
+ * render_mobile_category_panel(). One taxonomy query serves both surfaces;
+ * no duplicated category data between desktop rows and the mobile panel.
+ */
+add_action('woocommerce_before_shop_loop', __NAMESPACE__ . '\\open_catalog_nav_shell', 3);
+add_action('woocommerce_no_products_found', __NAMESPACE__ . '\\open_catalog_nav_shell', 3);
+function open_catalog_nav_shell(): void
+{
+    if (! is_shop() && ! is_product_category()) {
+        return;
+    }
+
+    echo '<div class="lyli-catalog-nav" data-lyli-catalog-nav>';
+    render_top_level_category_row();
+    render_mobile_category_trigger();
+}
+
+add_action('woocommerce_before_shop_loop', __NAMESPACE__ . '\\close_catalog_nav_shell', 6);
+add_action('woocommerce_no_products_found', __NAMESPACE__ . '\\close_catalog_nav_shell', 6);
+function close_catalog_nav_shell(): void
+{
+    if (! is_shop() && ! is_product_category()) {
+        return;
+    }
+
+    render_mobile_category_panel();
+    echo '</div>';
+}
+
+function render_top_level_category_row(): void
+{
+    $top_level = get_terms([
+        'taxonomy' => 'product_cat',
+        'parent' => 0,
+        'hide_empty' => true,
+    ]);
+    $top_level = is_wp_error($top_level) ? [] : $top_level;
+
+    if (count($top_level) < 2) {
+        return;
+    }
+
+    $current_top_id = get_current_top_level_category_id();
+
+    echo '<div class="lyli-catalog-row lyli-catalog-row-family">';
+    foreach ($top_level as $term) {
+        $url = get_term_link($term);
+        if (is_wp_error($url)) {
+            continue;
+        }
+        $is_current = $term->term_id === $current_top_id;
+        printf(
+            '<a class="category-button lyli-catalog-chip%s" href="%s"%s>%s</a>',
+            $is_current ? ' is-current' : '',
+            esc_url($url),
+            $is_current ? ' aria-current="page"' : '',
+            esc_html($term->name)
+        );
+    }
+    echo '</div>';
+}
+
+/**
+ * The top-level ancestor of the current queried term (or the term itself if
+ * it's already top-level), so Row 1 can mark the right family as current
+ * even three levels deep. Returns 0 on the shop root (no term at all).
+ */
+function get_current_top_level_category_id(): int
+{
+    if (! is_product_category()) {
+        return 0;
+    }
+
+    $term = get_queried_object();
+    if (! $term instanceof \WP_Term || $term->taxonomy !== 'product_cat') {
+        return 0;
+    }
+
+    while ($term->parent) {
+        $parent = get_term($term->parent, 'product_cat');
+        if (! $parent instanceof \WP_Term) {
+            break;
+        }
+        $term = $parent;
+    }
+
+    return $term->term_id;
+}
+
+function render_mobile_category_trigger(): void
+{
+    $current_label = __('Danh mục', 'shop-child');
+    if (is_product_category()) {
+        $term = get_queried_object();
+        if ($term instanceof \WP_Term) {
+            $current_label = $term->name;
+        }
+    }
+
+    printf(
+        '<button type="button" class="lyli-catalog-mobile-trigger" aria-haspopup="dialog" aria-controls="lyli-catalog-panel" data-lyli-catalog-trigger>' .
+        '<span class="lyli-catalog-mobile-trigger-label">%s</span>' .
+        '<span class="lyli-catalog-mobile-trigger-current">%s</span>' .
+        '</button>',
+        esc_html__('Danh mục', 'shop-child'),
+        esc_html($current_label)
+    );
+}
+
+/**
+ * Full taxonomy tree for the mobile panel — presentation can stay flatter
+ * than storage depth (per UX-017's own established finding), so this stops
+ * at 2 levels visually (top-level + direct children) even for the one
+ * genuinely 3-level branch (Hoa len → Hoa len lẻ → Hoa hướng dương/Hoa
+ * tulip): a category's own grandchildren are reachable from its own page
+ * (ROW 2 there), not pre-rendered redundantly inside every ancestor's panel
+ * entry. Empty terms are excluded throughout (hide_empty:true) — this is a
+ * shopper-facing browse surface, not a full CMS taxonomy dump.
+ */
+function render_mobile_category_panel(): void
+{
+    $top_level = get_terms([
+        'taxonomy' => 'product_cat',
+        'parent' => 0,
+        'hide_empty' => true,
+    ]);
+    $top_level = is_wp_error($top_level) ? [] : $top_level;
+
+    if (empty($top_level)) {
+        return;
+    }
+
+    $current_id = is_product_category() && get_queried_object() instanceof \WP_Term
+        ? get_queried_object()->term_id
+        : 0;
+    $shop_page_id = wc_get_page_id('shop');
+    $shop_url = $shop_page_id > 0 ? get_permalink($shop_page_id) : home_url('/');
+
+    echo '<dialog id="lyli-catalog-panel" class="lyli-catalog-panel" aria-label="' . esc_attr__('Danh mục sản phẩm', 'shop-child') . '">';
+    echo '<div class="lyli-catalog-panel-inner">';
+    echo '<div class="lyli-catalog-panel-header">';
+    echo '<p class="lyli-catalog-panel-title">' . esc_html__('Danh mục', 'shop-child') . '</p>';
+    echo '<button type="button" class="lyli-catalog-panel-close" data-lyli-catalog-close aria-label="' . esc_attr__('Đóng', 'shop-child') . '">&times;</button>';
+    echo '</div>';
+
+    printf(
+        '<a class="lyli-catalog-panel-link lyli-catalog-panel-link-all%s" href="%s">%s</a>',
+        $current_id === 0 && is_shop() ? ' is-current' : '',
+        esc_url($shop_url),
+        esc_html__('Tất cả sản phẩm', 'shop-child')
+    );
+
+    foreach ($top_level as $parent_term) {
+        $parent_url = get_term_link($parent_term);
+        if (is_wp_error($parent_url)) {
+            continue;
+        }
+
+        $children = get_terms([
+            'taxonomy' => 'product_cat',
+            'parent' => $parent_term->term_id,
+            'hide_empty' => true,
+        ]);
+        $children = is_wp_error($children) ? [] : $children;
+
+        echo '<div class="lyli-catalog-panel-group">';
+        printf(
+            '<a class="lyli-catalog-panel-link lyli-catalog-panel-link-parent%s" href="%s">%s</a>',
+            $parent_term->term_id === $current_id ? ' is-current' : '',
+            esc_url($parent_url),
+            esc_html($parent_term->name)
+        );
+
+        if (! empty($children)) {
+            echo '<div class="lyli-catalog-panel-children">';
+            foreach ($children as $child) {
+                $child_url = get_term_link($child);
+                if (is_wp_error($child_url)) {
+                    continue;
+                }
+                printf(
+                    '<a class="lyli-catalog-panel-link lyli-catalog-panel-link-child%s" href="%s">%s</a>',
+                    $child->term_id === $current_id ? ' is-current' : '',
+                    esc_url($child_url),
+                    esc_html($child->name)
+                );
+            }
+            echo '</div>';
+        }
+        echo '</div>';
+    }
+
+    echo '</div>';
+    echo '</dialog>';
+}
+
 add_action('woocommerce_before_shop_loop', __NAMESPACE__ . '\\render_taxonomy_nav', 5);
 add_action('woocommerce_no_products_found', __NAMESPACE__ . '\\render_taxonomy_nav', 5);
 function render_taxonomy_nav(): void
