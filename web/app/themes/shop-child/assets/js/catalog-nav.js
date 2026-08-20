@@ -268,23 +268,39 @@
         softNavigate(link.href);
     });
 
-    // WooCommerce's own ordering script submits the form itself on
-    // `change` (it does not rely on the native change-event default
-    // action), so intercepting `change` with preventDefault() has no
-    // effect — the actual thing to intercept is the form's `submit`.
-    document.addEventListener('submit', function (event) {
-        var form = event.target.closest('.woocommerce-ordering');
-        if (!form) {
-            return;
-        }
-        // The form's own action + field values already encode the
-        // canonical Woo sort URL — build it the same way a real submit
-        // would, rather than inventing a second sort vocabulary.
-        var params = new URLSearchParams(new FormData(form));
-        var url = window.location.pathname + '?' + params.toString();
-        event.preventDefault();
-        softNavigate(url);
-    });
+    // WooCommerce's own ordering script (assets/js/frontend/woocommerce.js)
+    // reacts to `change` by calling jQuery's `.trigger('submit')`, which
+    // never dispatches a real native `submit` event — it only calls
+    // jQuery-bound handlers directly, then calls the form's native
+    // `.submit()` method, which itself fires no event at all. A native
+    // `submit` listener (bubble or capture, on the form or on document)
+    // can never see any of this (confirmed empirically against the live
+    // site). The only reliable interception point is the `change` event
+    // itself, in the capture phase, stopped before WooCommerce's own
+    // bubble-phase delegated handler ever runs.
+    document.addEventListener(
+        'change',
+        function (event) {
+            var select = event.target.closest('.woocommerce-ordering select');
+            if (!select) {
+                return;
+            }
+            var form = select.closest('form');
+            if (!form) {
+                return;
+            }
+            event.stopImmediatePropagation();
+            event.preventDefault();
+            // The select's own value + the form's other fields already
+            // encode the canonical Woo sort URL — build it the same way a
+            // real submit would, rather than inventing a second sort
+            // vocabulary.
+            var params = new URLSearchParams(new FormData(form));
+            var url = window.location.pathname + '?' + params.toString();
+            softNavigate(url);
+        },
+        true
+    );
 
     window.addEventListener('popstate', function () {
         if (!isSoftNavigableUrl(window.location.href)) {
