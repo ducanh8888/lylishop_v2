@@ -303,12 +303,14 @@
             return;
         }
         panel.showModal();
+        document.body.classList.add('lyli-catalog-panel-open');
     }
 
     function closeCategoryPanel() {
         if (panel && panel.open) {
             panel.close();
         }
+        document.body.classList.remove('lyli-catalog-panel-open');
     }
 
     if (panel && trigger && typeof panel.showModal === 'function') {
@@ -328,6 +330,7 @@
         });
 
         panel.addEventListener('close', function () {
+            document.body.classList.remove('lyli-catalog-panel-open');
             trigger.focus();
         });
     } else if (trigger) {

@@ -1182,6 +1182,15 @@ form {
 .lyli-catalog-mobile-trigger,
 .lyli-catalog-panel { display: none; }
 
+/*
+ * Native <dialog> does not itself prevent the page behind it from
+ * scrolling (confirmed live: background scrollY moved while the panel
+ * was open). JS toggles this class for the duration the panel is open;
+ * it never applies without the panel actually being open, so JS-disabled
+ * visitors are unaffected.
+ */
+body.lyli-catalog-panel-open { overflow: hidden; }
+
 @media (max-width: 782px) {
     .lyli-catalog-row-family,
     .lyli-catalog-nav .lyli-taxonomy-nav { display: none; }
